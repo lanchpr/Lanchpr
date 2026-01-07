@@ -9,7 +9,6 @@
   <meta name="keywords" content="lanchonete, seropédica, delivery, caldo de cana, pastel, salgados, lanche do professor, ufrrj">
   <meta name="author" content="Lanche do Professor">
 
-  <!-- Fonts & AOS -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://www.google.com/maps/search/?api=1&query=Av.+Min.+Fernando+Costa+100+NA+PRIMEIRA+PASSARELA+PROX.+PONTO+-+Boa+Esperan%C3%A7a%2C+Serop%C3%A9dica+-+RJ%2C+23890-005" rel="stylesheet">
@@ -196,10 +195,13 @@
     .form-control{width:100%;padding:.6rem;border-radius:8px;border:1px solid rgba(0,0,0,0.08)}
     .form-control:focus{outline:2px solid rgba(0,0,0,0.06)}
 
-    /* WhatsApp order fixed */
-    .whatsapp-fab{
-      position:fixed;left:1rem;bottom:1rem;background:var(--cor-accent);color:#fff;padding:.7rem;border-radius:999px;display:flex;align-items:center;gap:.6rem;box-shadow:0 12px 30px rgba(37,211,102,0.18);z-index:1400;border:0;font-weight:700;
+    /* Editor: Layout grid para celular */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
     }
+    .span-2 { grid-column: span 2; }
 
     /* Footer */
     footer{padding:2rem 0;background:#fff;margin-top:2rem}
@@ -227,10 +229,8 @@
 </head>
 <body>
 
-  <!-- Mobile overlay -->
   <div id="mobile-overlay" class="mobile-overlay" aria-hidden="true"></div>
 
-  <!-- Header -->
   <header class="main-header" id="main-header" role="banner">
     <div class="header-inner">
       <a href="#hero" class="logo" aria-label="Lanche do Professor - início">
@@ -254,7 +254,6 @@
     </div>
   </header>
 
-  <!-- Mobile menu -->
   <nav id="nav-mobile" class="nav-mobile" aria-hidden="true" aria-label="Menu mobile">
     <div style="display:flex;justify-content:space-between;align-items:center;padding:1rem 1.2rem;border-bottom:1px solid rgba(255,255,255,0.03)">
       <div style="font-weight:800">Menu</div>
@@ -269,8 +268,6 @@
   </nav>
 
   <main id="main-content" tabindex="-1">
-
-    <!-- HERO -->
     <section id="hero" class="hero" role="region" aria-label="ENTREGA RÀPIDA E GRATIS">
       <div class="hero-inner container" data-aos="fade-up">
         <h1>FAÇA SEU PEDIDO!</h1>
@@ -281,7 +278,6 @@
       </div>
     </section>
 
-    <!-- CARDÁPIO -->
     <section id="cardapio" class="section" aria-labelledby="cardapio-title">
       <div class="container">
         <header style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
@@ -298,10 +294,7 @@
             <button class="btn filter-btn" data-filter="bolos" aria-pressed="false">Bolos</button>
           </div>
         </header>
-
-        <div id="product-grid" class="product-grid" role="region" aria-live="polite" aria-label="Lista de produtos">
-          <!-- produtos renderizados por JS -->
-        </div>
+        <div id="product-grid" class="product-grid" role="region" aria-live="polite" aria-label="Lista de produtos"></div>
       </div>
     </section>
 
@@ -322,27 +315,22 @@
             <p><strong>Ponto de referência:</strong> PRIMEIRA PASSARELA NO  CENTRO DE SEROPEDICA</p>
             <a class="btn" href="https://wa.me/5521998488983" target="_blank" rel="noopener noreferrer" style="background:var(--cor-accent)">Pedir pelo WhatsApp</a>
           </div>
-
           <div style="border-radius:12px;overflow:hidden">
             <iframe 
-              src="https://maps.google.com/maps?width=100%25&height=600&hl=pt&q=Av.%20Min.%20Fernando%20Costa%20100%20NA%20PRIMEIRA%20PASSARELA%20PROX.%20PONTO%20-%20Boa%20Esperan%C3%A7a%2C%20Serop%C3%A9dica%20-%20RJ%2C%2023890-005&z=15&output=embed"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3677.2016390161474!2d-43.712613!3d-22.756041!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDQ1JzIxLjciUyA0M8KwNDInNDUuNCJX!5e0!3m2!1spt-BR!2sbr!4v1690000000000!5m2!1spt-BR!2sbr"
               width="100%" height="320" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa - Lanche do Professor">
             </iframe>
           </div>
         </div>
       </div>
     </section>
-
   </main>
-
-
 
   <button id="cart-toggle-btn" aria-controls="cart-modal" aria-haspopup="dialog" aria-expanded="false" aria-label="Abrir carrinho de compras">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.9 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
     <span class="count" id="cart-item-count">0</span>
   </button>
 
-  <!-- Cart Modal -->
   <div id="cart-modal" role="dialog" aria-modal="true" aria-labelledby="cart-title" aria-hidden="true">
     <div class="cart-content" role="document">
       <header class="cart-header">
@@ -352,12 +340,10 @@
           <button id="cart-close-btn" class="icon-btn" aria-label="Fechar">✕</button>
         </div>
       </header>
-
       <div class="cart-body" id="cart-body">
         <p id="cart-empty-msg" style="color:var(--muted)">Seu carrinho está vazio.</p>
         <ul id="cart-items-list" style="list-style:none;padding:0;margin:0"></ul>
       </div>
-
       <div class="cart-summary" id="cart-summary">
         <div class="summary-row"><span>Subtotal</span><span id="cart-subtotal">R$ 0,00</span></div>
         <div class="summary-row"><span>Taxa de Entrega</span><span id="cart-delivery-fee">R$ 0,00</span></div>
@@ -366,434 +352,249 @@
 
         <form id="checkout-form" style="margin-top:1rem">
           <div class="form-group">
-            <label for="cliente-nome">Nome para a chamada</label>
-            <input id="cliente-nome" name="clienteNome" class="form-control" required placeholder="Ex: Professor Aloprado" />
+            <label for="cliente-nome">👤 Nome Completo</label>
+            <input id="cliente-nome" class="form-control" required placeholder="Ex: Wellington Silva" />
           </div>
-
           <div class="form-group">
-            <label for="tipo-entrega">Como prefere receber?</label>
+            <label for="tipo-entrega">🛵 Como prefere receber?</label>
             <select id="tipo-entrega" class="form-control" required>
               <option value="Retirada">Vou Buscar (Retirada)</option>
               <option value="Entrega">Delivery (Entrega)</option>
             </select>
           </div>
-
           <div id="endereco-field" class="form-group" style="display:none">
-            <label for="cliente-endereco">Endereço para entrega</label>
-            <input id="cliente-endereco" class="form-control" placeholder="Ex: Bloco A, apto 101, perto do xerox" />
+            <div class="form-grid">
+               <div class="span-2">
+                 <label>Rua e Número</label>
+                 <input id="end-rua" class="form-control" placeholder="Rua das Limeiras, 13" />
+               </div>
+               <div>
+                 <label>Bairro</label>
+                 <input id="end-bairro" class="form-control" placeholder="Centro" />
+               </div>
+               <div>
+                 <label>Complemento</label>
+                 <input id="end-complemento" class="form-control" placeholder="Apto 101, Fundos..." />
+               </div>
+               <div class="span-2">
+                 <label>🏁 Ponto de Referência</label>
+                 <input id="end-ref" class="form-control" placeholder="Perto do Colégio" />
+               </div>
+            </div>
           </div>
-
-          <div style="display:flex;gap:.6rem;align-items:center;margin-top:.6rem">
-            <button id="send-whatsapp-btn" type="submit" class="btn" style="flex:1">Finalizar pedido via WhatsApp</button>
+          <div class="form-group">
+            <label for="forma-pagamento">💳 Forma de Pagamento</label>
+            <select id="forma-pagamento" class="form-control" required>
+              <option value="Pix">Pix</option>
+              <option value="Cartão">Cartão (Débito/Crédito)</option>
+              <option value="Dinheiro">Dinheiro</option>
+            </select>
           </div>
+          <div id="troco-field" class="form-group" style="display:none">
+            <label for="valor-troco">💵 Troco para quanto?</label>
+            <input id="valor-troco" type="number" class="form-control" placeholder="Ex: 50" />
+          </div>
+          <button id="send-whatsapp-btn" type="submit" class="btn" style="flex:1; width: 100%; background: var(--cor-accent);">Finalizar Pedido via WhatsApp</button>
         </form>
       </div>
-
     </div>
   </div>
 
-  <!-- Footer -->
   <footer role="contentinfo">
     <div class="container footer-container">
       <div>
         <p><strong>Lanche do Professor</strong></p>
         <p>Av. Min. Fernando Costa 100 - Boa Esperança, Seropédica - RJ, 23890-005</p>
-        <p>WhatsApp: <a href="https://wa.me/5521998488983" target="_blank" rel="noopener noreferrer" style="color:var(--cor-principal)">+55 21 99848-8983</a></p>
       </div>
-
       <div>
         <ul class="social-links" aria-label="Redes sociais">
-          <li><a href="https://www.instagram.com/caldodecanadoprof" target="_blank" rel="noopener noreferrer" aria-label="Instagram">Instagram</a></li>
-          <li><a href="https://wa.me/5521998488983" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">WhatsApp</a></li>
+          <li><a href="https://www.instagram.com/caldodecanadoprof" target="_blank">Instagram</a></li>
+          <li><a href="https://wa.me/5521998488983" target="_blank">WhatsApp</a></li>
         </ul>
       </div>
     </div>
   </footer>
 
-  <!-- AOS & App JS -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
   <script>
     (function(){
-      // --- Dados iniciais (atualizados com seus novos produtos) ---
       const productDatabase = [
-        // Pastéis (R$7,00)
+        // Pastéis (11 itens)
         { id: 'pas1', name: 'Pastel de Carne', price: 9.00, category: 'pasteis', description: 'Pastel crocante com recheio de carne suculenta.', imageUrl: 'https://i.postimg.cc/VNZKXSb1/pastel-maria.jpg' },
         { id: 'pas2', name: 'Pastel de Queijo', price: 9.00, category: 'pasteis', description: 'Queijo derretido até a última mordida.', imageUrl: 'https://i.postimg.cc/gJPnSsh8/990810f9242641a8e264ce996a78ed28-XL.jpg' },
         { id: 'pas3', name: 'Pastel de Pizza', price: 9.00, category: 'pasteis', description: 'Sabor pizza com muito queijo e molho.', imageUrl: 'https://i.postimg.cc/9MG1KLNs/pizza-tradicional.jpg' },
         { id: 'pas4', name: 'Pastel de Frango c/ Catupiry', price: 9.00, category: 'pasteis', description: 'Frango desfiado com catupiry cremoso.', imageUrl: 'https://i.postimg.cc/7PjthTg4/images.jpg' },
-        { id: 'pas4', name: 'Pastel de Camarão', price: 12.00, category: 'pasteis', description: 'Camarão fresco! Venha experimentar!.', imageUrl: 'https://i.postimg.cc/3xc5NDQy/pastel-de-camarao-com-queijo-portal-minha-receita-1-500x281.jpg' },
-                { id: 'pas4', name: 'Pastel de Carne Seca', price: 12.00, category: 'pasteis', description: 'Carne seca desfiada! Venha experimentar!.', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg' },
-                    { id: 'pas4', name: 'Pastel de Arraia', price: 12.00, category: 'pasteis', description: 'Uma explosão de sabor.', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg' },
-                   { id: 'pas4', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', description: 'Pastel delicioso de marisco.', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg' },
-           { id: 'pas4', name: 'Pastel de Siri', price: 12.00, category: 'pasteis', description: 'Recheado de siri desfiado a exprimentar.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg' },
-            { id: 'pas4', name: 'Pastel de Banana com Canela', price: 12.00, category: 'pasteis', description: 'Recheado de banana macia com um leve toque de canela para experimentar.', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg' },
-                        { id: 'pas4', name: 'Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', description: 'Recheado com a tradicional combinação de goiabada e queijo para saborear.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg' },
-           
-        // Caldos (garrafa 500ml - R$6,00)
-        { id: 'cal1', name: 'Garrafa de Caldo 500ml', price: 8.00, category: 'caldo', description: 'Caldo de cana moído na hora - garrafa 500ml.', imageUrl: 'https://i.postimg.cc/D0BtSDZp/D-Q-NP-2X-869138-MLB91945553217-092025-T-garrafa-plast-descartavel-300ml-sucocaldo-de-cana-c30un.webp' },
-
-        // Bebidas (variações)
-        { id: 'bev1', name: 'Refrigerante (lata)', price: 7.00, category: 'bebidas', description: 'Refrigerante geladinho em lata (Coca ou Fanta).', imageUrl: 'https://i.postimg.cc/bNK77B6g/istockphoto-477567554-612x612.jpg' },
-        { id: 'bev2', name: 'Refrigerente Mini', price: 4.00, category: 'bebidas', description: 'Coca-Cola em embalagem mini.', imageUrl: 'https://i.postimg.cc/zGQFts05/623a090228197.webp' },
+        { id: 'pas5', name: 'Pastel de Camarão', price: 12.00, category: 'pasteis', description: 'Camarão fresco! Venha experimentar!.', imageUrl: 'https://i.postimg.cc/3xc5NDQy/pastel-de-camarao-com-queijo-portal-minha-receita-1-500x281.jpg' },
+        { id: 'pas6', name: 'Pastel de Carne Seca', price: 12.00, category: 'pasteis', description: 'Carne seca desfiada! Venha experimentar!.', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg' },
+        { id: 'pas7', name: 'Pastel de Arraia', price: 12.00, category: 'pasteis', description: 'Uma explosão de sabor.', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg' },
+        { id: 'pas8', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', description: 'Pastel delicioso de marisco.', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg' },
+        { id: 'pas9', name: 'Pastel de Siri', price: 12.00, category: 'pasteis', description: 'Recheado de siri desfiado a exprimentar.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg' },
+        { id: 'pas10', name: 'Pastel de Banana com Canela', price: 12.00, category: 'pasteis', description: 'Recheado de banana macia com um leve toque de canela.', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg' },
+        { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', description: 'Recheado com goiabada e queijo.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg' },
+        // Caldo (1 item)
+        { id: 'cal1', name: 'Garrafa de Caldo 500ml', price: 8.00, category: 'caldo', description: 'Caldo de cana moído na hora.', imageUrl: 'https://i.postimg.cc/D0BtSDZp/D-Q-NP-2X-869138-MLB91945553217-092025-T-garrafa-plast-descartavel-300ml-sucocaldo-de-cana-c30un.webp' },
+        // Bebidas (5 itens)
+        { id: 'bev1', name: 'Refrigerante (lata)', price: 7.00, category: 'bebidas', description: 'Coca ou Fanta lata.', imageUrl: 'https://i.postimg.cc/bNK77B6g/istockphoto-477567554-612x612.jpg' },
+        { id: 'bev2', name: 'Refrigerente Mini', price: 4.00, category: 'bebidas', description: 'Coca mini.', imageUrl: 'https://i.postimg.cc/zGQFts05/623a090228197.webp' },
         { id: 'bev3', name: 'Guaracamp', price: 3.50, category: 'bebidas', description: 'Guaracamp geladinho.', imageUrl: 'https://i.postimg.cc/sDQXPbQz/images-1.jpg' },
-        { id: 'bev4', name: 'Água natural', price: 3.00, category: 'bebidas', description: 'Água mineral natural.', imageUrl: 'https://i.postimg.cc/xj7HSvL0/shutterstock-174041981.jpg' },
-        { id: 'bev5', name: 'Água com gás', price: 4.00, category: 'bebidas', description: 'Água mineral com gás.', imageUrl: 'https://i.postimg.cc/FKDpbY8C/CAPA-BONS-FLUIDOS-27.jpg' },
-
-        // Salgados (R$6,00 cada)
-        { id: 'sal1', name: 'Pastel de Forno de Frango', price: 7.00, category: 'salgados', description: 'Pastel de forno recheado com frango.', imageUrl: 'https://i.postimg.cc/pXn3RM1S/massa-de-pastel-de-forno.jpg' },
+        { id: 'bev4', name: 'Água natural', price: 3.00, category: 'bebidas', description: 'Mineral sem gás.', imageUrl: 'https://i.postimg.cc/xj7HSvL0/shutterstock-174041981.jpg' },
+        { id: 'bev5', name: 'Água com gás', price: 4.00, category: 'bebidas', description: 'Mineral com gás.', imageUrl: 'https://i.postimg.cc/FKDpbY8C/CAPA-BONS-FLUIDOS-27.jpg' },
+        // Salgados (11 itens)
+        { id: 'sal1', name: 'Pastel de Forno de Frango', price: 7.00, category: 'salgados', description: 'Massa leve recheada com frango.', imageUrl: 'https://i.postimg.cc/pXn3RM1S/massa-de-pastel-de-forno.jpg' },
         { id: 'sal2', name: 'Coxinha', price: 7.00, category: 'salgados', description: 'Coxinha assada, crocante por fora.', imageUrl: 'https://i.postimg.cc/x1f7HN1w/03-pc027ubzik.png' },
-        { id: 'sal3', name: 'Hambúrguer (com cheddar)', price: 7.00, category: 'salgados', description: 'Hambúrguer suculento com cheddar.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg' },
-        { id: 'sal4', name: 'Hambúrguer (sem cheddar)', price: 7.00, category: 'salgados', description: 'Hambúrguer sem cheddar, clássico.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg' },
+        { id: 'sal3', name: 'Hambúrguer (com cheddar)', price: 7.00, category: 'salgados', description: 'Saboroso hambúrguer com muito cheddar.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg' },
+        { id: 'sal4', name: 'Hambúrguer (sem cheddar)', price: 7.00, category: 'salgados', description: 'O clássico hambúrguer assado.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg' },
         { id: 'sal5', name: 'Joelho', price: 7.00, category: 'salgados', description: 'Joelho assado, recheado e macio.', imageUrl: 'https://i.postimg.cc/mZPJYpF5/images-2.jpg' },
-        { id: 'sal6', name: 'Esfiha', price: 7.00, category: 'salgados', description: 'Esfiha tradicional aberta ou fechada.', imageUrl: 'https://i.postimg.cc/mkTcs1M7/esfirradecarnelouca.webp' },
-        { id: 'sal7', name: 'Cachorro quente de forno', price: 7.00, category: 'salgados', description: 'Cachorro quente assado no forno.', imageUrl: 'https://i.postimg.cc/Px5sntJv/images-3.jpg' },
-        // Bolinhas de aipim (variações)
-        { id: 'sal8', name: 'Bolinho de Aipim - Carne', price: 7.00, category: 'salgados', description: 'Bolinho de aipim recheado com carne.', imageUrl: 'https://i.postimg.cc/k42CtJmk/Bolinho-de-aimpim.jpg' },
-        { id: 'sal9', name: 'Bolinho de Aipim - Queijo', price: 7.00, category: 'salgados', description: 'Bolinho de aipim recheada com queijo.', imageUrl: 'https://i.postimg.cc/gkJVX1XW/9900510.jpg' },
-        { id: 'sal10', name: 'Bolinho de Aipim - Pizza', price: 7.00, category: 'salgados', description: 'Bolinha de aipim sabor pizza.', imageUrl: 'https://i.postimg.cc/pr9dxQrh/hqdefault.jpg' },
-        { id: 'sal11', name: 'Bolinho de Aipim - Carne Seca', price: 7.00, category: 'salgados', description: 'Bolinho de aipim com carne seca.', imageUrl: 'https://i.postimg.cc/s26Qrgmp/bolinho2.jpg' },
-        // Bolos (R$4,00 cada)
-        { id: 'b1', name: 'Bolo - Cenoura (fatia)', price: 5.00, category: 'bolos', description: 'Bolo de cenoura fofinho, com ou sem cobertura.', imageUrl: 'https://i.postimg.cc/sgG0SMQ1/images-4.jpg' },
-        { id: 'b2', name: 'Bolo - Fubá (fatia)', price: 5.00, category: 'bolos', description: 'Bolo de fubá com textura caseira.', imageUrl: 'https://i.postimg.cc/FHxG00Fh/images-5.jpg' },
-        { id: 'b3', name: 'Bolo - Banana (fatia)', price: 5.00, category: 'bolos', description: 'Bolo de banana sabor caseiro.', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg' }
+        { id: 'sal6', name: 'Esfiha', price: 7.00, category: 'salgados', description: 'Tradicional sabor de carne.', imageUrl: 'https://i.postimg.cc/mkTcs1M7/esfirradecarnelouca.webp' },
+        { id: 'sal7', name: 'Cachorro quente de forno', price: 7.00, category: 'salgados', description: 'O queridinho da galera.', imageUrl: 'https://i.postimg.cc/Px5sntJv/images-3.jpg' },
+        { id: 'sal8', name: 'Bolinho de Aipim - Carne', price: 7.00, category: 'salgados', description: 'Aipim recheado com carne moída.', imageUrl: 'https://i.postimg.cc/k42CtJmk/Bolinho-de-aimpim.jpg' },
+        { id: 'sal9', name: 'Bolinho de Aipim - Queijo', price: 7.00, category: 'salgados', description: 'Aipim recheado com queijo.', imageUrl: 'https://i.postimg.cc/gkJVX1XW/9900510.jpg' },
+        { id: 'sal10', name: 'Bolinho de Aipim - Pizza', price: 7.00, category: 'salgados', description: 'Aipim sabor pizza.', imageUrl: 'https://i.postimg.cc/pr9dxQrh/hqdefault.jpg' },
+        { id: 'sal11', name: 'Bolinho de Aipim - Carne Seca', price: 7.00, category: 'salgados', description: 'Aipim com deliciosa carne seca.', imageUrl: 'https://i.postimg.cc/s26Qrgmp/bolinho2.jpg' },
+        // Bolos (3 itens)
+        { id: 'b1', name: 'Bolo - Cenoura (fatia)', price: 5.00, category: 'bolos', description: 'Com calda de chocolate.', imageUrl: 'https://i.postimg.cc/sgG0SMQ1/images-4.jpg' },
+        { id: 'b2', name: 'Bolo - Fubá (fatia)', price: 5.00, category: 'bolos', description: 'Bolo de vó.', imageUrl: 'https://i.postimg.cc/FHxG00Fh/images-5.jpg' },
+        { id: 'b3', name: 'Bolo - Banana (fatia)', price: 5.00, category: 'bolos', description: 'Caramelizado.', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg' }
       ];
 
-      // Config
-      const WHATSAPP_NUMBER = "5521998488983"; // número fornecido por você
+      const WHATSAPP_NUMBER = "5521998488983";
       const DELIVERY_FEE = 5.00;
       const FREE_DELIVERY_THRESHOLD = 15.00;
       const STORAGE_KEY = 'ldp_cart_v1';
-
-      // Estado
       let cart = [];
 
-      // Seletores
+      // Seletores preservados
       const productGrid = document.getElementById('product-grid');
-      const filterBtns = document.querySelectorAll('.filter-btn');
-      const mobileToggle = document.getElementById('mobile-nav-toggle');
-      const navMobile = document.getElementById('nav-mobile');
-      const mobileOverlay = document.getElementById('mobile-overlay');
-      const mobileClose = document.getElementById('mobile-close');
-      const header = document.getElementById('main-header');
-
       const cartToggleBtn = document.getElementById('cart-toggle-btn');
       const cartModal = document.getElementById('cart-modal');
-      const cartCloseBtn = document.getElementById('cart-close-btn');
-      const cartClearBtn = document.getElementById('cart-clear');
       const cartItemsList = document.getElementById('cart-items-list');
-      const cartEmptyMsg = document.getElementById('cart-empty-msg');
-      const cartItemCount = document.getElementById('cart-item-count');
-      const cartSubtotalEl = document.getElementById('cart-subtotal');
-      const cartDeliveryFeeEl = document.getElementById('cart-delivery-fee');
-      const cartTotalEl = document.getElementById('cart-total');
-      const deliveryFeeMsgEl = document.getElementById('delivery-fee-msg');
-
-      const tipoEntregaSelect = document.getElementById('tipo-entrega');
-      const enderecoField = document.getElementById('endereco-field');
-      const enderecoInput = document.getElementById('cliente-endereco');
-      const nomeInput = document.getElementById('cliente-nome');
       const checkoutForm = document.getElementById('checkout-form');
-      const sendWhatsappBtn = document.getElementById('send-whatsapp-btn');
+      const tipoEntregaSelect = document.getElementById('tipo-entrega');
+      const formaPagamentoSelect = document.getElementById('forma-pagamento');
 
-      // Init AOS
       AOS.init({duration:900, once:true, easing:'ease-out-cubic'});
 
-      // Persistência local
-      function loadCart(){
-        try{
-          const raw = localStorage.getItem(STORAGE_KEY);
-          if(raw){
-            cart = JSON.parse(raw) || [];
-          } else cart = [];
-        }catch(e){ cart = [] }
-        updateCartState();
-      }
-      function saveCart(){
-        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); }catch(e){}
-      }
-
-      // Render produtos
       function renderProducts(filter='all'){
         productGrid.innerHTML = '';
         const items = productDatabase.filter(p => filter==='all' || p.category===filter);
-        if(items.length===0){
-          productGrid.innerHTML = '<p style="text-align:center;color:var(--muted)">Nenhum produto encontrado.</p>';
-          return;
-        }
-        items.forEach((product, idx)=>{
+        items.forEach((p, idx)=>{
           const card = document.createElement('article');
           card.className = 'product-card';
           card.setAttribute('data-aos','fade-up');
-          card.setAttribute('data-aos-delay', String(idx*40));
-          card.innerHTML = `
-            <img class="product-card-image" src="${product.imageUrl}" alt="${escapeHtml(product.name)}">
+          card.innerHTML = `<img class="product-card-image" src="${p.imageUrl}" alt="${p.name}">
             <div class="product-card-content">
-              <div>
-                <h3>${escapeHtml(product.name)}</h3>
-                <p class="description">${escapeHtml(product.description)}</p>
-              </div>
+              <div><h3>${p.name}</h3><p class="description">${p.description}</p></div>
               <div class="product-card-footer">
-                <div class="product-price">R$ ${product.price.toFixed(2).replace('.',',')}</div>
-                <button class="btn-add-cart" data-id="${product.id}" data-name="${escapeHtml(product.name)}" data-price="${product.price}" aria-label="Adicionar ${escapeHtml(product.name)} ao carrinho">Adicionar</button>
+                <div class="product-price">R$ ${p.price.toFixed(2).replace('.',',')}</div>
+                <button class="btn-add-cart" onclick="addToCart('${p.id}')">Adicionar</button>
               </div>
-            </div>
-          `;
-          productGrid.appendChild(card);
+            </div>`;
+          productGrid.appendChild(art = card);
         });
-        AOS.refresh();
       }
 
-      // Helpers
-      function escapeHtml(text){
-        return String(text).replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-      }
-      function money(n){ return 'R$ ' + n.toFixed(2).replace('.',','); }
+      window.addToCart = function(id){
+        const p = productDatabase.find(x => x.id === id);
+        const exists = cart.find(x => x.id === id);
+        if(exists) exists.quantity++; else cart.push({...p, quantity: 1});
+        updateCart();
+        if(cart.length === 1) toggleCartModal(true);
+      };
 
-      // Carrinho
-      function addToCart(id, name, price){
-        const found = cart.find(i=>i.id===id);
-        if(found){ found.quantity += 1; }
-        else cart.push({ id, name, price: Number(price), quantity:1 });
-        saveCart();
-        updateCartState();
-        // abrir modal na 1ª adição
-        if(cart.length===1 && cart[0].quantity===1) toggleCartModal(true);
-      }
-
-      function updateCartItemQuantity(id, action){
-        const idx = cart.findIndex(i=>i.id===id);
-        if(idx===-1) return;
-        if(action==='increment') cart[idx].quantity++;
-        else if(action==='decrement'){ cart[idx].quantity--; if(cart[idx].quantity<=0) cart.splice(idx,1); }
-        saveCart();
-        updateCartState();
-      }
-
-      function removeItem(id){
-        cart = cart.filter(i=>i.id!==id);
-        saveCart();
-        updateCartState();
-      }
-
-      function clearCart(){
-        cart = [];
-        saveCart();
-        updateCartState();
-      }
-
-      function updateCartState(){
-        renderCartItems();
-        updateCartSummary();
-        updateCartToggleIcon();
-      }
-
-      function renderCartItems(){
+      function updateCart(){
+        document.getElementById('cart-item-count').textContent = cart.reduce((s,i)=> s + i.quantity, 0);
         cartItemsList.innerHTML = '';
-        if(!cart || cart.length===0){ cartEmptyMsg.style.display = 'block'; return; }
-        cartEmptyMsg.style.display = 'none';
-        cart.forEach(item=>{
+        if(!cart.length) { document.getElementById('cart-empty-msg').style.display = 'block'; return; }
+        document.getElementById('cart-empty-msg').style.display = 'none';
+        let subtotal = 0;
+        cart.forEach(i => {
+          subtotal += i.price * i.quantity;
           const li = document.createElement('li');
           li.className = 'cart-item';
-          li.setAttribute('data-id', item.id);
-          li.innerHTML = `
-            <div>
-              <h4>${escapeHtml(item.name)}</h4>
-              <div style="color:var(--muted);font-size:.95rem">${money(item.price)} cada</div>
-            </div>
+          li.innerHTML = `<div><h4>${i.name}</h4><small>${i.quantity}x R$ ${i.price.toFixed(2)}</small></div>
             <div class="controls">
-              <button class="icon-btn decrement-btn" data-id="${item.id}" aria-label="Diminuir">−</button>
-              <div style="min-width:26px;text-align:center;font-weight:700">${item.quantity}</div>
-              <button class="icon-btn increment-btn" data-id="${item.id}" aria-label="Aumentar">+</button>
-              <button class="icon-btn remove-btn" data-id="${item.id}" aria-label="Remover">×</button>
-            </div>
-          `;
+              <button class="icon-btn" onclick="changeQty('${i.id}', -1)">−</button>
+              <button class="icon-btn" onclick="changeQty('${i.id}', 1)">+</button>
+            </div>`;
           cartItemsList.appendChild(li);
         });
+        const taxa = (tipoEntregaSelect.value === 'Entrega' && subtotal < FREE_DELIVERY_THRESHOLD && subtotal > 0) ? DELIVERY_FEE : 0;
+        document.getElementById('cart-subtotal').textContent = 'R$ ' + subtotal.toFixed(2).replace('.',',');
+        document.getElementById('cart-delivery-fee').textContent = taxa === 0 ? 'GRÁTIS' : 'R$ ' + taxa.toFixed(2).replace('.',',');
+        document.getElementById('cart-total').textContent = 'R$ ' + (subtotal + taxa).toFixed(2).replace('.',',');
       }
 
-      function updateCartSummary(){
-        const subtotal = cart.reduce((s,i)=>s + i.price * i.quantity, 0);
-        let currentDelivery = 0;
-        let feeMessage = '';
-        const tipo = tipoEntregaSelect.value || 'Retirada';
-        if(tipo === 'Entrega'){
-          if(subtotal === 0) { currentDelivery = 0; feeMessage = ''; }
-          else if(subtotal >= FREE_DELIVERY_THRESHOLD){ currentDelivery = 0; feeMessage = 'Entrega GRÁTIS!' }
-          else { currentDelivery = DELIVERY_FEE; feeMessage = `Taxa de entrega: ${money(DELIVERY_FEE)}` }
-        } else {
-          currentDelivery = 0; if(subtotal>0) feeMessage = 'Retirada no local (sem taxa).'
-        }
-        const total = subtotal + currentDelivery;
-        cartSubtotalEl.textContent = money(subtotal);
-        cartDeliveryFeeEl.textContent = money(currentDelivery);
-        cartTotalEl.textContent = money(total);
-        deliveryFeeMsgEl.textContent = feeMessage;
+      window.changeQty = (id, delta) => {
+        const item = cart.find(i => i.id === id);
+        if(item) { item.quantity += delta; if(item.quantity <= 0) cart = cart.filter(x => x.id !== id); }
+        updateCart();
+      };
+
+      function toggleCartModal(open){
+        if(open) { cartModal.classList.add('visible'); document.body.style.overflow = 'hidden'; }
+        else { cartModal.classList.remove('visible'); document.body.style.overflow = ''; }
       }
 
-      function updateCartToggleIcon(){
-        const totalItems = cart.reduce((s,i)=>s + i.quantity, 0);
-        cartItemCount.textContent = totalItems;
-        cartToggleBtn.setAttribute('aria-label', `Abrir carrinho (${totalItems} itens)`);
-      }
+      // Toggle campos
+      tipoEntregaSelect.onchange = () => { document.getElementById('endereco-field').style.display = tipoEntregaSelect.value === 'Entrega' ? 'block' : 'none'; updateCart(); };
+      formaPagamentoSelect.onchange = () => { document.getElementById('troco-field').style.display = formaPagamentoSelect.value === 'Dinheiro' ? 'block' : 'none'; };
 
-      // Modal cart
-      function toggleCartModal(forceOpen=false){
-        const isVisible = cartModal.classList.contains('visible');
-        if(forceOpen || !isVisible){
-          cartModal.classList.add('visible'); cartModal.setAttribute('aria-hidden','false');
-          cartToggleBtn.setAttribute('aria-expanded','true');
-          // focus trap: focus first focusable inside (nome input)
-          setTimeout(()=>{ nomeInput && nomeInput.focus(); }, 80);
-          document.body.style.overflow = 'hidden';
-          document.addEventListener('keydown', escClose);
-        } else {
-          cartModal.classList.remove('visible'); cartModal.setAttribute('aria-hidden','true');
-          cartToggleBtn.setAttribute('aria-expanded','false');
-          document.body.style.overflow = '';
-          document.removeEventListener('keydown', escClose);
-        }
-      }
-      function escClose(e){ if(e.key === 'Escape') { if(navMobile.classList.contains('is-open')) toggleMobileMenu(true); else toggleCartModal(); } }
-
-      // Mobile menu
-      function toggleMobileMenu(forceClose=false){
-        const open = navMobile.classList.contains('is-open');
-        if(open && !forceClose){
-          navMobile.classList.remove('is-open');
-          mobileOverlay.classList.remove('is-open');
-          mobileOverlay.setAttribute('aria-hidden','true');
-          mobileToggle.setAttribute('aria-expanded','false');
-          document.body.style.overflow = '';
-        } else if(!open && !forceClose){
-          navMobile.classList.add('is-open');
-          mobileOverlay.classList.add('is-open');
-          mobileOverlay.setAttribute('aria-hidden','false');
-          mobileToggle.setAttribute('aria-expanded','true');
-          document.body.style.overflow = 'hidden';
-        } else if(forceClose){
-          navMobile.classList.remove('is-open');
-          mobileOverlay.classList.remove('is-open');
-          mobileOverlay.setAttribute('aria-hidden','true');
-          mobileToggle.setAttribute('aria-expanded','false');
-          document.body.style.overflow = '';
-        }
-      }
-
-      // Checkout & WhatsApp
-      function generateWhatsAppMessage(nome, tipoEntrega, endereco){
-        const lines = [];
-        lines.push('=== NOVO PEDIDO — LANCHE DO PROFESSOR ===');
-        lines.push('');
-        lines.push(`Cliente: ${nome}`);
-        lines.push(`Tipo: ${tipoEntrega}`);
-        lines.push(`Local: ${endereco}`);
-        lines.push('');
-        lines.push('--- ITENS ---');
-        cart.forEach(i=>{
-          lines.push(`• ${i.quantity}x ${i.name} — R$ ${(i.price * i.quantity).toFixed(2).replace('.',',')}`);
-        });
-        const subtotal = cart.reduce((s,i)=>s + i.price * i.quantity,0);
-        let taxa = 0;
-        if(tipoEntrega==='Entrega' && subtotal > 0 && subtotal < FREE_DELIVERY_THRESHOLD) taxa = DELIVERY_FEE;
-        const total = subtotal + taxa;
-        lines.push('');
-        lines.push(`Subtotal: R$ ${subtotal.toFixed(2).replace('.',',')}`);
-        lines.push(`Taxa de entrega: R$ ${taxa.toFixed(2).replace('.',',')}`);
-        lines.push(`TOTAL: R$ ${total.toFixed(2).replace('.',',')}`);
-        lines.push('');
-        lines.push('--- OBS (se tiver) ---');
-        return lines.join('\n');
-      }
-
-      function sendToWhatsApp(message){
-        const encoded = encodeURIComponent(message);
-        const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
-        window.open(url, '_blank', 'noopener,noreferrer');
-      }
-
-      // Events
-      document.addEventListener('click', (e)=>{
-        // Add cart
-        const addBtn = e.target.closest('.btn-add-cart');
-        if(addBtn){
-          const id = addBtn.dataset.id;
-          const name = addBtn.dataset.name;
-          const price = parseFloat(addBtn.dataset.price);
-          addToCart(id,name,price);
-        }
-
-        // increment/decrement/remove in cart
-        const inc = e.target.closest('.increment-btn');
-        const dec = e.target.closest('.decrement-btn');
-        const rem = e.target.closest('.remove-btn');
-        if(inc){ updateCartItemQuantity(inc.dataset.id, 'increment'); }
-        if(dec){ updateCartItemQuantity(dec.dataset.id, 'decrement'); }
-        if(rem){ removeItem(rem.dataset.id); }
-
-        // open cart
-        if(e.target.closest('#cart-toggle-btn')) { toggleCartModal(); }
-
-        // cart close / clear
-        if(e.target.closest('#cart-close-btn')) toggleCartModal();
-        if(e.target.closest('#cart-clear')) { if(confirm('Deseja limpar o carrinho?')) clearCart(); }
-
-        // mobile menu
-        if(e.target.closest('#mobile-nav-toggle')) toggleMobileMenu();
-        if(e.target.closest('#mobile-close')) toggleMobileMenu(true);
-        if(e.target.closest('.mobile-overlay')) toggleMobileMenu(true);
-        if(e.target.closest('#mobile-overlay')) toggleMobileMenu(true);
-        if(e.target.closest('[data-anchor]')) toggleMobileMenu(true);
-      });
-
-      // Overlay click to close mobile menu
-      mobileOverlay.addEventListener('click', ()=> toggleMobileMenu(true));
-
-      // Filter buttons
-      filterBtns.forEach(btn=>{
-        btn.addEventListener('click', ()=> {
-          filterBtns.forEach(b=> { b.setAttribute('aria-pressed','false'); b.classList.remove('active'); });
-          btn.setAttribute('aria-pressed','true'); btn.classList.add('active');
-          renderProducts(btn.dataset.filter || 'all');
-        });
-      });
-
-      // Header scroll effect
-      window.addEventListener('scroll', ()=>{
-        if(window.scrollY > 40) header.classList.add('scrolled');
-        else header.classList.remove('scrolled');
-      });
-
-      // Tipo de entrega toggle
-      tipoEntregaSelect.addEventListener('change', ()=> {
-        if(tipoEntregaSelect.value === 'Entrega'){
-          enderecoField.style.display = 'block';
-          enderecoInput.setAttribute('required','true');
-        } else {
-          enderecoField.style.display = 'none';
-          enderecoInput.removeAttribute('required');
-        }
-        updateCartSummary();
-      });
-
-      // Checkout submit
-      checkoutForm.addEventListener('submit', (e)=>{
+      checkoutForm.onsubmit = (e) => {
         e.preventDefault();
-        if(cart.length === 0){ alert('Seu carrinho está vazio!'); return; }
-        if(!nomeInput.value.trim()){ nomeInput.focus(); return alert('Digite seu nome para finalizarmos'); }
+        if(!cart.length) return alert("Carrinho vazio!");
+
+        const nome = document.getElementById('cliente-nome').value.toUpperCase();
         const tipo = tipoEntregaSelect.value;
-        const endereco = (tipo === 'Entrega') ? (enderecoInput.value || 'Sem endereço informado') : 'Retirada no local';
-        const message = generateWhatsAppMessage(nomeInput.value.trim(), tipo, endereco);
-        sendToWhatsApp(message);
-        // limpar carrinho após enviar
-        clearCart();
-        toggleCartModal();
+        const pag = formaPagamentoSelect.value;
+        const troco = document.getElementById('valor-troco').value;
+        const rua = document.getElementById('end-rua').value;
+        const bairro = document.getElementById('end-bairro').value;
+        const comp = document.getElementById('end-complemento').value;
+        const ref = document.getElementById('end-ref').value;
+
+        // NOVO DESIGN DO RELATÓRIO (OTIMIZADO)
+        let msg = `*🚀 NOVO PEDIDO — LANCHE DO PROFESSOR 🚀*\n`;
+        msg += `------------------------------------------\n\n`;
+        msg += `*👤 Cliente:* ${nome}\n`;
+        msg += `*🛵 Tipo:* ${tipo}\n`;
+        if(tipo === 'Entrega') {
+          msg += `*📍 Local:* ${rua}, ${bairro}${comp ? ' ('+comp+')' : ''}\n`;
+          msg += `*🏁 Ref:* ${ref}\n`;
+        } else {
+          msg += `*📍 Local:* Retirada no Balcão\n`;
+        }
+        msg += `*💳 Pagamento:* ${pag}${troco ? ' (Troco p/ R$ '+troco+')' : ''}\n\n`;
+        msg += `*--- ITENS DO PEDIDO ---*\n`;
+        
+        let sub = 0;
+        cart.forEach(i => {
+          msg += `✅ ${i.quantity}x ${i.name} — R$ ${(i.price * i.quantity).toFixed(2).replace('.',',')}\n`;
+          sub += i.price * i.quantity;
+        });
+
+        const taxa = (tipo === 'Entrega' && sub < FREE_DELIVERY_THRESHOLD) ? DELIVERY_FEE : 0;
+        msg += `\n*------------------------------------------*\n`;
+        msg += `*Subtotal:* R$ ${sub.toFixed(2).replace('.',',')}\n`;
+        msg += `*Taxa de entrega:* R$ ${taxa.toFixed(2).replace('.',',')}\n`;
+        msg += `*TOTAL: R$ ${(sub + taxa).toFixed(2).replace('.',',')}*\n`;
+        msg += `*------------------------------------------*`;
+
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`);
+        cart = []; updateCart(); toggleCartModal(false);
+      };
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.onclick = () => { 
+          document.querySelectorAll('.filter-btn').forEach(b=>b.setAttribute('aria-pressed','false')); 
+          btn.setAttribute('aria-pressed','true'); renderProducts(btn.dataset.filter); 
+        };
       });
-      // Init
+
+      document.getElementById('mobile-nav-toggle').onclick = () => document.getElementById('nav-mobile').classList.toggle('is-open');
+      document.getElementById('cart-toggle-btn').onclick = () => toggleCartModal(true);
+      document.getElementById('cart-close-btn').onclick = () => toggleCartModal(false);
+
       renderProducts('all');
-      loadCart();
-      // Expose for quick debug (optional)
-      window.__ldp = { addToCart, cart, renderProducts };
     })();
   </script>
 </body>
