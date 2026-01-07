@@ -95,13 +95,13 @@
     .nav-links a{padding:.5rem .6rem;border-radius:8px;color:var(--txt-dark);font-weight:600}
     .nav-links a:hover{background:rgba(0,0,0,0.04)}
 
-    /* Mobile toggle */
+    /* Mobile toggle - Estilo Hambúrguer */
     #mobile-nav-toggle{
       background:transparent;border:0;padding:.4rem;border-radius:8px;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;
+      display:flex;flex-direction:column;gap:4px;
     }
     #mobile-nav-toggle .bar{
-      width:22px;height:2px;background:#111;margin:3px 0;display:block;border-radius:2px;transition:transform .2s;
+      width:22px;height:2px;background:#111;display:block;border-radius:2px;transition:transform .2s;
     }
 
     /* Mobile menu */
@@ -257,7 +257,7 @@
   <nav id="nav-mobile" class="nav-mobile" aria-hidden="true" aria-label="Menu mobile">
     <div style="display:flex;justify-content:space-between;align-items:center;padding:1rem 1.2rem;border-bottom:1px solid rgba(255,255,255,0.03)">
       <div style="font-weight:800">Menu</div>
-      <button id="mobile-close" aria-label="Fechar menu" class="icon-btn" style="background:transparent;border:0;color:inherit">✕</button>
+      <button id="mobile-close" aria-label="Fechar menu" class="icon-btn" style="background:transparent;border:0;color:inherit;font-size:1.5rem;cursor:pointer">✕</button>
     </div>
     <div class="nav-mobile-links">
       <a href="#cardapio" data-anchor>Cardápio</a>
@@ -311,13 +311,13 @@
         <div style="display:flex;flex-direction:column;gap:1rem">
           <div style="display:flex;flex-direction:column;gap:.6rem">
             <strong>Endereço</strong>
-            <p>Av. Min. Fernando Costa 100 NA  PONTO - Boa Esperança, Seropédica - RJ, 23890-005</p>
-            <p><strong>Ponto de referência:</strong> PRIMEIRA PASSARELA NO  CENTRO DE SEROPEDICA</p>
+            <p>Av. Min. Fernando Costa 100 NA PRIMEIRA PASSARELA PROX. PONTO - Boa Esperança, Seropédica - RJ, 23890-005</p>
+            <p><strong>Ponto de referência:</strong> PRIMEIRA PASSARELA NO CENTRO DE SEROPEDICA</p>
             <a class="btn" href="https://wa.me/5521998488983" target="_blank" rel="noopener noreferrer" style="background:var(--cor-accent)">Pedir pelo WhatsApp</a>
           </div>
           <div style="border-radius:12px;overflow:hidden">
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3677.2016390161474!2d-43.712613!3d-22.756041!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDQ1JzIxLjciUyA0M8KwNDInNDUuNCJX!5e0!3m2!1spt-BR!2sbr!4v1690000000000!5m2!1spt-BR!2sbr"
+              src="https://www.google.com/maps?q=Av.+Min.+Fernando+Costa+100+Boa+Esperanca+Seropedica+RJ&output=embed"
               width="100%" height="320" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa - Lanche do Professor">
             </iframe>
           </div>
@@ -429,8 +429,8 @@
         { id: 'pas7', name: 'Pastel de Arraia', price: 12.00, category: 'pasteis', description: 'Uma explosão de sabor.', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg' },
         { id: 'pas8', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', description: 'Pastel delicioso de marisco.', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg' },
         { id: 'pas9', name: 'Pastel de Siri', price: 12.00, category: 'pasteis', description: 'Recheado de siri desfiado a exprimentar.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg' },
-        { id: 'pas10', name: 'Pastel de Banana com Canela', price: 12.00, category: 'pasteis', description: 'Recheado de banana macia com um leve toque de canela.', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg' },
-        { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', description: 'Recheado com goiabada e queijo.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg' },
+        { id: 'pas10', name: 'Pastel de Banana com Canela', price: 12.00, category: 'pasteis', description: 'Recheado de banana macia com um leve toque de canela para experimentar.', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg' },
+        { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', description: 'Recheado com a tradicional combinação de goiabada e queijo para saborear.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg' },
         // Caldo (1 item)
         { id: 'cal1', name: 'Garrafa de Caldo 500ml', price: 8.00, category: 'caldo', description: 'Caldo de cana moído na hora.', imageUrl: 'https://i.postimg.cc/D0BtSDZp/D-Q-NP-2X-869138-MLB91945553217-092025-T-garrafa-plast-descartavel-300ml-sucocaldo-de-cana-c30un.webp' },
         // Bebidas (5 itens)
@@ -471,8 +471,31 @@
       const checkoutForm = document.getElementById('checkout-form');
       const tipoEntregaSelect = document.getElementById('tipo-entrega');
       const formaPagamentoSelect = document.getElementById('forma-pagamento');
+      const navMobile = document.getElementById('nav-mobile');
+      const mobileOverlay = document.getElementById('mobile-overlay');
+      const mobileToggle = document.getElementById('mobile-nav-toggle');
+      const mobileClose = document.getElementById('mobile-close');
 
       AOS.init({duration:900, once:true, easing:'ease-out-cubic'});
+
+      // --- LOGICA MENU LATERAL ---
+      const closeMenu = () => {
+        navMobile.classList.remove('is-open');
+        mobileOverlay.classList.remove('is-open');
+      };
+
+      mobileToggle.onclick = () => {
+        navMobile.classList.add('is-open');
+        mobileOverlay.classList.add('is-open');
+      };
+
+      mobileClose.onclick = closeMenu;
+      mobileOverlay.onclick = closeMenu;
+
+      // Fechar ao clicar em qualquer link
+      document.querySelectorAll('.nav-mobile-links a').forEach(link => {
+        link.onclick = closeMenu;
+      });
 
       function renderProducts(filter='all'){
         productGrid.innerHTML = '';
@@ -489,7 +512,7 @@
                 <button class="btn-add-cart" onclick="addToCart('${p.id}')">Adicionar</button>
               </div>
             </div>`;
-          productGrid.appendChild(art = card);
+          productGrid.appendChild(card);
         });
       }
 
@@ -590,7 +613,6 @@
         };
       });
 
-      document.getElementById('mobile-nav-toggle').onclick = () => document.getElementById('nav-mobile').classList.toggle('is-open');
       document.getElementById('cart-toggle-btn').onclick = () => toggleCartModal(true);
       document.getElementById('cart-close-btn').onclick = () => toggleCartModal(false);
 
