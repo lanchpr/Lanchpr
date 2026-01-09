@@ -22,7 +22,7 @@
   <style>
     :root{
       --cor-principal: #ffd400;
-      --cor-accent: #25d366; /* Mantido verde, mas agora simboliza sucesso/envio */
+      --cor-accent: #25d366;
       --bg-dark: #111114;
       --bg-light: #f6f6f7;
       --txt-dark: #111;
@@ -412,6 +412,11 @@
             <input id="cliente-nome" name="nome" class="form-control" required placeholder="Ex: Wellington Silva" />
           </div>
           <div class="form-group">
+            <label for="cliente-contato">📱 WhatsApp / Telefone</label>
+            <input id="cliente-contato" type="tel" class="form-control" required placeholder="(21) 99999-9999" />
+          </div>
+          
+          <div class="form-group">
             <label for="tipo-entrega">🛵 Como prefere receber?</label>
             <select id="tipo-entrega" class="form-control" required>
               <option value="Retirada">Vou Buscar (Retirada)</option>
@@ -462,26 +467,10 @@
     </div>
   </div>
 
-  <footer role="contentinfo">
-    <div class="container footer-container">
-      <div>
-        <p><strong>Lanche do Professor</strong></p>
-        <p>Av. Min. Fernando Costa 100 - Boa Esperança, Seropédica - RJ, 23890-005</p>
-      </div>
-      <div>
-        <ul class="social-links" aria-label="Redes sociais">
-          <li><a href="https://www.instagram.com/caldodecanadoprof" target="_blank">Instagram</a></li>
-          <li><a href="https://wa.me/5521998488983" target="_blank">WhatsApp</a></li>
-        </ul>
-      </div>
-    </div>
-  </footer>
-
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     (function(){
       // --- 3. INICIALIZAÇÃO DO EMAILJS ---
-      // IMPORTANTE: Substitua "sUgrOhv341c8oUSlO" pela sua Public Key do EmailJS (ex: "user_123abc...")
       emailjs.init("I411iBg-_msw-aK29");
 
       // LÓGICA DE GEOLOCALIZAÇÃO
@@ -703,6 +692,8 @@
         sendOrderBtn.disabled = true;
 
         const nome = document.getElementById('cliente-nome').value.toUpperCase();
+        // CAPTURA DO CONTATO AQUI
+        const contato = document.getElementById('cliente-contato').value;
         const tipo = tipoEntregaSelect.value;
         const pag = formaPagamentoSelect.value;
         const troco = document.getElementById('valor-troco').value;
@@ -714,6 +705,8 @@
         let msg = `NOVO PEDIDO — LANCHE DO PROFESSOR\n`;
         msg += `------------------------------------------\n`;
         msg += `Cliente: ${nome}\n`;
+        // ADICIONADO AO EMAIL AQUI
+        msg += `Contato: ${contato}\n`;
         msg += `Tipo: ${tipo}\n`;
         if(tipo === 'Entrega') {
           msg += `Local: ${rua}, ${bairro}${comp ? ' ('+comp+')' : ''}\n`;
@@ -778,4 +771,4 @@
     })();
   </script>
 </body>
-</html>```
+</html>
