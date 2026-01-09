@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Lanche do Professor — O Delivery mais Rápido de Seropédica!</title>
-  <meta name="description" content="Peça o melhor pastel, caldo de cana e salgados de Seropédica. Lanche do Professor: matando a sua fome com velocidade e bom humor. Peça já pelo WhatsApp!">
+  
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/bYCjz5WZ/Picsart-25-11-03-11-29-40-541.png">
+
+  <meta name="description" content="Peça o melhor pastel, caldo de cana e salgados de Seropédica. Lanche do Professor: matando a sua fome com velocidade e bom humor.">
   <meta name="keywords" content="lanchonete, seropédica, delivery, caldo de cana, pastel, salgados, lanche do professor, ufrrj">
   <meta name="author" content="Lanche do Professor">
 
@@ -14,10 +17,12 @@
   <link href="https://www.google.com/maps/search/?api=1&query=Av.+Min.+Fernando+Costa+100+NA+PRIMEIRA+PASSARELA+PROX.+PONTO+-+Boa+Esperan%C3%A7a%2C+Serop%C3%A9dica+-+RJ%2C+23890-005" rel="stylesheet">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
   <style>
     :root{
       --cor-principal: #ffd400;
-      --cor-accent: #25d366;
+      --cor-accent: #25d366; /* Mantido verde, mas agora simboliza sucesso/envio */
       --bg-dark: #111114;
       --bg-light: #f6f6f7;
       --txt-dark: #111;
@@ -83,7 +88,7 @@
       gap:.6rem;
     }
     .logo img{
-      width:44px;height:44px;border-radius:8px;object-fit:cover;
+      width:50px;height:50px;border-radius:50%;object-fit:cover; border: 2px solid var(--cor-principal);
     }
     .brand{
       font-weight:700;font-size:1rem;color:var(--txt-dark);
@@ -95,7 +100,7 @@
     .nav-links a{padding:.5rem .6rem;border-radius:8px;color:var(--txt-dark);font-weight:600}
     .nav-links a:hover{background:rgba(0,0,0,0.04)}
 
-    /* Mobile toggle - Estilo Hambúrguer */
+    /* Mobile toggle */
     #mobile-nav-toggle{
       background:transparent;border:0;padding:.4rem;border-radius:8px;cursor:pointer;
       display:flex;flex-direction:column;gap:4px;
@@ -156,7 +161,7 @@
       background:#fff;border-radius:14px;padding:0;overflow:hidden;display:flex;gap:0;
       align-items:stretch;box-shadow:0 6px 20px rgba(18,18,18,0.06);
     }
-    .product-card-image{width:36%;min-height:120px;object-fit:cover}
+    .product-card-image{width:36%;min-height:120px;object-fit:cover; cursor: pointer;}
     .product-card-content{padding:1rem;flex:1;display:flex;flex-direction:column;justify-content:space-between}
     .product-card-content h3{margin:0 0 .25rem;font-size:1.05rem}
     .product-card-content .description{font-size:.92rem;color:var(--muted);margin-bottom:.6rem}
@@ -203,6 +208,38 @@
     }
     .span-2 { grid-column: span 2; }
 
+    /* Botão GPS */
+    .btn-gps {
+      background: var(--bg-dark); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem;
+      border: 0; cursor: pointer; display: flex; align-items: center; gap: 5px; margin-bottom: 5px; width: 100%; justify-content: center;
+    }
+
+    /* Zoom */
+    #image-zoom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1500; display: none; align-items: center; justify-content: center; padding: 1rem; }
+    #image-zoom-modal.visible { display: flex; animation: fadeIn .3s ease; }
+    #zoomed-image { max-width: 100%; max-height: 90vh; border-radius: 12px; }
+    #close-zoom { position: absolute; top: 1rem; right: 1rem; color: #fff; background: transparent; border: 0; font-size: 2rem; cursor: pointer; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* --- TRACKER (RASTREADOR) ESTILO --- */
+    #order-tracker {
+      display: none; /* Escondido até pedir */
+      position: fixed; inset: 0; background: #fff; z-index: 2000;
+      flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 2rem;
+    }
+    #order-tracker.active { display: flex; }
+    .tracker-icon { font-size: 4rem; margin-bottom: 1rem; animation: bounce 2s infinite; }
+    .tracker-status { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--bg-dark); }
+    .tracker-timer { font-size: 2.5rem; font-weight: 900; color: var(--cor-principal); margin: 1rem 0; font-family: monospace; }
+    .tracker-steps { display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 300px; margin-top: 1.5rem; }
+    .step { display: flex; align-items: center; gap: 10px; opacity: 0.4; transition: opacity 0.5s; }
+    .step.active { opacity: 1; font-weight: 700; color: var(--sucesso); }
+    .step-icon { width: 20px; height: 20px; border-radius: 50%; background: #ccc; }
+    .step.active .step-icon { background: var(--sucesso); }
+    
+    @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
+
     /* Footer */
     footer{padding:2rem 0;background:#fff;margin-top:2rem}
     .footer-container{display:flex;flex-wrap:wrap;gap:1.2rem;align-items:flex-start;justify-content:space-between}
@@ -231,10 +268,29 @@
 
   <div id="mobile-overlay" class="mobile-overlay" aria-hidden="true"></div>
 
+  <div id="image-zoom-modal" aria-hidden="true">
+    <button id="close-zoom" aria-label="Fechar zoom">✕</button>
+    <img id="zoomed-image" src="" alt="Produto ampliado">
+  </div>
+
+  <div id="order-tracker">
+    <div class="tracker-icon">🛵</div>
+    <div class="tracker-status" id="status-text">Recebendo Pedido...</div>
+    <div class="tracker-timer" id="countdown">20:00</div>
+    
+    <div class="tracker-steps">
+      <div class="step active" id="step1"><div class="step-icon"></div> Pedido Recebido</div>
+      <div class="step" id="step2"><div class="step-icon"></div> Preparando Lanche</div>
+      <div class="step" id="step3"><div class="step-icon"></div> Saiu para Entrega</div>
+    </div>
+
+    <button onclick="location.reload()" style="margin-top: 2rem; background: transparent; border: 1px solid #ccc; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Fazer Novo Pedido</button>
+  </div>
+
   <header class="main-header" id="main-header" role="banner">
     <div class="header-inner">
       <a href="#hero" class="logo" aria-label="Lanche do Professor - início">
-        <img src="https://i.postimg.cc/0jLMnvvg/IMG-20251103-WA0010.jpg" alt="Logo - Lanche do Professor">
+        <img src="https://i.postimg.cc/bYCjz5WZ/Picsart-25-11-03-11-29-40-541.png" alt="Ícone - Lanche do Professor">
         <div class="brand">Lanche do Professor</div>
       </a>
 
@@ -247,9 +303,9 @@
       </nav>
 
       <button id="mobile-nav-toggle" aria-controls="nav-mobile" aria-expanded="false" aria-label="Abrir menu">
-        <span class="bar" aria-hidden="true"></span>
-        <span class="bar" aria-hidden="true"></span>
-        <span class="bar" aria-hidden="true"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
       </button>
     </div>
   </header>
@@ -283,7 +339,7 @@
         <header style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
           <div>
             <h2 id="cardapio-title">Nosso Cardápio</h2>
-            <p>Filtre por categoria e adicione ao carrinho.</p>
+            <p>Filtre por categoria e adicione ao carrinho. (Clique na foto para ampliar)</p>
           </div>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap" aria-hidden="false">
             <button class="btn filter-btn" data-filter="all" aria-pressed="true">Todos</button>
@@ -353,7 +409,7 @@
         <form id="checkout-form" style="margin-top:1rem">
           <div class="form-group">
             <label for="cliente-nome">👤 Nome Completo</label>
-            <input id="cliente-nome" class="form-control" required placeholder="Ex: Wellington Silva" />
+            <input id="cliente-nome" name="nome" class="form-control" required placeholder="Ex: Wellington Silva" />
           </div>
           <div class="form-group">
             <label for="tipo-entrega">🛵 Como prefere receber?</label>
@@ -363,6 +419,12 @@
             </select>
           </div>
           <div id="endereco-field" class="form-group" style="display:none">
+            
+            <button type="button" class="btn-gps" onclick="getLocation()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              Usar Localização Atual
+            </button>
+
             <div class="form-grid">
                <div class="span-2">
                  <label>Rua e Número</label>
@@ -394,7 +456,7 @@
             <label for="valor-troco">💵 Troco para quanto?</label>
             <input id="valor-troco" type="number" class="form-control" placeholder="Ex: 50" />
           </div>
-          <button id="send-whatsapp-btn" type="submit" class="btn" style="flex:1; width: 100%; background: var(--cor-accent);">Finalizar Pedido via WhatsApp</button>
+          <button id="send-order-btn" type="submit" class="btn" style="flex:1; width: 100%; background: var(--cor-accent);">Enviar Pedido Agora</button>
         </form>
       </div>
     </div>
@@ -418,28 +480,58 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     (function(){
+      // --- 3. INICIALIZAÇÃO DO EMAILJS ---
+      // IMPORTANTE: Substitua "sUgrOhv341c8oUSlO" pela sua Public Key do EmailJS (ex: "user_123abc...")
+      emailjs.init("SUA_PUBLIC_KEY_AQUI");
+
+      // LÓGICA DE GEOLOCALIZAÇÃO
+      window.getLocation = function() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+          alert("Geolocalização não é suportada por este navegador.");
+        }
+      }
+
+      function showPosition(position) {
+        const lat = position.coords.latitude;
+        const long = position.coords.longitude;
+        document.getElementById("end-rua").value = `Localização GPS: https://maps.google.com/?q=${lat},${long}`;
+        document.getElementById("end-bairro").value = "Localização Atual (GPS)";
+        alert("Localização capturada! O link do mapa será enviado ao motoboy.");
+      }
+
+      function showError(error) {
+        switch(error.code) {
+          case error.PERMISSION_DENIED: alert("Usuário negou a solicitação de Geolocalização."); break;
+          case error.POSITION_UNAVAILABLE: alert("Informações de localização indisponíveis."); break;
+          case error.TIMEOUT: alert("A requisição para obter a localização expirou."); break;
+          case error.UNKNOWN_ERROR: alert("Um erro desconhecido ocorreu."); break;
+        }
+      }
+
       const productDatabase = [
-        // Pastéis (11 itens)
         { id: 'pas1', name: 'Pastel de Carne', price: 9.00, category: 'pasteis', description: 'Pastel crocante com recheio de carne suculenta.', imageUrl: 'https://i.postimg.cc/VNZKXSb1/pastel-maria.jpg' },
         { id: 'pas2', name: 'Pastel de Queijo', price: 9.00, category: 'pasteis', description: 'Queijo derretido até a última mordida.', imageUrl: 'https://i.postimg.cc/gJPnSsh8/990810f9242641a8e264ce996a78ed28-XL.jpg' },
         { id: 'pas3', name: 'Pastel de Pizza', price: 9.00, category: 'pasteis', description: 'Sabor pizza com muito queijo e molho.', imageUrl: 'https://i.postimg.cc/9MG1KLNs/pizza-tradicional.jpg' },
         { id: 'pas4', name: 'Pastel de Frango c/ Catupiry', price: 9.00, category: 'pasteis', description: 'Frango desfiado com catupiry cremoso.', imageUrl: 'https://i.postimg.cc/7PjthTg4/images.jpg' },
-        { id: 'pas5', name: '(ESGOTADO) Pastel de Camarão', price: 12.00, category: 'pasteis', description: 'Camarão fresco! Venha experimentar!.', imageUrl: 'https://i.postimg.cc/3xc5NDQy/pastel-de-camarao-com-queijo-portal-minha-receita-1-500x281.jpg' },
-        { id: 'pas6', name: '(ESGOTADO)Pastel de Carne Seca', price: 12.00, category: 'pasteis', description: 'Carne seca desfiada! Venha experimentar!.', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg' },
-        { id: 'pas7', name: '(ESGOTADO)Pastel de Arraia', price: 12.00, category: 'pasteis', description: 'Uma explosão de sabor.', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg' },
-        { id: 'pas8', name: '(ESGOTADO)Pastel de Marisco', price: 12.00, category: 'pasteis', description: 'Pastel delicioso de marisco.', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg' },
-        { id: 'pas9', name: '(ESGOTADO)Pastel de Siri', price: 12.00, category: 'pasteis', description: 'Recheado de siri desfiado a exprimentar.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg' },
-        { id: 'pas10', name: '(ESGOTADO)Pastel de Banana com Canela', price: 12.00, category: 'pasteis', description: 'Recheado de banana macia com um leve toque de canela para experimentar.', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg' },
-        { id: 'pas11', name: '(ESGOTADO)Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', description: 'Recheado com a tradicional combinação de goiabada e queijo para saborear.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg' },
-        // Caldo (1 item)
+        
+        { id: 'pas5', name: 'Pastel de Camarão', price: 12.00, category: 'pasteis', description: 'Camarão fresco!', imageUrl: 'https://i.postimg.cc/3xc5NDQy/pastel-de-camarao-com-queijo-portal-minha-receita-1-500x281.jpg', available: false },
+        { id: 'pas6', name: 'Pastel de Carne Seca', price: 12.00, category: 'pasteis', description: 'Carne seca desfiada!', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg', available: false },
+        { id: 'pas7', name: 'Pastel de Arraia', price: 12.00, category: 'pasteis', description: 'Uma explosão de sabor.', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg', available: false },
+        { id: 'pas8', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', description: 'Pastel delicioso de marisco.', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg', available: false },
+        { id: 'pas9', name: 'Pastel de Siri', price: 12.00, category: 'pasteis', description: 'Recheado de siri desfiado.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg', available: false },
+        { id: 'pas10', name: 'Pastel de Banana com Canela', price: 12.00, category: 'pasteis', description: 'Recheado de banana macia.', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg', available: false },
+        { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', description: 'Goiabada e queijo.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg', available: false },
+        
         { id: 'cal1', name: 'Garrafa de Caldo 500ml', price: 8.00, category: 'caldo', description: 'Caldo de cana moído na hora.', imageUrl: 'https://i.postimg.cc/D0BtSDZp/D-Q-NP-2X-869138-MLB91945553217-092025-T-garrafa-plast-descartavel-300ml-sucocaldo-de-cana-c30un.webp' },
-        // Bebidas (5 itens)
+        
         { id: 'bev1', name: 'Refrigerante (lata)', price: 7.00, category: 'bebidas', description: 'Coca ou Fanta lata.', imageUrl: 'https://i.postimg.cc/bNK77B6g/istockphoto-477567554-612x612.jpg' },
         { id: 'bev2', name: 'Refrigerente Mini', price: 4.00, category: 'bebidas', description: 'Coca mini.', imageUrl: 'https://i.postimg.cc/zGQFts05/623a090228197.webp' },
         { id: 'bev3', name: 'Guaracamp', price: 3.50, category: 'bebidas', description: 'Guaracamp geladinho.', imageUrl: 'https://i.postimg.cc/sDQXPbQz/images-1.jpg' },
         { id: 'bev4', name: 'Água natural', price: 3.00, category: 'bebidas', description: 'Mineral sem gás.', imageUrl: 'https://i.postimg.cc/xj7HSvL0/shutterstock-174041981.jpg' },
         { id: 'bev5', name: 'Água com gás', price: 4.00, category: 'bebidas', description: 'Mineral com gás.', imageUrl: 'https://i.postimg.cc/FKDpbY8C/CAPA-BONS-FLUIDOS-27.jpg' },
-        // Salgados (11 itens)
+        
         { id: 'sal1', name: 'Pastel de Forno de Frango', price: 7.00, category: 'salgados', description: 'Massa leve recheada com frango.', imageUrl: 'https://i.postimg.cc/pXn3RM1S/massa-de-pastel-de-forno.jpg' },
         { id: 'sal2', name: 'Coxinha', price: 7.00, category: 'salgados', description: 'Coxinha assada, crocante por fora.', imageUrl: 'https://i.postimg.cc/x1f7HN1w/03-pc027ubzik.png' },
         { id: 'sal3', name: 'Hambúrguer (com cheddar)', price: 7.00, category: 'salgados', description: 'Saboroso hambúrguer com muito cheddar.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg' },
@@ -451,19 +543,16 @@
         { id: 'sal9', name: 'Bolinho de Aipim - Queijo', price: 7.00, category: 'salgados', description: 'Aipim recheado com queijo.', imageUrl: 'https://i.postimg.cc/gkJVX1XW/9900510.jpg' },
         { id: 'sal10', name: 'Bolinho de Aipim - Pizza', price: 7.00, category: 'salgados', description: 'Aipim sabor pizza.', imageUrl: 'https://i.postimg.cc/pr9dxQrh/hqdefault.jpg' },
         { id: 'sal11', name: 'Bolinho de Aipim - Carne Seca', price: 7.00, category: 'salgados', description: 'Aipim com deliciosa carne seca.', imageUrl: 'https://i.postimg.cc/s26Qrgmp/bolinho2.jpg' },
-        // Bolos (3 itens)
+        
         { id: 'b1', name: 'Bolo - Cenoura (fatia)', price: 5.00, category: 'bolos', description: 'Com calda de chocolate.', imageUrl: 'https://i.postimg.cc/sgG0SMQ1/images-4.jpg' },
         { id: 'b2', name: 'Bolo - Fubá (fatia)', price: 5.00, category: 'bolos', description: 'Bolo de vó.', imageUrl: 'https://i.postimg.cc/FHxG00Fh/images-5.jpg' },
         { id: 'b3', name: 'Bolo - Banana (fatia)', price: 5.00, category: 'bolos', description: 'Caramelizado.', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg' }
       ];
 
-      const WHATSAPP_NUMBER = "5521998488983";
       const DELIVERY_FEE = 5.00;
       const FREE_DELIVERY_THRESHOLD = 15.00;
-      const STORAGE_KEY = 'ldp_cart_v1';
       let cart = [];
 
-      // Seletores preservados
       const productGrid = document.getElementById('product-grid');
       const cartToggleBtn = document.getElementById('cart-toggle-btn');
       const cartModal = document.getElementById('cart-modal');
@@ -475,41 +564,83 @@
       const mobileOverlay = document.getElementById('mobile-overlay');
       const mobileToggle = document.getElementById('mobile-nav-toggle');
       const mobileClose = document.getElementById('mobile-close');
+      const sendOrderBtn = document.getElementById('send-order-btn');
+
+      // SELETORES DO ZOOM
+      const zoomModal = document.getElementById('image-zoom-modal');
+      const zoomedImage = document.getElementById('zoomed-image');
+      const closeZoom = document.getElementById('close-zoom');
 
       AOS.init({duration:900, once:true, easing:'ease-out-cubic'});
 
-      // --- LOGICA MENU LATERAL ---
+      function startOrderSimulation() {
+        toggleCartModal(false);
+        const tracker = document.getElementById('order-tracker');
+        tracker.classList.add('active');
+        let timeLeft = 1200; 
+        const countdownEl = document.getElementById('countdown');
+        const statusText = document.getElementById('status-text');
+        const steps = [
+          document.getElementById('step1'),
+          document.getElementById('step2'),
+          document.getElementById('step3')
+        ];
+
+        const timer = setInterval(() => {
+          timeLeft--;
+          const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+          const s = (timeLeft % 60).toString().padStart(2, '0');
+          countdownEl.textContent = `${m}:${s}`;
+          if(timeLeft === 1195) { steps[0].classList.add('active'); statusText.textContent = "Pedido Aceito!"; }
+          if(timeLeft === 1180) { steps[1].classList.add('active'); statusText.textContent = "Preparando seu Lanche..."; }
+          if(timeLeft === 600) { steps[2].classList.add('active'); statusText.textContent = "Saiu para Entrega!"; }
+          if(timeLeft <= 0) { clearInterval(timer); statusText.textContent = "Pedido Entregue!"; }
+        }, 1000);
+      }
+
+      window.openZoom = function(src) {
+        zoomedImage.src = src;
+        zoomModal.classList.add('visible');
+      }
+      closeZoom.onclick = () => zoomModal.classList.remove('visible');
+      zoomModal.onclick = (e) => {
+        if(e.target === zoomModal) zoomModal.classList.remove('visible');
+      }
+
       const closeMenu = () => {
         navMobile.classList.remove('is-open');
         mobileOverlay.classList.remove('is-open');
       };
-
       mobileToggle.onclick = () => {
         navMobile.classList.add('is-open');
         mobileOverlay.classList.add('is-open');
       };
-
       mobileClose.onclick = closeMenu;
       mobileOverlay.onclick = closeMenu;
-
-      // Fechar ao clicar em qualquer link
-      document.querySelectorAll('.nav-mobile-links a').forEach(link => {
-        link.onclick = closeMenu;
-      });
+      document.querySelectorAll('.nav-mobile-links a').forEach(link => { link.onclick = closeMenu; });
 
       function renderProducts(filter='all'){
         productGrid.innerHTML = '';
         const items = productDatabase.filter(p => filter==='all' || p.category===filter);
         items.forEach((p, idx)=>{
+          const isAvailable = p.available !== false; 
           const card = document.createElement('article');
           card.className = 'product-card';
           card.setAttribute('data-aos','fade-up');
-          card.innerHTML = `<img class="product-card-image" src="${p.imageUrl}" alt="${p.name}">
+          if(!isAvailable) card.style.opacity = '0.6';
+          card.innerHTML = `
+            <img class="product-card-image" src="${p.imageUrl}" alt="${p.name}" style="${!isAvailable ? 'filter: grayscale(1);' : ''}" onclick="openZoom('${p.imageUrl}')">
             <div class="product-card-content">
-              <div><h3>${p.name}</h3><p class="description">${p.description}</p></div>
+              <div>
+                <h3>${p.name} ${!isAvailable ? '<span style="color:red; font-size:0.8rem;">(ESGOTADO)</span>' : ''}</h3>
+                <p class="description">${p.description}</p>
+              </div>
               <div class="product-card-footer">
                 <div class="product-price">R$ ${p.price.toFixed(2).replace('.',',')}</div>
-                <button class="btn-add-cart" onclick="addToCart('${p.id}')">Adicionar</button>
+                ${isAvailable 
+                  ? `<button class="btn-add-cart" onclick="addToCart('${p.id}')">Adicionar</button>`
+                  : `<button class="btn" style="background:#ccc; cursor:not-allowed;" disabled>Indisponível</button>`
+                }
               </div>
             </div>`;
           productGrid.appendChild(card);
@@ -518,6 +649,7 @@
 
       window.addToCart = function(id){
         const p = productDatabase.find(x => x.id === id);
+        if (p.available === false) return alert("Desculpe, este produto acabou de esgotar!");
         const exists = cart.find(x => x.id === id);
         if(exists) exists.quantity++; else cart.push({...p, quantity: 1});
         updateCart();
@@ -558,13 +690,17 @@
         else { cartModal.classList.remove('visible'); document.body.style.overflow = ''; }
       }
 
-      // Toggle campos
       tipoEntregaSelect.onchange = () => { document.getElementById('endereco-field').style.display = tipoEntregaSelect.value === 'Entrega' ? 'block' : 'none'; updateCart(); };
       formaPagamentoSelect.onchange = () => { document.getElementById('troco-field').style.display = formaPagamentoSelect.value === 'Dinheiro' ? 'block' : 'none'; };
 
+      // --- 4. LÓGICA DE ENVIO VIA EMAILJS ---
       checkoutForm.onsubmit = (e) => {
         e.preventDefault();
         if(!cart.length) return alert("Carrinho vazio!");
+
+        // Feedback visual
+        sendOrderBtn.textContent = "Enviando pedido...";
+        sendOrderBtn.disabled = true;
 
         const nome = document.getElementById('cliente-nome').value.toUpperCase();
         const tipo = tipoEntregaSelect.value;
@@ -575,35 +711,57 @@
         const comp = document.getElementById('end-complemento').value;
         const ref = document.getElementById('end-ref').value;
 
-        // NOVO DESIGN DO RELATÓRIO (OTIMIZADO)
-        let msg = `*🚀 NOVO PEDIDO — LANCHE DO PROFESSOR 🚀*\n`;
-        msg += `------------------------------------------\n\n`;
-        msg += `*👤 Cliente:* ${nome}\n`;
-        msg += `*🛵 Tipo:* ${tipo}\n`;
+        let msg = `NOVO PEDIDO — LANCHE DO PROFESSOR\n`;
+        msg += `------------------------------------------\n`;
+        msg += `Cliente: ${nome}\n`;
+        msg += `Tipo: ${tipo}\n`;
         if(tipo === 'Entrega') {
-          msg += `*📍 Local:* ${rua}, ${bairro}${comp ? ' ('+comp+')' : ''}\n`;
-          msg += `*🏁 Ref:* ${ref}\n`;
+          msg += `Local: ${rua}, ${bairro}${comp ? ' ('+comp+')' : ''}\n`;
+          msg += `Referência: ${ref}\n`;
         } else {
-          msg += `*📍 Local:* Retirada no Balcão\n`;
+          msg += `Local: Retirada no Balcão\n`;
         }
-        msg += `*💳 Pagamento:* ${pag}${troco ? ' (Troco p/ R$ '+troco+')' : ''}\n\n`;
-        msg += `*--- ITENS DO PEDIDO ---*\n`;
+        msg += `Pagamento: ${pag}${troco ? ' (Troco p/ R$ '+troco+')' : ''}\n\n`;
+        msg += `--- ITENS DO PEDIDO ---\n`;
         
         let sub = 0;
         cart.forEach(i => {
-          msg += `✅ ${i.quantity}x ${i.name} — R$ ${(i.price * i.quantity).toFixed(2).replace('.',',')}\n`;
+          msg += `- ${i.quantity}x ${i.name} — R$ ${(i.price * i.quantity).toFixed(2).replace('.',',')}\n`;
           sub += i.price * i.quantity;
         });
 
         const taxa = (tipo === 'Entrega' && sub < FREE_DELIVERY_THRESHOLD) ? DELIVERY_FEE : 0;
-        msg += `\n*------------------------------------------*\n`;
-        msg += `*Subtotal:* R$ ${sub.toFixed(2).replace('.',',')}\n`;
-        msg += `*Taxa de entrega:* R$ ${taxa.toFixed(2).replace('.',',')}\n`;
-        msg += `*TOTAL: R$ ${(sub + taxa).toFixed(2).replace('.',',')}*\n`;
-        msg += `*------------------------------------------*`;
+        msg += `\nSubtotal: R$ ${sub.toFixed(2).replace('.',',')}\n`;
+        msg += `Taxa de entrega: R$ ${taxa.toFixed(2).replace('.',',')}\n`;
+        msg += `TOTAL: R$ ${(sub + taxa).toFixed(2).replace('.',',')}\n`;
 
-        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`);
-        cart = []; updateCart(); toggleCartModal(false);
+        // Parâmetros para o template do EmailJS
+        const templateParams = {
+            message: msg,       // Todo o texto do pedido
+            from_name: nome,    // Nome do cliente
+            reply_to: "email_cliente@exemplo.com" // (Opcional, se tivesse campo de email)
+        };
+
+        // ENVIO PARA O EMAIL
+        emailjs.send('service_tibjxdw', 'template_3tfwdsp', templateParams)
+          .then(function(response) {
+             console.log('SUCCESS!', response.status, response.text);
+             alert("Pedido enviado com sucesso para o restaurante! Acompanhe o rastreador.");
+             
+             // Limpa e inicia simulação
+             cart = []; 
+             updateCart();
+             startOrderSimulation();
+             
+             // Reseta botão
+             sendOrderBtn.textContent = "Enviar Pedido Agora";
+             sendOrderBtn.disabled = false;
+          }, function(error) {
+             console.log('FAILED...', error);
+             alert("Erro ao enviar o pedido. Verifique sua conexão ou tente novamente.");
+             sendOrderBtn.textContent = "Tentar Novamente";
+             sendOrderBtn.disabled = false;
+          });
       };
 
       document.querySelectorAll('.filter-btn').forEach(btn => {
