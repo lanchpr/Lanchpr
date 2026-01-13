@@ -29,6 +29,7 @@
       --txt-light: #fff;
       --muted: #6b6b6b;
       --sucesso: #28a745;
+      --erro: #dc3545;
 
       --ff: "Source Sans Pro", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       --radius: 12px;
@@ -133,6 +134,20 @@
     .hero-inner{max-width:var(--max-w);margin:0 auto;padding:3.2rem 1rem}
     .hero h1{font-size:2.1rem;margin:.2rem 0 0.6rem;line-height:1.05}
     .hero p.lead{font-size:1.05rem;color:var(--txt-dark);margin-bottom:1rem;max-width:720px;margin-left:auto;margin-right:auto}
+    
+    /* STATUS DA LOJA */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; 
+      border-radius: 50px; font-weight: 800; font-size: 0.9rem; margin-bottom: 1rem;
+      background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #ccc; }
+    .loja-aberta .status-dot { background: var(--sucesso); box-shadow: 0 0 0 3px rgba(40,167,69,0.3); animation: pulse 2s infinite; }
+    .loja-aberta { color: var(--sucesso); border: 2px solid rgba(40,167,69,0.1); }
+    .loja-fechada .status-dot { background: var(--erro); }
+    .loja-fechada { color: var(--erro); border: 2px solid rgba(220,53,69,0.1); opacity: 0.9; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(40,167,69,0.7); } 70% { box-shadow: 0 0 0 6px rgba(40,167,69,0); } 100% { box-shadow: 0 0 0 0 rgba(40,167,69,0); } }
+
     .cta-row{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
     .btn{
       background:var(--bg-dark);color:var(--txt-light);padding:.85rem 1rem;border-radius:10px;font-weight:700;border:0;cursor:pointer;
@@ -326,8 +341,15 @@
   <main id="main-content" tabindex="-1">
     <section id="hero" class="hero" role="region" aria-label="ENTREGA RÀPIDA E GRATIS">
       <div class="hero-inner container" data-aos="fade-up">
+        
+        <div id="status-loja" class="status-badge">
+          <span class="status-dot"></span>
+          <span id="status-texto">Verificando...</span>
+        </div>
+
         <h1>FAÇA SEU PEDIDO!</h1>
-        <p class="lead">Entrega Rápida —  <strong>Compras acima de 15 reais , entrega GRÁTIS</strong> chegou pra salvar seu semestre com a entrega mais rápida de Seropédica.</p>
+        <p class="lead" style="font-size:0.95rem; margin-top:0.5rem"><strong>Compras acima de 15 reais , entrega GRÁTIS</strong> chegou pra salvar seu semestre com a entrega mais rápida de Seropédica.</p>
+        
         <div class="cta-row" aria-hidden="false">
           <a class="btn" href="#cardapio">Ver Cardápio</a>
         </div>
@@ -339,7 +361,7 @@
         <header style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
           <div>
             <h2 id="cardapio-title">Nosso Cardápio</h2>
-            <p>Filtre por categoria e adicione ao carrinho. (Clique na foto para ampliar)</p>
+            <p>Funcionamos 24h de segunda a sábado. Delivery a partir das 16h até 1h da manhã.</p>
           </div>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap" aria-hidden="false">
             <button class="btn filter-btn" data-filter="all" aria-pressed="true">Todos</button>
@@ -473,6 +495,41 @@
       // --- 3. INICIALIZAÇÃO DO EMAILJS ---
       emailjs.init("I411iBg-_msw-aK29");
 
+      // VERIFICAÇÃO AUTOMÁTICA DE HORÁRIO
+      function checkOpenStatus() {
+        const now = new Date();
+        const day = now.getDay(); // 0=Dom, 1=Seg... 6=Sab
+        const hour = now.getHours();
+        
+        let isOpen = false;
+
+        // Lógica: 
+        // Seg(1) a Sáb(6): 16h as 23h59 OU 00h as 01h
+        // Dom(0): Apenas 00h as 01h (madrugada de sábado)
+        
+        if (day >= 1 && day <= 6) {
+           if (hour >= 16 || hour < 1) isOpen = true;
+        } else if (day === 0) {
+           if (hour < 1) isOpen = true;
+        }
+
+        const badge = document.getElementById('status-loja');
+        const text = document.getElementById('status-texto');
+
+        if(isOpen) {
+          badge.className = 'status-badge loja-aberta';
+          text.textContent = 'LOJA ABERTA • Vamos pedir?';
+        } else {
+          badge.className = 'status-badge loja-fechada';
+          text.textContent = 'LOJA FECHADA • Abre às 16h';
+        }
+      }
+      
+      // Roda ao carregar e a cada 1 minuto
+      checkOpenStatus();
+      setInterval(checkOpenStatus, 60000);
+
+
       // LÓGICA DE GEOLOCALIZAÇÃO
       window.getLocation = function() {
         if (navigator.geolocation) {
@@ -506,8 +563,8 @@
         { id: 'pas4', name: 'Pastel de Frango c/ Catupiry', price: 9.00, category: 'pasteis', description: 'Frango desfiado com catupiry cremoso.', imageUrl: 'https://i.postimg.cc/7PjthTg4/images.jpg' },
         
         { id: 'pas5', name: 'Pastel de Camarão', price: 12.00, category: 'pasteis', description: 'Camarão fresco!', imageUrl: 'https://i.postimg.cc/3xc5NDQy/pastel-de-camarao-com-queijo-portal-minha-receita-1-500x281.jpg', available: false },
-        // PASTEL DE CARNE SECA DISPONÍVEL
-        { id: 'pas6', name: 'Pastel de Carne Seca', price: 12.00, category: 'pasteis', description: 'Carne seca desfiada!', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg' },
+        // PASTEL DE CARNE SECA (ESGOTADO)
+        { id: 'pas6', name: 'Pastel de Carne Seca', price: 12.00, category: 'pasteis', description: 'Carne seca desfiada!', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg', available: false },
         { id: 'pas7', name: 'Pastel de Arraia', price: 12.00, category: 'pasteis', description: 'Uma explosão de sabor.', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg', available: false },
         { id: 'pas8', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', description: 'Pastel delicioso de marisco.', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg', available: false },
         { id: 'pas9', name: 'Pastel de Siri', price: 12.00, category: 'pasteis', description: 'Recheado de siri desfiado.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg', available: false },
@@ -536,7 +593,8 @@
         
         { id: 'b1', name: 'Bolo - Cenoura (fatia)', price: 5.00, category: 'bolos', description: 'Com calda de chocolate.', imageUrl: 'https://i.postimg.cc/sgG0SMQ1/images-4.jpg' },
         { id: 'b2', name: 'Bolo - Fubá (fatia)', price: 5.00, category: 'bolos', description: 'Bolo de vó.', imageUrl: 'https://i.postimg.cc/FHxG00Fh/images-5.jpg' },
-        { id: 'b3', name: 'Bolo - Banana (fatia)', price: 5.00, category: 'bolos', description: 'Caramelizado.', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg' }
+        // BOLO DE BANANA (ESGOTADO)
+        { id: 'b3', name: 'Bolo - Banana (fatia)', price: 5.00, category: 'bolos', description: 'Caramelizado.', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg', available: false }
       ];
 
       const DELIVERY_FEE = 5.00;
