@@ -9,18 +9,12 @@
   <link rel="icon" type="image/png" href="https://i.postimg.cc/bYCjz5WZ/Picsart-25-11-03-11-29-40-541.png">
 
   <meta name="description" content="Peça o melhor pastel, caldo de cana e salgados de Seropédica. Lanche do Professor: matando a sua fome com velocidade e bom humor.">
-  <meta name="keywords" content="lanchonete, seropédica, delivery, caldo de cana, pastel, salgados, lanche do professor, ufrrj">
-  <meta name="author" content="Lanche do Professor">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://www.google.com/maps/search/?api=1&query=Av.+Min.+Fernando+Costa+100+NA+PRIMEIRA+PASSARELA+PROX.+PONTO+-+Boa+Esperan%C3%A7a%2C+Serop%C3%A9dica+-+RJ%2C+23890-005" rel="stylesheet">
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
   <style>
     :root{
+      /* Cores Originais Mantidas */
       --cor-principal: #ffd400;
       --cor-accent: #25d366;
       --bg-dark: #111114;
@@ -69,10 +63,6 @@
       box-shadow:0 4px 12px rgba(0,0,0,0.06);
       transition:background var(--transition);
     }
-    .main-header.scrolled{
-      backdrop-filter:saturate(120%) blur(6px);
-      background:rgba(255,255,255,0.9);
-    }
     .header-inner{
       width:100%;
       max-width:var(--max-w);
@@ -94,6 +84,25 @@
     .brand{
       font-weight:700;font-size:1rem;color:var(--txt-dark);
     }
+
+    /* --- STATUS MODESTO NA BARRA (CABEÇALHO) --- */
+    .status-modesto {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; font-weight: 700; color: var(--muted);
+      background: rgba(0,0,0,0.05); padding: 5px 12px; border-radius: 50px;
+      margin-left: auto; margin-right: 1rem; 
+    }
+    @media(min-width: 1000px) { .status-modesto { margin-left: 1rem; margin-right: 0; } }
+
+    .status-bolinha { width: 8px; height: 8px; border-radius: 50%; background: #ccc; }
+    
+    .status-aberto .status-bolinha { background: var(--sucesso); box-shadow: 0 0 0 2px rgba(40,167,69,0.2); animation: piscar 2s infinite; }
+    .status-aberto { color: var(--sucesso); border: 1px solid rgba(40,167,69,0.2); background: rgba(40,167,69,0.05); }
+    
+    .status-fechado .status-bolinha { background: var(--erro); }
+    .status-fechado { color: var(--erro); opacity: 0.9; border: 1px solid rgba(220,53,69,0.2); background: rgba(220,53,69,0.05); }
+    
+    @keyframes piscar { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
     /* Desktop nav */
     .main-nav{display:none}
@@ -134,20 +143,6 @@
     .hero-inner{max-width:var(--max-w);margin:0 auto;padding:3.2rem 1rem}
     .hero h1{font-size:2.1rem;margin:.2rem 0 0.6rem;line-height:1.05}
     .hero p.lead{font-size:1.05rem;color:var(--txt-dark);margin-bottom:1rem;max-width:720px;margin-left:auto;margin-right:auto}
-    
-    /* STATUS DA LOJA */
-    .status-badge {
-      display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; 
-      border-radius: 50px; font-weight: 800; font-size: 0.9rem; margin-bottom: 1rem;
-      background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #ccc; }
-    .loja-aberta .status-dot { background: var(--sucesso); box-shadow: 0 0 0 3px rgba(40,167,69,0.3); animation: pulse 2s infinite; }
-    .loja-aberta { color: var(--sucesso); border: 2px solid rgba(40,167,69,0.1); }
-    .loja-fechada .status-dot { background: var(--erro); }
-    .loja-fechada { color: var(--erro); border: 2px solid rgba(220,53,69,0.1); opacity: 0.9; }
-    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(40,167,69,0.7); } 70% { box-shadow: 0 0 0 6px rgba(40,167,69,0); } 100% { box-shadow: 0 0 0 0 rgba(40,167,69,0); } }
-
     .cta-row{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
     .btn{
       background:var(--bg-dark);color:var(--txt-light);padding:.85rem 1rem;border-radius:10px;font-weight:700;border:0;cursor:pointer;
@@ -309,6 +304,11 @@
         <div class="brand">Lanche do Professor</div>
       </a>
 
+      <div id="status-cabecalho" class="status-modesto">
+        <span class="status-bolinha"></span>
+        <span id="status-texto-cabecalho">Verificando...</span>
+      </div>
+
       <nav class="main-nav" role="navigation" aria-label="Navegação principal">
         <ul class="nav-links" role="menubar">
           <li role="none"><a role="menuitem" href="#cardapio">Cardápio</a></li>
@@ -334,20 +334,17 @@
       <a href="#cardapio" data-anchor>Cardápio</a>
       <a href="#sobre" data-anchor>Sobre Nós</a>
       <a href="#localizacao" data-anchor>Localização</a>
-      <a href="https://wa.me/5521998488983" target="_blank" rel="noopener noreferrer" style="margin-top:.6rem;background:var(--cor-accent);padding:.75rem;border-radius:10px;text-align:center;font-weight:800">Pedir pelo WhatsApp</a>
+      <a href="https://wa.me/5521996470174" target="_blank" rel="noopener noreferrer" style="margin-top:.6rem;background:var(--cor-accent);padding:.75rem;border-radius:10px;text-align:center;font-weight:800">Pedir pelo WhatsApp</a>
     </div>
   </nav>
 
   <main id="main-content" tabindex="-1">
     <section id="hero" class="hero" role="region" aria-label="ENTREGA RÀPIDA E GRATIS">
       <div class="hero-inner container" data-aos="fade-up">
-        
-        <div id="status-loja" class="status-badge">
-          <span class="status-dot"></span>
-          <span id="status-texto">Verificando...</span>
-        </div>
-
         <h1>FAÇA SEU PEDIDO!</h1>
+        
+        <p class="lead">Loja aberta 24h • Segunda a Sábado<br>🚚 Delivery: 16h → 1h da manhã</p>
+        
         <p class="lead" style="font-size:0.95rem; margin-top:0.5rem"><strong>Compras acima de 15 reais , entrega GRÁTIS</strong> chegou pra salvar seu semestre com a entrega mais rápida de Seropédica.</p>
         
         <div class="cta-row" aria-hidden="false">
@@ -361,7 +358,7 @@
         <header style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
           <div>
             <h2 id="cardapio-title">Nosso Cardápio</h2>
-            <p>Funcionamos 24h de segunda a sábado. Delivery a partir das 16h até 1h da manhã.</p>
+            <p>Filtre por categoria e adicione ao carrinho. (Clique na foto para ampliar)</p>
           </div>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap" aria-hidden="false">
             <button class="btn filter-btn" data-filter="all" aria-pressed="true">Todos</button>
@@ -391,7 +388,7 @@
             <strong>Endereço</strong>
             <p>Av. Min. Fernando Costa 100 NA PRIMEIRA PASSARELA PROX. PONTO - Boa Esperança, Seropédica - RJ, 23890-005</p>
             <p><strong>Ponto de referência:</strong> PRIMEIRA PASSARELA NO CENTRO DE SEROPEDICA</p>
-            <a class="btn" href="https://wa.me/5521998488983" target="_blank" rel="noopener noreferrer" style="background:var(--cor-accent)">Pedir pelo WhatsApp</a>
+            <a class="btn" href="https://wa.me/5521996470174" target="_blank" rel="noopener noreferrer" style="background:var(--cor-accent)">Pedir pelo WhatsApp</a>
           </div>
           <div style="border-radius:12px;overflow:hidden">
             <iframe 
@@ -495,7 +492,7 @@
       // --- 3. INICIALIZAÇÃO DO EMAILJS ---
       emailjs.init("I411iBg-_msw-aK29");
 
-      // VERIFICAÇÃO AUTOMÁTICA DE HORÁRIO
+      // VERIFICAÇÃO AUTOMÁTICA DE HORÁRIO (STATUS MODESTO)
       function checkOpenStatus() {
         const now = new Date();
         const day = now.getDay(); // 0=Dom, 1=Seg... 6=Sab
@@ -503,25 +500,23 @@
         
         let isOpen = false;
 
-        // Lógica: 
-        // Seg(1) a Sáb(6): 16h as 23h59 OU 00h as 01h
-        // Dom(0): Apenas 00h as 01h (madrugada de sábado)
-        
+        // Lógica Delivery: 16h as 01h (Seg-Sab) | Dom até 1h
         if (day >= 1 && day <= 6) {
            if (hour >= 16 || hour < 1) isOpen = true;
         } else if (day === 0) {
            if (hour < 1) isOpen = true;
         }
 
-        const badge = document.getElementById('status-loja');
-        const text = document.getElementById('status-texto');
+        // Atualiza o indicador no cabeçalho
+        const statusDiv = document.getElementById('status-cabecalho');
+        const statusText = document.getElementById('status-texto-cabecalho');
 
         if(isOpen) {
-          badge.className = 'status-badge loja-aberta';
-          text.textContent = 'LOJA ABERTA • Vamos pedir?';
+          statusDiv.className = 'status-modesto status-aberto';
+          statusText.textContent = 'Delivery Aberto';
         } else {
-          badge.className = 'status-badge loja-fechada';
-          text.textContent = 'LOJA FECHADA • Abre às 16h';
+          statusDiv.className = 'status-modesto status-fechado';
+          statusText.textContent = 'Delivery Fechado (Abre 16h)';
         }
       }
       
@@ -563,8 +558,10 @@
         { id: 'pas4', name: 'Pastel de Frango c/ Catupiry', price: 9.00, category: 'pasteis', description: 'Frango desfiado com catupiry cremoso.', imageUrl: 'https://i.postimg.cc/7PjthTg4/images.jpg' },
         
         { id: 'pas5', name: 'Pastel de Camarão', price: 12.00, category: 'pasteis', description: 'Camarão fresco!', imageUrl: 'https://i.postimg.cc/3xc5NDQy/pastel-de-camarao-com-queijo-portal-minha-receita-1-500x281.jpg', available: false },
-        // PASTEL DE CARNE SECA (ESGOTADO)
-        { id: 'pas6', name: 'Pastel de Carne Seca', price: 12.00, category: 'pasteis', description: 'Carne seca desfiada!', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg', available: false },
+        
+        // PASTEL DE CARNE SECA ATIVADO!
+        { id: 'pas6', name: 'Pastel de Carne Seca', price: 12.00, category: 'pasteis', description: 'Carne seca desfiada!', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg' },
+        
         { id: 'pas7', name: 'Pastel de Arraia', price: 12.00, category: 'pasteis', description: 'Uma explosão de sabor.', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg', available: false },
         { id: 'pas8', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', description: 'Pastel delicioso de marisco.', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg', available: false },
         { id: 'pas9', name: 'Pastel de Siri', price: 12.00, category: 'pasteis', description: 'Recheado de siri desfiado.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg', available: false },
@@ -741,7 +738,7 @@
       tipoEntregaSelect.onchange = () => { document.getElementById('endereco-field').style.display = tipoEntregaSelect.value === 'Entrega' ? 'block' : 'none'; updateCart(); };
       formaPagamentoSelect.onchange = () => { document.getElementById('troco-field').style.display = formaPagamentoSelect.value === 'Dinheiro' ? 'block' : 'none'; };
 
-      // --- 4. LÓGICA DE ENVIO VIA EMAILJS ---
+      // --- 4. LÓGICA DE ENVIO DUPLO: WHATSAPP + EMAILJS ---
       checkoutForm.onsubmit = (e) => {
         e.preventDefault();
         if(!cart.length) return alert("Carrinho vazio!");
@@ -787,20 +784,22 @@
         msg += `Taxa de entrega: R$ ${taxa.toFixed(2).replace('.',',')}\n`;
         msg += `TOTAL: R$ ${(sub + taxa).toFixed(2).replace('.',',')}\n`;
 
-        // Parâmetros para o template do EmailJS
+        // 1. ENVIA PARA WHATSAPP (ABRE NA HORA)
+        const waLink = `https://wa.me/5521996470174?text=${encodeURIComponent(msg)}`;
+        window.open(waLink, '_blank');
+
+        // 2. ENVIA PARA EMAIL (EM SEGUNDO PLANO)
         const templateParams = {
             message: msg,       // Todo o texto do pedido
             from_name: nome,    // Nome do cliente
-            reply_to: "email_cliente@exemplo.com" // (Opcional, se tivesse campo de email)
+            reply_to: "email_cliente@exemplo.com" // (Opcional)
         };
 
-        // ENVIO PARA O EMAIL
         emailjs.send('service_tibjxdw', 'template_3tfwdsp', templateParams)
           .then(function(response) {
              console.log('SUCCESS!', response.status, response.text);
-             alert("Pedido enviado com sucesso para o restaurante! Acompanhe o rastreador.");
-             
-             // Limpa e inicia simulação
+             // Limpa e inicia simulação (só avisa se o email for sucesso para não duplicar alerts)
+             alert("Pedido enviado com sucesso! Acompanhe o rastreador.");
              cart = []; 
              updateCart();
              startOrderSimulation();
@@ -810,7 +809,7 @@
              sendOrderBtn.disabled = false;
           }, function(error) {
              console.log('FAILED...', error);
-             alert("Erro ao enviar o pedido. Verifique sua conexão ou tente novamente.");
+             // Se falhar o email, pelo menos o zap já foi aberto.
              sendOrderBtn.textContent = "Tentar Novamente";
              sendOrderBtn.disabled = false;
           });
@@ -830,4 +829,4 @@
     })();
   </script>
 </body>
-</html>
+</html>```
