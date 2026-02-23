@@ -85,6 +85,28 @@
       font-weight:700;font-size:1rem;color:var(--txt-dark);
     }
 
+    /* --- STATUS MODESTO NA BARRA (CABEÇALHO) --- */
+    .status-modesto {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; font-weight: 700; color: var(--muted);
+      background: rgba(0,0,0,0.05); padding: 5px 12px; border-radius: 50px;
+      /* Ajuste para mobile: empurra para direita */
+      margin-left: auto; margin-right: 1rem; 
+    }
+    @media(min-width: 1000px) { .status-modesto { margin-left: 1rem; margin-right: 0; } }
+
+    .status-bolinha { width: 8px; height: 8px; border-radius: 50%; background: #ccc; }
+    
+    /* Aberto */
+    .status-aberto .status-bolinha { background: var(--sucesso); box-shadow: 0 0 0 2px rgba(40,167,69,0.2); animation: piscar 2s infinite; }
+    .status-aberto { color: var(--sucesso); border: 1px solid rgba(40,167,69,0.2); background: rgba(40,167,69,0.05); }
+    
+    /* Fechado */
+    .status-fechado .status-bolinha { background: var(--erro); }
+    .status-fechado { color: var(--erro); opacity: 0.9; border: 1px solid rgba(220,53,69,0.2); background: rgba(220,53,69,0.05); }
+    
+    @keyframes piscar { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
     /* Desktop nav */
     .main-nav{display:none}
     .nav-links{display:flex;gap:1rem;align-items:center;list-style:none}
@@ -285,6 +307,11 @@
         <div class="brand">Lanche do Professor</div>
       </a>
 
+      <div id="status-cabecalho" class="status-modesto">
+        <span class="status-bolinha"></span>
+        <span id="status-texto-cabecalho">Verificando...</span>
+      </div>
+
       <nav class="main-nav" role="navigation" aria-label="Navegação principal">
         <ul class="nav-links" role="menubar">
           <li role="none"><a role="menuitem" href="#cardapio">Cardápio</a></li>
@@ -319,7 +346,7 @@
       <div class="hero-inner container" data-aos="fade-up">
         <h1>FAÇA SEU PEDIDO!</h1>
         
-        <p class="lead">Funcionando de Segunda a Sexta<br>Delivery: 16h → 1h da manhã</p>
+        <p class="lead">Funcionando de Segunda a Sexta.<br>Delivery: 16h → 1h da manhã.</p>
         
         <p class="lead" style="font-size:0.95rem; margin-top:0.5rem"><strong>Compras acima de 15 reais , entrega GRÁTIS</strong> chegou pra salvar seu semestre com a entrega mais rápida de Seropédica.</p>
         
@@ -468,6 +495,43 @@
       // --- 3. INICIALIZAÇÃO DO EMAILJS ---
       emailjs.init("I411iBg-_msw-aK29");
 
+      // VERIFICAÇÃO AUTOMÁTICA DE HORÁRIO (STATUS MODESTO)
+      function checkOpenStatus() {
+        const now = new Date();
+        const day = now.getDay(); // 0=Dom, 1=Seg, 2=Ter, 3=Qua, 4=Qui, 5=Sex, 6=Sab
+        const hour = now.getHours();
+        
+        let isOpen = false;
+
+        // Lógica Delivery: 16h as 01h (Seg-Sex)
+        // Isso cobre Seg-Sex das 16h as 23:59 E Ter-Sáb das 00:00 a 01:00
+        
+        if (day >= 1 && day <= 5 && hour >= 16) {
+           // Seg a Sex, das 16h em diante
+           isOpen = true;
+        } else if (day >= 2 && day <= 6 && hour < 1) {
+           // Ter a Sáb, antes da 1h da manhã (continuação do turno anterior)
+           isOpen = true;
+        }
+
+        // Atualiza o indicador no cabeçalho
+        const statusDiv = document.getElementById('status-cabecalho');
+        const statusText = document.getElementById('status-texto-cabecalho');
+
+        if(isOpen) {
+          statusDiv.className = 'status-modesto status-aberto';
+          statusText.textContent = 'Delivery Aberto';
+        } else {
+          statusDiv.className = 'status-modesto status-fechado';
+          statusText.textContent = 'Delivery Fechado (Abre 16h)';
+        }
+      }
+      
+      // Roda ao carregar e a cada 1 minuto
+      checkOpenStatus();
+      setInterval(checkOpenStatus, 60000);
+
+
       // LÓGICA DE GEOLOCALIZAÇÃO
       window.getLocation = function() {
         if (navigator.geolocation) {
@@ -509,7 +573,9 @@
         { id: 'pas8', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', description: 'Pastel delicioso de marisco.', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg', available: false },
         { id: 'pas9', name: 'Pastel de Siri', price: 12.00, category: 'pasteis', description: 'Recheado de siri desfiado.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg', available: false },
         { id: 'pas10', name: 'Pastel de Banana com Canela', price: 12.00, category: 'pasteis', description: 'Recheado de banana macia.', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg', available: false },
-        { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', description: 'Goiabada e queijo.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg', available: false },
+        
+        // PASTEL DE ROMEU E JULIETA DISPONÍVEL!
+        { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', description: 'Goiabada e queijo.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg' },
         
         { id: 'cal1', name: 'Garrafa de Caldo 500ml', price: 8.00, category: 'caldo', description: 'Caldo de cana moído na hora.', imageUrl: 'https://i.postimg.cc/D0BtSDZp/D-Q-NP-2X-869138-MLB91945553217-092025-T-garrafa-plast-descartavel-300ml-sucocaldo-de-cana-c30un.webp' },
         
