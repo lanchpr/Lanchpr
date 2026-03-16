@@ -202,7 +202,14 @@
     .cart-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem;border-radius:10px;border:1px solid rgba(0,0,0,0.04);margin-bottom:.6rem;background:#fcfcfd}
     .cart-item h4{margin:0;font-size:.98rem}
     .cart-item .controls{display:flex;gap:.4rem;align-items:center}
+    
+    /* --- BOTÕES DO CARRINHO (ATUALIZADO) --- */
     .icon-btn{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:.25rem .45rem;border-radius:8px;cursor:pointer}
+    /* Limpar: Cinza claro discreto */
+    #cart-clear { background: #f0f0f0; border: none; font-size: 0.85rem; padding: 0.4rem 0.8rem; }
+    /* Fechar: Destaque Vermelho */
+    #cart-close-btn { background: var(--erro); color: white; border: none; font-weight: bold; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
+    
     .cart-summary{margin-top:1rem;border-top:1px dashed rgba(0,0,0,0.06);padding-top:1rem}
     .summary-row{display:flex;justify-content:space-between;margin-bottom:.45rem;font-weight:700}
     .total{font-size:1.05rem}
@@ -414,8 +421,8 @@
       <header class="cart-header">
         <h3 id="cart-title">Seu Pedido</h3>
         <div style="display:flex;gap:.5rem;align-items:center">
-          <button id="cart-clear" class="icon-btn" title="Limpar carrinho">Limpar</button>
-          <button id="cart-close-btn" class="icon-btn" aria-label="Fechar">✕</button>
+          <button id="cart-clear" class="icon-btn" title="Esvaziar Carrinho">Limpar</button>
+          <button id="cart-close-btn" class="icon-btn" aria-label="Fechar Carrinho">✕</button>
         </div>
       </header>
       <div class="cart-body" id="cart-body">
@@ -504,17 +511,12 @@
         let isOpen = false;
 
         // Lógica Delivery: 16h as 01h (Seg-Sex)
-        // Isso cobre Seg-Sex das 16h as 23:59 E Ter-Sáb das 00:00 a 01:00
-        
         if (day >= 1 && day <= 5 && hour >= 16) {
-           // Seg a Sex, das 16h em diante
            isOpen = true;
         } else if (day >= 2 && day <= 6 && hour < 1) {
-           // Ter a Sáb, antes da 1h da manhã (continuação do turno anterior)
            isOpen = true;
         }
 
-        // Atualiza o indicador no cabeçalho
         const statusDiv = document.getElementById('status-cabecalho');
         const statusText = document.getElementById('status-texto-cabecalho');
 
@@ -527,7 +529,6 @@
         }
       }
       
-      // Roda ao carregar e a cada 1 minuto
       checkOpenStatus();
       setInterval(checkOpenStatus, 60000);
 
@@ -568,14 +569,13 @@
         
         { id: 'pas6', name: 'Pastel de Carne Seca', price: 12.00, category: 'pasteis', description: 'Carne seca desfiada!', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg', available: false },
         
-        // PASTEL DE ARRAIA ESGOTADO AQUI!
+        // PASTEL DE ARRAIA ESGOTADO
         { id: 'pas7', name: 'Pastel de Arraia', price: 12.00, category: 'pasteis', description: 'Uma explosão de sabor.', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg', available: false },
         
         { id: 'pas8', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', description: 'Pastel delicioso de marisco.', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg', available: false },
         { id: 'pas9', name: 'Pastel de Siri', price: 12.00, category: 'pasteis', description: 'Recheado de siri desfiado.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg', available: false },
         { id: 'pas10', name: 'Pastel de Banana com Canela', price: 12.00, category: 'pasteis', description: 'Recheado de banana macia.', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg', available: false },
         
-        // PASTEL DE ROMEU E JULIETA DISPONÍVEL!
         { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', description: 'Goiabada e queijo.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg' },
         
         { id: 'cal1', name: 'Garrafa de Caldo 500ml', price: 8.00, category: 'caldo', description: 'Caldo de cana moído na hora.', imageUrl: 'https://i.postimg.cc/D0BtSDZp/D-Q-NP-2X-869138-MLB91945553217-092025-T-garrafa-plast-descartavel-300ml-sucocaldo-de-cana-c30un.webp' },
@@ -600,7 +600,6 @@
         
         { id: 'b1', name: 'Bolo - Cenoura (fatia)', price: 5.00, category: 'bolos', description: 'Com calda de chocolate.', imageUrl: 'https://i.postimg.cc/sgG0SMQ1/images-4.jpg' },
         { id: 'b2', name: 'Bolo - Fubá (fatia)', price: 5.00, category: 'bolos', description: 'Bolo de vó.', imageUrl: 'https://i.postimg.cc/FHxG00Fh/images-5.jpg' },
-        // BOLO DE BANANA (ESGOTADO)
         { id: 'b3', name: 'Bolo - Banana (fatia)', price: 5.00, category: 'bolos', description: 'Caramelizado.', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg', available: false }
       ];
 
@@ -621,7 +620,7 @@
       const mobileClose = document.getElementById('mobile-close');
       const sendOrderBtn = document.getElementById('send-order-btn');
 
-      // SELETORES DO ZOOM
+      // SELETORES DO ZOOM E MÁSCARA DO CARRINHO (OVERLAY)
       const zoomModal = document.getElementById('image-zoom-modal');
       const zoomedImage = document.getElementById('zoomed-image');
       const closeZoom = document.getElementById('close-zoom');
@@ -671,7 +670,12 @@
         mobileOverlay.classList.add('is-open');
       };
       mobileClose.onclick = closeMenu;
-      mobileOverlay.onclick = closeMenu;
+      // FECHAR CARRINHO OU MENU AO CLICAR NA ÁREA ESCURA (OVERLAY)
+      mobileOverlay.onclick = () => {
+         closeMenu();
+         toggleCartModal(false);
+      };
+      
       document.querySelectorAll('.nav-mobile-links a').forEach(link => { link.onclick = closeMenu; });
 
       function renderProducts(filter='all'){
@@ -741,9 +745,22 @@
       };
 
       function toggleCartModal(open){
-        if(open) { cartModal.classList.add('visible'); document.body.style.overflow = 'hidden'; }
-        else { cartModal.classList.remove('visible'); document.body.style.overflow = ''; }
+        if(open) { 
+          cartModal.classList.add('visible'); 
+          mobileOverlay.classList.add('is-open'); // Ativa área escura
+          document.body.style.overflow = 'hidden'; 
+        } else { 
+          cartModal.classList.remove('visible');
+          mobileOverlay.classList.remove('is-open'); // Desativa área escura
+          document.body.style.overflow = ''; 
+        }
       }
+      
+      // BOTÃO LIMPAR CARRINHO
+      document.getElementById('cart-clear').onclick = () => {
+         cart = [];
+         updateCart();
+      };
 
       tipoEntregaSelect.onchange = () => { document.getElementById('endereco-field').style.display = tipoEntregaSelect.value === 'Entrega' ? 'block' : 'none'; updateCart(); };
       formaPagamentoSelect.onchange = () => { document.getElementById('troco-field').style.display = formaPagamentoSelect.value === 'Dinheiro' ? 'block' : 'none'; };
