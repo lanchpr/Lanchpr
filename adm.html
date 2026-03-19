@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin - Lanche do Professor</title>
+  
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f6f6f7; margin: 0; padding: 0; }
+    .container { max-width: 900px; margin: 2rem auto; padding: 1rem; }
+    
+    /* Ecrã de Login */
+    #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+    .login-box { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 350px; text-align: center; }
+    .login-box input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+    .btn { background: #ffd400; color: #111; font-weight: bold; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%; transition: 0.2s; }
+    .btn:hover { background: #ffc500; }
+
+    /* Painel Administrativo */
+    #admin-dashboard { display: none; }
+    .header { display: flex; justify-content: space-between; align-items: center; background: #111; color: white; padding: 1rem 2rem; border-radius: 12px; margin-bottom: 2rem; }
+    .tabs { display: flex; gap: 1rem; margin-bottom: 1rem; overflow-x: auto; padding-bottom: 5px; }
+    .tab-btn { background: #ddd; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; white-space: nowrap; }
+    .tab-btn.active { background: #25d366; color: white; }
+    
+    .panel-section { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: none; }
+    .panel-section.active { display: block; }
+
+    /* Tabelas */
+    .table-container { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px; }
+    th, td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
+    .status-btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100px; text-align: center; transition: 0.2s; }
+    .btn-on { background: #28a745; color: white; }
+    .btn-off { background: #dc3545; color: white; }
+    .input-preco { width: 80px; padding: 6px; border-radius: 6px; border: 1px solid #ccc; text-align: center; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div id="login-screen">
+    <div class="login-box">
+      <img src="https://i.postimg.cc/bYCjz5WZ/Picsart-25-11-03-11-29-40-541.png" width="80" style="border-radius:50%; margin-bottom: 1rem;">
+      <h2>Acesso Restrito</h2>
+      <input type="email" id="email" placeholder="E-mail" />
+      <input type="password" id="senha" placeholder="Senha" />
+      <button class="btn" onclick="fazerLogin()">Entrar no Painel</button>
+      <p id="erro-login" style="color: red; display: none; font-size: 0.9rem; margin-top: 10px;">Login ou senha incorretos.</p>
+    </div>
+  </div>
+
+  <div id="admin-dashboard" class="container">
+    <div class="header">
+      <h2 style="margin: 0; font-size: 1.3rem;">Gestão - Lanche do Professor</h2>
+      <button onclick="fazerLogout()" style="background:transparent; color:white; border:1px solid white; padding:6px 16px; border-radius:6px; cursor:pointer; font-weight: bold;">Sair</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="mudarAba('pedidos')">🔔 Pedidos ao Vivo</button>
+      <button class="tab-btn" onclick="mudarAba('produtos')">🍔 Gerir Produtos</button>
+    </div>
+
+    <div id="pedidos" class="panel-section active">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="margin: 0;">Relatório de Pedidos</h3>
+        <span style="font-size: 0.8rem; color: #28a745; font-weight: bold;">🟢 A escutar novos pedidos...</span>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Data/Hora</th><th>Cliente</th><th>Contato</th><th>Tipo</th><th>Total</th><th>Detalhes</th></tr></thead>
+          <tbody id="lista-pedidos">
+            <tr><td colspan="6" style="text-align: center; color: #888;">A carregar pedidos...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="produtos" class="panel-section">
+      <h3 style="margin-top: 0;">Cardápio e Preços</h3>
+      <p style="font-size: 0.9rem; color: #666;">Altere o preço ou o estado (Ativo/Esgotado) e clique em Salvar.</p>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Produto</th><th>Preço (R$)</th><th>Estado</th><th>Ação</th></tr></thead>
+          <tbody id="lista-produtos">
+             <tr><td colspan="4" style="text-align: center; color: #888;">A carregar produtos do banco de dados...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-detalhes" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center;">
+    <div style="background:white; padding:2rem; border-radius:12px; width:90%; max-width:500px; max-height:80vh; overflow-y:auto;">
+      <h3 style="margin-top:0;">Detalhes do Pedido</h3>
+      <pre id="texto-detalhes" style="white-space: pre-wrap; font-family: monospace; background:#f4f4f4; padding:1rem; border-radius:8px;"></pre>
+      <button class="btn" onclick="document.getElementById('modal-detalhes').style.display='none'" style="margin-top:1rem;">Fechar</button>
+    </div>
+  </div>
+
+  <script>
+    // CHAVES DO FIREBASE INSERIDAS
+    const firebaseConfig = {
+      apiKey: "AIzaSyBiMg-u2r6BYwjjdjV4ItuJfnsCSsTCqc0",
+      authDomain: "lanche-do-professor.firebaseapp.com",
+      projectId: "lanche-do-professor",
+      storageBucket: "lanche-do-professor.firebasestorage.app",
+      messagingSenderId: "921836830559",
+      appId: "1:921836830559:web:a1da6e2fffae48c58d80ea"
+    };
+
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const audioNotificacao = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3');
+    let primeiraCargaPedidos = true;
+
+    // Cardápio inicial que será salvo no Firebase no 1º acesso
+    const produtosIniciais = [
+      { id: 'pas1', name: 'Pastel de Carne', price: 9.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/VNZKXSb1/pastel-maria.jpg', available: true },
+      { id: 'pas2', name: 'Pastel de Queijo', price: 9.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/gJPnSsh8/990810f9242641a8e264ce996a78ed28-XL.jpg', available: true },
+      { id: 'pas3', name: 'Pastel de Pizza', price: 9.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/9MG1KLNs/pizza-tradicional.jpg', available: true },
+      { id: 'pas4', name: 'Pastel de Frango c/ Catupiry', price: 9.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/7PjthTg4/images.jpg', available: true },
+      { id: 'pas5', name: 'Pastel de Camarão', price: 12.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/3xc5NDQy/pastel-de-camarao-com-queijo-portal-minha-receita-1-500x281.jpg', available: false },
+      { id: 'pas6', name: 'Pastel de Carne Seca', price: 12.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg', available: false },
+      { id: 'pas7', name: 'Pastel de Arraia', price: 12.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg', available: false },
+      { id: 'pas8', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg', available: false },
+      { id: 'pas9', name: 'Pastel de Siri', price: 12.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg', available: false },
+      { id: 'pas10', name: 'Pastel de Banana com Canela', price: 12.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg', available: false },
+      { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg', available: true },
+      { id: 'cal1', name: 'Garrafa de Caldo 500ml', price: 8.00, category: 'caldo', imageUrl: 'https://i.postimg.cc/D0BtSDZp/D-Q-NP-2X-869138-MLB91945553217-092025-T-garrafa-plast-descartavel-300ml-sucocaldo-de-cana-c30un.webp', available: true },
+      { id: 'bev1', name: 'Refrigerante (lata)', price: 7.00, category: 'bebidas', imageUrl: 'https://i.postimg.cc/bNK77B6g/istockphoto-477567554-612x612.jpg', available: true },
+      { id: 'bev2', name: 'Refrigerente Mini', price: 4.00, category: 'bebidas', imageUrl: 'https://i.postimg.cc/zGQFts05/623a090228197.webp', available: true },
+      { id: 'bev3', name: 'Guaracamp', price: 3.50, category: 'bebidas', imageUrl: 'https://i.postimg.cc/sDQXPbQz/images-1.jpg', available: true },
+      { id: 'bev4', name: 'Água natural', price: 3.00, category: 'bebidas', imageUrl: 'https://i.postimg.cc/xj7HSvL0/shutterstock-174041981.jpg', available: true },
+      { id: 'bev5', name: 'Água com gás', price: 4.00, category: 'bebidas', imageUrl: 'https://i.postimg.cc/FKDpbY8C/CAPA-BONS-FLUIDOS-27.jpg', available: true },
+      { id: 'sal1', name: 'Pastel de Forno de Frango', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/pXn3RM1S/massa-de-pastel-de-forno.jpg', available: true },
+      { id: 'sal2', name: 'Coxinha', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/x1f7HN1w/03-pc027ubzik.png', available: true },
+      { id: 'sal3', name: 'Hambúrguer (com cheddar)', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true },
+      { id: 'sal4', name: 'Hambúrguer (sem cheddar)', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true },
+      { id: 'sal5', name: 'Joelho', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/mZPJYpF5/images-2.jpg', available: true },
+      { id: 'sal6', name: 'Esfiha', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/mkTcs1M7/esfirradecarnelouca.webp', available: true },
+      { id: 'sal7', name: 'Cachorro quente de forno', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/Px5sntJv/images-3.jpg', available: true },
+      { id: 'sal8', name: 'Bolinho de Aipim - Carne', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/k42CtJmk/Bolinho-de-aimpim.jpg', available: true },
+      { id: 'sal9', name: 'Bolinho de Aipim - Queijo', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/gkJVX1XW/9900510.jpg', available: true },
+      { id: 'sal10', name: 'Bolinho de Aipim - Pizza', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/pr9dxQrh/hqdefault.jpg', available: true },
+      { id: 'sal11', name: 'Bolinho de Aipim - Carne Seca', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/s26Qrgmp/bolinho2.jpg', available: true },
+      { id: 'b1', name: 'Bolo - Cenoura (fatia)', price: 5.00, category: 'bolos', imageUrl: 'https://i.postimg.cc/sgG0SMQ1/images-4.jpg', available: true },
+      { id: 'b2', name: 'Bolo - Fubá (fatia)', price: 5.00, category: 'bolos', imageUrl: 'https://i.postimg.cc/FHxG00Fh/images-5.jpg', available: true },
+      { id: 'b3', name: 'Bolo - Banana (fatia)', price: 5.00, category: 'bolos', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg', available: false }
+    ];
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('admin-dashboard').style.display = 'block';
+        iniciarPainel();
+      } else {
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('admin-dashboard').style.display = 'none';
+      }
+    });
+
+    function fazerLogin() {
+      const email = document.getElementById('email').value;
+      const senha = document.getElementById('senha').value;
+      auth.signInWithEmailAndPassword(email, senha).catch(error => {
+        document.getElementById('erro-login').style.display = 'block';
+      });
+    }
+
+    function fazerLogout() { auth.signOut(); }
+
+    function mudarAba(abaId) {
+      document.querySelectorAll('.panel-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(abaId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function iniciarPainel() {
+      carregarProdutos();
+      ouvirPedidos();
+    }
+
+    function carregarProdutos() {
+      db.collection('produtos').get().then(snapshot => {
+        if (snapshot.empty) {
+          const batch = db.batch();
+          produtosIniciais.forEach(p => {
+            const docRef = db.collection('produtos').doc(p.id);
+            batch.set(docRef, p);
+          });
+          batch.commit().then(() => carregarProdutos());
+        } else {
+          let html = '';
+          const produtosArray = [];
+          snapshot.forEach(doc => produtosArray.push({ id: doc.id, ...doc.data() }));
+          produtosArray.sort((a, b) => a.name.localeCompare(b.name));
+
+          produtosArray.forEach(p => {
+            const statusClass = p.available !== false ? 'btn-on' : 'btn-off';
+            const statusText = p.available !== false ? 'Ativo' : 'Esgotado';
+            html += `
+              <tr>
+                <td><strong>${p.name}</strong></td>
+                <td><input type="number" id="preco-${p.id}" class="input-preco" value="${p.price.toFixed(2)}" step="0.50"></td>
+                <td><button class="status-btn ${statusClass}" onclick="alternarStatus('${p.id}', ${p.available !== false})">${statusText}</button></td>
+                <td><button class="btn" style="padding: 6px 12px; width:auto;" onclick="salvarPreco('${p.id}')">Salvar</button></td>
+              </tr>
+            `;
+          });
+          document.getElementById('lista-produtos').innerHTML = html;
+        }
+      });
+    }
+
+    window.alternarStatus = function(id, statusAtual) {
+      const novoStatus = !statusAtual;
+      db.collection('produtos').doc(id).update({ available: novoStatus }).then(() => {
+        carregarProdutos(); 
+      });
+    }
+
+    window.salvarPreco = function(id) {
+      const novoPreco = parseFloat(document.getElementById(`preco-${id}`).value);
+      if(isNaN(novoPreco)) return alert("Preço inválido!");
+      db.collection('produtos').doc(id).update({ price: novoPreco }).then(() => {
+        alert("Preço atualizado!");
+      });
+    }
+
+    function ouvirPedidos() {
+      db.collection('pedidos').orderBy('timestamp', 'desc').limit(50).onSnapshot(snapshot => {
+        let html = '';
+        if (snapshot.empty) {
+            document.getElementById('lista-pedidos').innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum pedido recebido ainda.</td></tr>';
+            return;
+        }
+
+        snapshot.forEach(doc => {
+          const ped = doc.data();
+          const dataHora = ped.timestamp ? ped.timestamp.toDate().toLocaleString('pt-BR') : 'Agora';
+          const tipoCor = ped.tipo === 'Entrega' ? '#007bff' : '#fd7e14';
+          const btnHtml = `<button class="btn" style="padding: 5px; font-size: 0.8rem; width: auto;" onclick='verDetalhes(${JSON.stringify(ped.mensagem || "Detalhes indisponíveis.")})'>Ver</button>`;
+
+          html += `
+            <tr>
+              <td style="font-size:0.85rem; color:#555;">${dataHora}</td>
+              <td><strong>${ped.cliente}</strong></td>
+              <td>${ped.contato}</td>
+              <td><span style="background:${tipoCor}; color:white; padding:3px 8px; border-radius:4px; font-size:0.8rem;">${ped.tipo}</span></td>
+              <td><strong>R$ ${ped.total.toFixed(2).replace('.',',')}</strong></td>
+              <td>${btnHtml}</td>
+            </tr>
+          `;
+        });
+        
+        document.getElementById('lista-pedidos').innerHTML = html;
+
+        snapshot.docChanges().forEach(change => {
+          if (change.type === "added" && !primeiraCargaPedidos) {
+            audioNotificacao.play().catch(() => console.log("Áudio bloqueado"));
+          }
+        });
+        primeiraCargaPedidos = false;
+      });
+    }
+
+    window.verDetalhes = function(texto) {
+      document.getElementById('texto-detalhes').textContent = texto;
+      document.getElementById('modal-detalhes').style.display = 'flex';
+    }
+  </script>
+</body>
+</html>
