@@ -80,7 +80,10 @@
     </div>
 
     <div id="produtos" class="panel-section">
-      <h3 style="margin-top: 0;">Cardápio e Preços</h3>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="margin: 0;">Cardápio e Preços</h3>
+        <button class="btn" style="width: auto; padding: 5px 15px; font-size: 0.8rem;" onclick="forcarSincronizacao()">🔄 Forçar Sincronização</button>
+      </div>
       <p style="font-size: 0.9rem; color: #666;">Altere o preço ou o estado (Ativo/Esgotado) e clique em Salvar.</p>
       <div class="table-container">
         <table>
@@ -119,7 +122,7 @@
     const audioNotificacao = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3');
     let primeiraCargaPedidos = true;
 
-    // Cardápio inicial que será salvo no Firebase no 1º acesso
+    // Cardápio que será salvo no Firebase. Erro de Sintaxe corrigido aqui!
     const produtosIniciais = [
       { id: 'pas1', name: 'Pastel de Carne', price: 9.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/VNZKXSb1/pastel-maria.jpg', available: true },
       { id: 'pas2', name: 'Pastel de Queijo', price: 9.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/gJPnSsh8/990810f9242641a8e264ce996a78ed28-XL.jpg', available: true },
@@ -152,10 +155,8 @@
       { id: 'b1', name: 'Bolo - Cenoura (fatia)', price: 5.00, category: 'bolos', imageUrl: 'https://i.postimg.cc/sgG0SMQ1/images-4.jpg', available: true },
       { id: 'b2', name: 'Bolo - Fubá (fatia)', price: 5.00, category: 'bolos', imageUrl: 'https://i.postimg.cc/FHxG00Fh/images-5.jpg', available: true },
       { id: 'b3', name: 'Bolo - Banana (fatia)', price: 5.00, category: 'bolos', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg', available: false },
-      { id: 'novo2', name: 'Pastel de Frango Caipira', price: 8.50, category: 'pasteis', imageUrl: 'https://i.postimg.cc/ZYHVsHGJ/Screenshot-20260319-181437-2.jpg', available: true },
-       { id: 'sal99', name: 'Crocroissant de Queijo e Presunto', price: 8.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/ZYHVsHGJ/Screenshot-20260319-181437-2.jpg', available: true }
-    ];
-      
+      { id: 'novo2', name: 'Pastel de Frango Caipira', price: 9.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/ZYHVsHGJ/Screenshot-20260319-181437-2.jpg', available: true },
+      { id: 'sal99', name: 'Croissant de Queijo e Presunto', price: 8.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/ZRCsrdqW/Screenshot-20260319-183502-2.jpg', available: true }
     ];
 
     auth.onAuthStateChanged(user => {
@@ -191,15 +192,26 @@
       ouvirPedidos();
     }
 
+    // Função para forçar a atualização do Firebase com os produtos escritos no código acima
+    window.forcarSincronizacao = function() {
+      const batch = db.batch();
+      produtosIniciais.forEach(p => {
+        const docRef = db.collection('produtos').doc(p.id);
+        batch.set(docRef, p, { merge: true }); // Merge true adiciona sem apagar o que já existe de bom
+      });
+      batch.commit().then(() => {
+        alert("Sincronização concluída! Os novos produtos foram enviados para a base de dados.");
+        carregarProdutos();
+      }).catch(err => {
+        console.error(err);
+        alert("Erro ao sincronizar.");
+      });
+    }
+
     function carregarProdutos() {
       db.collection('produtos').get().then(snapshot => {
         if (snapshot.empty) {
-          const batch = db.batch();
-          produtosIniciais.forEach(p => {
-            const docRef = db.collection('produtos').doc(p.id);
-            batch.set(docRef, p);
-          });
-          batch.commit().then(() => carregarProdutos());
+          forcarSincronizacao();
         } else {
           let html = '';
           const produtosArray = [];
