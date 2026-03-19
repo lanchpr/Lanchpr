@@ -209,9 +209,7 @@
     
     /* --- BOTÕES DO CARRINHO --- */
     .icon-btn{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:.25rem .45rem;border-radius:8px;cursor:pointer}
-    /* Limpar: Cinza claro discreto */
     #cart-clear { background: #f0f0f0; border: none; font-size: 0.85rem; padding: 0.4rem 0.8rem; }
-    /* Fechar: Destaque Vermelho */
     #cart-close-btn { background: var(--erro); color: white; border: none; font-weight: bold; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
     
     .cart-summary{margin-top:1rem;border-top:1px dashed rgba(0,0,0,0.06);padding-top:1rem}
@@ -796,6 +794,7 @@
         }
       }
       
+      // BOTÃO LIMPAR CARRINHO
       document.getElementById('cart-clear').onclick = () => {
          cart = [];
          updateCart();
