@@ -9,16 +9,13 @@
   <link rel="icon" type="image/png" href="https://i.postimg.cc/bYCjz5WZ/Picsart-25-11-03-11-29-40-541.png">
 
   <meta name="description" content="Peça o melhor pastel, caldo de cana e salgados de Seropédica. Lanche do Professor: matando a sua fome com velocidade e bom humor.">
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
   <style>
     :root{
-      /* Cores Originais Mantidas */
       --cor-principal: #ffd400;
       --cor-accent: #25d366;
       --bg-dark: #111114;
@@ -28,7 +25,6 @@
       --muted: #6b6b6b;
       --sucesso: #28a745;
       --erro: #dc3545;
-
       --ff: "Source Sans Pro", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       --radius: 12px;
       --gap: 1rem;
@@ -37,7 +33,6 @@
       --max-w: 1200px;
     }
 
-    /* Reset minimal */
     *,*::before,*::after{box-sizing:border-box}
     html{scroll-behavior:smooth}
     body{
@@ -53,7 +48,6 @@
     a{color:inherit;text-decoration:none}
     img{max-width:100%;display:block}
 
-    /* Header */
     .main-header{
       position:fixed;
       top:0;
@@ -89,35 +83,26 @@
       font-weight:700;font-size:1rem;color:var(--txt-dark);
     }
 
-    /* --- STATUS MODESTO NA BARRA (CABEÇALHO) --- */
     .status-modesto {
       display: flex; align-items: center; gap: 6px;
       font-size: 0.8rem; font-weight: 700; color: var(--muted);
       background: rgba(0,0,0,0.05); padding: 5px 12px; border-radius: 50px;
-      /* Ajuste para mobile: empurra para direita */
       margin-left: auto; margin-right: 1rem; 
     }
     @media(min-width: 1000px) { .status-modesto { margin-left: 1rem; margin-right: 0; } }
 
     .status-bolinha { width: 8px; height: 8px; border-radius: 50%; background: #ccc; }
-    
-    /* Aberto */
     .status-aberto .status-bolinha { background: var(--sucesso); box-shadow: 0 0 0 2px rgba(40,167,69,0.2); animation: piscar 2s infinite; }
     .status-aberto { color: var(--sucesso); border: 1px solid rgba(40,167,69,0.2); background: rgba(40,167,69,0.05); }
-    
-    /* Fechado */
     .status-fechado .status-bolinha { background: var(--erro); }
     .status-fechado { color: var(--erro); opacity: 0.9; border: 1px solid rgba(220,53,69,0.2); background: rgba(220,53,69,0.05); }
-    
     @keyframes piscar { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-    /* Desktop nav */
     .main-nav{display:none}
     .nav-links{display:flex;gap:1rem;align-items:center;list-style:none}
     .nav-links a{padding:.5rem .6rem;border-radius:8px;color:var(--txt-dark);font-weight:600}
     .nav-links a:hover{background:rgba(0,0,0,0.04)}
 
-    /* Mobile toggle */
     #mobile-nav-toggle{
       background:transparent;border:0;padding:.4rem;border-radius:8px;cursor:pointer;
       display:flex;flex-direction:column;gap:4px;
@@ -126,7 +111,6 @@
       width:22px;height:2px;background:#111;display:block;border-radius:2px;transition:transform .2s;
     }
 
-    /* Mobile menu */
     .nav-mobile{
       position:fixed;top:0;right:0;height:100vh;width:84%;max-width:360px;background:var(--bg-dark);color:var(--txt-light);
       transform:translateX(110%);transition:transform .35s cubic-bezier(.22,.9,.33,1);z-index:1300;padding-top:var(--header-h);
@@ -139,7 +123,6 @@
     .mobile-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1250;opacity:0;visibility:hidden;transition:opacity .3s}
     .mobile-overlay.is-open{opacity:1;visibility:visible}
 
-    /* Hero (DESIGN ORIGINAL AMARELO) */
     #hero{
       display:flex;align-items:center;justify-content:center;
       min-height:calc(100vh - var(--header-h));
@@ -159,15 +142,12 @@
       background:transparent;color:var(--bg-dark);border:2px solid rgba(0,0,0,0.06);
     }
     .btn:active{transform:translateY(1px)}
-    .hero-cta-ghost{background:transparent;border:2px solid rgba(0,0,0,0.06);color:var(--bg-dark)}
 
-    /* Container / sections */
     .container{width:100%;max-width:var(--max-w);margin:0 auto;padding:1rem}
     .section{padding:3rem 0}
     .section h2{font-size:1.6rem;margin-bottom:.5rem}
     .section p{color:var(--muted)}
 
-    /* Product grid */
     .product-grid{
       display:grid;
       grid-template-columns:repeat(1,1fr);
@@ -187,13 +167,11 @@
     .btn-add-cart{background:linear-gradient(180deg,var(--cor-principal),#ffc500);color:#111;padding:.5rem .75rem;border-radius:10px;font-weight:800;border:0;cursor:pointer}
     .btn-add-cart:active{transform:translateY(1px)}
 
-    /* Cart toggle floating */
     #cart-toggle-btn{
       position:fixed;right:1rem;bottom:1rem;background:var(--bg-dark);color:var(--txt-light);border-radius:999px;padding:.65rem .8rem;display:flex;align-items:center;gap:.6rem;z-index:1400;border:0;box-shadow:0 12px 30px rgba(0,0,0,0.18);cursor:pointer;
     }
     #cart-toggle-btn .count{background:var(--cor-principal);color:#111;padding:.18rem .45rem;border-radius:999px;font-weight:700;font-size:.9rem}
 
-    /* Cart modal */
     #cart-modal{position:fixed;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:1rem;z-index:1400;pointer-events:none}
     #cart-modal.visible{pointer-events:auto}
     .cart-content{
@@ -207,7 +185,6 @@
     .cart-item h4{margin:0;font-size:.98rem}
     .cart-item .controls{display:flex;gap:.4rem;align-items:center}
     
-    /* --- BOTÕES DO CARRINHO --- */
     .icon-btn{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:.25rem .45rem;border-radius:8px;cursor:pointer}
     #cart-clear { background: #f0f0f0; border: none; font-size: 0.85rem; padding: 0.4rem 0.8rem; }
     #cart-close-btn { background: var(--erro); color: white; border: none; font-weight: bold; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
@@ -216,13 +193,11 @@
     .summary-row{display:flex;justify-content:space-between;margin-bottom:.45rem;font-weight:700}
     .total{font-size:1.05rem}
 
-    /* Form */
     .form-group{margin-bottom:.8rem}
     label{display:block;margin-bottom:.2rem;font-weight:700}
     .form-control{width:100%;padding:.6rem;border-radius:8px;border:1px solid rgba(0,0,0,0.08)}
     .form-control:focus{outline:2px solid rgba(0,0,0,0.06)}
 
-    /* Editor: Layout grid para celular */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -230,22 +205,19 @@
     }
     .span-2 { grid-column: span 2; }
 
-    /* Botão GPS */
     .btn-gps {
       background: var(--bg-dark); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem;
       border: 0; cursor: pointer; display: flex; align-items: center; gap: 5px; margin-bottom: 5px; width: 100%; justify-content: center;
     }
 
-    /* Zoom */
     #image-zoom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1500; display: none; align-items: center; justify-content: center; padding: 1rem; }
     #image-zoom-modal.visible { display: flex; animation: fadeIn .3s ease; }
     #zoomed-image { max-width: 100%; max-height: 90vh; border-radius: 12px; }
     #close-zoom { position: absolute; top: 1rem; right: 1rem; color: #fff; background: transparent; border: 0; font-size: 2rem; cursor: pointer; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    /* --- TRACKER (RASTREADOR) ESTILO --- */
     #order-tracker {
-      display: none; /* Escondido até pedir */
+      display: none; 
       position: fixed; inset: 0; background: #fff; z-index: 2000;
       flex-direction: column; align-items: center; justify-content: center;
       text-align: center; padding: 2rem;
@@ -262,13 +234,11 @@
     
     @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
 
-    /* Footer */
     footer{padding:2rem 0;background:#fff;margin-top:2rem}
     .footer-container{display:flex;flex-wrap:wrap;gap:1.2rem;align-items:flex-start;justify-content:space-between}
     .footer-contact p{margin:.25rem 0}
     .social-links{display:flex;gap:.6rem;list-style:none;padding:0;margin:0}
 
-    /* Responsive */
     @media(min-width:700px){
       .product-grid{grid-template-columns:repeat(2,1fr)}
       .product-card-image{width:40%}
@@ -282,7 +252,6 @@
       .hero h1{font-size:2.8rem}
     }
 
-    /* Accessibility focus */
     :focus-visible{outline:3px solid var(--cor-principal);outline-offset:3px;border-radius:8px}
   </style>
 </head>
@@ -501,35 +470,17 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     (function(){
-      // =====================================
-      // 1. INICIALIZAÇÃO FIREBASE (SITE CLIENTE)
-      // =====================================
-      const firebaseConfig = {
-        apiKey: "AIzaSyBiMg-u2r6BYwjjdjV4ItuJfnsCSsTCqc0",
-        authDomain: "lanche-do-professor.firebaseapp.com",
-        projectId: "lanche-do-professor",
-        storageBucket: "lanche-do-professor.firebasestorage.app",
-        messagingSenderId: "921836830559",
-        appId: "1:921836830559:web:a1da6e2fffae48c58d80ea"
-      };
-
-      if (!firebase.apps.length) { 
-          firebase.initializeApp(firebaseConfig); 
-      }
-      const db = firebase.firestore();
-
-      // --- 3. INICIALIZAÇÃO DO EMAILJS ---
+      // INICIALIZAÇÃO DO EMAILJS
       emailjs.init("I411iBg-_msw-aK29");
 
       // VERIFICAÇÃO AUTOMÁTICA DE HORÁRIO (STATUS MODESTO)
       function checkOpenStatus() {
         const now = new Date();
-        const day = now.getDay(); // 0=Dom, 1=Seg, 2=Ter, 3=Qua, 4=Qui, 5=Sex, 6=Sab
+        const day = now.getDay(); 
         const hour = now.getHours();
         
         let isOpen = false;
 
-        // Lógica Delivery: 16h as 01h (Seg-Sex)
         if (day >= 1 && day <= 5 && hour >= 16) {
            isOpen = true;
         } else if (day >= 2 && day <= 6 && hour < 1) {
@@ -576,30 +527,25 @@
         }
       }
 
-      // =====================================
-      // 2. O SISTEMA "MANUAL" ESTÁ MANTIDO AQUI - CASO O FIREBASE FALHE
-      // =====================================
-      let productDatabase = [
+      // =========================================================================
+      // BASE DE DADOS MANUAL - EDITE SEUS PRODUTOS E PREÇOS AQUI
+      // Mude "available: true" para "available: false" para marcar como ESGOTADO
+      // =========================================================================
+      const productDatabase = [
         { id: 'pas1', name: 'Pastel de Carne', price: 9.00, category: 'pasteis', description: 'Pastel crocante com recheio de carne suculenta.', imageUrl: 'https://i.postimg.cc/VNZKXSb1/pastel-maria.jpg', available: true },
         { id: 'pas2', name: 'Pastel de Queijo', price: 9.00, category: 'pasteis', description: 'Queijo derretido até a última mordida.', imageUrl: 'https://i.postimg.cc/gJPnSsh8/990810f9242641a8e264ce996a78ed28-XL.jpg', available: true },
         { id: 'pas3', name: 'Pastel de Pizza', price: 9.00, category: 'pasteis', description: 'Sabor pizza com muito queijo e molho.', imageUrl: 'https://i.postimg.cc/9MG1KLNs/pizza-tradicional.jpg', available: true },
         { id: 'pas4', name: 'Pastel de Frango c/ Catupiry', price: 9.00, category: 'pasteis', description: 'Frango desfiado com catupiry cremoso.', imageUrl: 'https://i.postimg.cc/7PjthTg4/images.jpg', available: true },
         
         { id: 'pas5', name: 'Pastel de Camarão', price: 12.00, category: 'pasteis', description: 'Camarão fresco!', imageUrl: 'https://i.postimg.cc/3xc5NDQy/pastel-de-camarao-com-queijo-portal-minha-receita-1-500x281.jpg', available: false },
-        { id: 'pas6', name: 'Pastel de Carne Seca', price: 12.00, category: 'pasteis', description: 'Carne seca desfiada!', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg', available: false },
-        
-        // PASTEL DE ARRAIA ESTÁ ESGOTADO
+        { id: 'pas6', name: 'Pastel de Carne Seca', price: 12.00, category: 'pasteis', description: 'Carne seca desfiada!', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg', available: true },
         { id: 'pas7', name: 'Pastel de Arraia', price: 12.00, category: 'pasteis', description: 'Uma explosão de sabor.', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg', available: false },
-        
         { id: 'pas8', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', description: 'Pastel delicioso de marisco.', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg', available: false },
         { id: 'pas9', name: 'Pastel de Siri', price: 12.00, category: 'pasteis', description: 'Recheado de siri desfiado.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg', available: false },
         { id: 'pas10', name: 'Pastel de Banana com Canela', price: 12.00, category: 'pasteis', description: 'Recheado de banana macia.', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg', available: false },
-                 { id: 'pas12', name: 'Pastel de Frango Caipira', price: 9.00, category: 'pasteis', description: 'Recheado de banana macia.', imageUrl: 'https://i.postimg.cc/ZYHVsHGJ/Screenshot-20260319-181437-2.jpg', available: false },
-                                  { id: 'sal99', name: 'Croissant de Queijo e Presunto ', price: 8.00, category: 'salgados', description: 'Recheado de banana macia.', imageUrl: 'https://i.postimg.cc/ZRCsrdqW/Screenshot-20260319-183502-2.jpg', available: false },
-                 
-
-        // PASTEL DE ROMEU E JULIETA ESTÁ ATIVO
-        { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', description: 'Goiabada e queijo.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg', available: true },
+        { id: 'pas12', name: 'Pastel de Frango Caipira', price: 9.00, category: 'pasteis', description: 'Recheado de frango caipira.', imageUrl: 'https://i.postimg.cc/ZYHVsHGJ/Screenshot-20260319-181437-2.jpg', available: false },
+        
+        { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', description: 'Goiabada e queijo.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg', available: false },
         
         { id: 'cal1', name: 'Garrafa de Caldo 500ml', price: 8.00, category: 'caldo', description: 'Caldo de cana moído na hora.', imageUrl: 'https://i.postimg.cc/D0BtSDZp/D-Q-NP-2X-869138-MLB91945553217-092025-T-garrafa-plast-descartavel-300ml-sucocaldo-de-cana-c30un.webp', available: true },
         
@@ -609,6 +555,7 @@
         { id: 'bev4', name: 'Água natural', price: 3.00, category: 'bebidas', description: 'Mineral sem gás.', imageUrl: 'https://i.postimg.cc/xj7HSvL0/shutterstock-174041981.jpg', available: true },
         { id: 'bev5', name: 'Água com gás', price: 4.00, category: 'bebidas', description: 'Mineral com gás.', imageUrl: 'https://i.postimg.cc/FKDpbY8C/CAPA-BONS-FLUIDOS-27.jpg', available: true },
         
+        { id: 'sal99', name: 'Croissant de Queijo e Presunto', price: 8.00, category: 'salgados', description: 'Croissant macio recheado.', imageUrl: 'https://i.postimg.cc/ZRCsrdqW/Screenshot-20260319-183502-2.jpg', available: true },
         { id: 'sal1', name: 'Pastel de Forno de Frango', price: 7.00, category: 'salgados', description: 'Massa leve recheada com frango.', imageUrl: 'https://i.postimg.cc/pXn3RM1S/massa-de-pastel-de-forno.jpg', available: true },
         { id: 'sal2', name: 'Coxinha', price: 7.00, category: 'salgados', description: 'Coxinha assada, crocante por fora.', imageUrl: 'https://i.postimg.cc/x1f7HN1w/03-pc027ubzik.png', available: true },
         { id: 'sal3', name: 'Hambúrguer (com cheddar)', price: 7.00, category: 'salgados', description: 'Saboroso hambúrguer com muito cheddar.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true },
@@ -624,7 +571,6 @@
         { id: 'b1', name: 'Bolo - Cenoura (fatia)', price: 5.00, category: 'bolos', description: 'Com calda de chocolate.', imageUrl: 'https://i.postimg.cc/sgG0SMQ1/images-4.jpg', available: true },
         { id: 'b2', name: 'Bolo - Fubá (fatia)', price: 5.00, category: 'bolos', description: 'Bolo de vó.', imageUrl: 'https://i.postimg.cc/FHxG00Fh/images-5.jpg', available: true },
         { id: 'b3', name: 'Bolo - Banana (fatia)', price: 5.00, category: 'bolos', description: 'Caramelizado.', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg', available: false }
-        
       ];
 
       const DELIVERY_FEE = 5.00;
@@ -632,9 +578,8 @@
       let cart = [];
 
       const productGrid = document.getElementById('product-grid');
-      const cartToggleBtn = document.getElementById('cart-toggle-btn');
-      const cartModal = document.getElementById('cart-modal');
       const cartItemsList = document.getElementById('cart-items-list');
+      const cartModal = document.getElementById('cart-modal');
       const checkoutForm = document.getElementById('checkout-form');
       const tipoEntregaSelect = document.getElementById('tipo-entrega');
       const formaPagamentoSelect = document.getElementById('forma-pagamento');
@@ -643,26 +588,14 @@
       const mobileToggle = document.getElementById('mobile-nav-toggle');
       const mobileClose = document.getElementById('mobile-close');
       const sendOrderBtn = document.getElementById('send-order-btn');
-
       const zoomModal = document.getElementById('image-zoom-modal');
       const zoomedImage = document.getElementById('zoomed-image');
       const closeZoom = document.getElementById('close-zoom');
 
       AOS.init({duration:900, once:true, easing:'ease-out-cubic'});
 
-      // TENTA CARREGAR DO FIREBASE, SE NÃO CONSEGUIR OU TIVER VAZIO, USA A BASE LOCAL
-      db.collection('produtos').onSnapshot((snapshot) => {
-          if(!snapshot.empty) {
-            productDatabase = [];
-            snapshot.forEach(doc => {
-                productDatabase.push(doc.data());
-            });
-          }
-          
-          const btnAtivo = document.querySelector('.filter-btn[aria-pressed="true"]');
-          const filtroAtual = btnAtivo ? btnAtivo.dataset.filter : 'all';
-          renderProducts(filtroAtual);
-      });
+      // Inicia a renderização diretamente com os dados manuais
+      renderProducts('all');
 
       function startOrderSimulation() {
         toggleCartModal(false);
@@ -794,7 +727,6 @@
         }
       }
       
-      // BOTÃO LIMPAR CARRINHO
       document.getElementById('cart-clear').onclick = () => {
          cart = [];
          updateCart();
@@ -845,23 +777,11 @@
         msg += `Taxa de entrega: R$ ${taxa.toFixed(2).replace('.',',')}\n`;
         msg += `TOTAL: R$ ${(sub + taxa).toFixed(2).replace('.',',')}\n`;
 
-        // SALVA NO FIREBASE PARA O PAINEL ADMIN
-        const pedidoParaAdmin = {
-          cliente: nome,
-          contato: contato,
-          tipo: tipo,
-          total: sub + taxa,
-          mensagem: msg, 
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        };
-
-        db.collection('pedidos').add(pedidoParaAdmin).catch(err => console.log("Erro ao salvar no painel: ", err));
-
-        // ENVIA PARA WHATSAPP
+        // ABRE O WHATSAPP
         const waLink = `https://wa.me/5521996470174?text=${encodeURIComponent(msg)}`;
         window.open(waLink, '_blank');
 
-        // ENVIA PARA EMAIL 
+        // ENVIA E-MAIL PARA BACKUP E ATIVA O RASTREADOR (Mantido)
         const templateParams = {
             message: msg,       
             from_name: nome,    
@@ -877,7 +797,12 @@
              sendOrderBtn.textContent = "Enviar Pedido Agora";
              sendOrderBtn.disabled = false;
           }, function(error) {
-             sendOrderBtn.textContent = "Tentar Novamente";
+             // Caso o EmailJS falhe, a mensagem de WhatsApp já abriu, então podemos continuar a tela
+             alert("Pedido enviado para o WhatsApp!");
+             cart = [];
+             updateCart();
+             startOrderSimulation();
+             sendOrderBtn.textContent = "Enviar Pedido Agora";
              sendOrderBtn.disabled = false;
           });
       };
@@ -892,7 +817,6 @@
       document.getElementById('cart-toggle-btn').onclick = () => toggleCartModal(true);
       document.getElementById('cart-close-btn').onclick = () => toggleCartModal(false);
 
-      renderProducts('all');
     })();
   </script>
 </body>
