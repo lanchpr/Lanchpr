@@ -1,296 +1,823 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin - Lanche do Professor</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Lanche do Professor — O Delivery mais Rápido de Seropédica!</title>
   
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/bYCjz5WZ/Picsart-25-11-03-11-29-40-541.png">
+
+  <meta name="description" content="Peça o melhor pastel, caldo de cana e salgados de Seropédica. Lanche do Professor: matando a sua fome com velocidade e bom humor.">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
   <style>
-    body { font-family: system-ui, -apple-system, sans-serif; background: #f6f6f7; margin: 0; padding: 0; }
-    .container { max-width: 900px; margin: 2rem auto; padding: 1rem; }
-    
-    /* Ecrã de Login */
-    #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
-    .login-box { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 350px; text-align: center; }
-    .login-box input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-    .btn { background: #ffd400; color: #111; font-weight: bold; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%; transition: 0.2s; }
-    .btn:hover { background: #ffc500; }
+    :root{
+      --cor-principal: #ffd400;
+      --cor-accent: #25d366;
+      --bg-dark: #111114;
+      --bg-light: #f6f6f7;
+      --txt-dark: #111;
+      --txt-light: #fff;
+      --muted: #6b6b6b;
+      --sucesso: #28a745;
+      --erro: #dc3545;
+      --ff: "Source Sans Pro", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --radius: 12px;
+      --gap: 1rem;
+      --header-h: 70px;
+      --transition: 0.22s ease;
+      --max-w: 1200px;
+    }
 
-    /* Painel Administrativo */
-    #admin-dashboard { display: none; }
-    .header { display: flex; justify-content: space-between; align-items: center; background: #111; color: white; padding: 1rem 2rem; border-radius: 12px; margin-bottom: 2rem; }
-    .tabs { display: flex; gap: 1rem; margin-bottom: 1rem; overflow-x: auto; padding-bottom: 5px; }
-    .tab-btn { background: #ddd; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; white-space: nowrap; }
-    .tab-btn.active { background: #25d366; color: white; }
-    
-    .panel-section { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: none; }
-    .panel-section.active { display: block; }
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:var(--ff);
+      margin:0;
+      color:var(--txt-dark);
+      background:var(--bg-light);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+    }
 
-    /* Tabelas */
-    .table-container { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px; }
-    th, td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
-    .status-btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100px; text-align: center; transition: 0.2s; }
-    .btn-on { background: #28a745; color: white; }
-    .btn-off { background: #dc3545; color: white; }
-    .input-preco { width: 80px; padding: 6px; border-radius: 6px; border: 1px solid #ccc; text-align: center; font-weight: bold; }
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    .main-header{
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      height:var(--header-h);
+      display:flex;
+      align-items:center;
+      z-index:1200;
+      background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
+      box-shadow:0 4px 12px rgba(0,0,0,0.06);
+      transition:background var(--transition);
+    }
+    .header-inner{
+      width:100%;
+      max-width:var(--max-w);
+      margin:0 auto;
+      padding:0 1rem;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:1rem;
+    }
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:.6rem;
+    }
+    .logo img{
+      width:50px;height:50px;border-radius:50%;object-fit:cover; border: 2px solid var(--cor-principal);
+    }
+    .brand{
+      font-weight:700;font-size:1rem;color:var(--txt-dark);
+    }
+
+    .status-modesto {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; font-weight: 700; color: var(--muted);
+      background: rgba(0,0,0,0.05); padding: 5px 12px; border-radius: 50px;
+      margin-left: auto; margin-right: 1rem; 
+    }
+    @media(min-width: 1000px) { .status-modesto { margin-left: 1rem; margin-right: 0; } }
+
+    .status-bolinha { width: 8px; height: 8px; border-radius: 50%; background: #ccc; }
+    .status-aberto .status-bolinha { background: var(--sucesso); box-shadow: 0 0 0 2px rgba(40,167,69,0.2); animation: piscar 2s infinite; }
+    .status-aberto { color: var(--sucesso); border: 1px solid rgba(40,167,69,0.2); background: rgba(40,167,69,0.05); }
+    .status-fechado .status-bolinha { background: var(--erro); }
+    .status-fechado { color: var(--erro); opacity: 0.9; border: 1px solid rgba(220,53,69,0.2); background: rgba(220,53,69,0.05); }
+    @keyframes piscar { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+    .main-nav{display:none}
+    .nav-links{display:flex;gap:1rem;align-items:center;list-style:none}
+    .nav-links a{padding:.5rem .6rem;border-radius:8px;color:var(--txt-dark);font-weight:600}
+    .nav-links a:hover{background:rgba(0,0,0,0.04)}
+
+    #mobile-nav-toggle{
+      background:transparent;border:0;padding:.4rem;border-radius:8px;cursor:pointer;
+      display:flex;flex-direction:column;gap:4px;
+    }
+    #mobile-nav-toggle .bar{
+      width:22px;height:2px;background:#111;display:block;border-radius:2px;transition:transform .2s;
+    }
+
+    .nav-mobile{
+      position:fixed;top:0;right:0;height:100vh;width:84%;max-width:360px;background:var(--bg-dark);color:var(--txt-light);
+      transform:translateX(110%);transition:transform .35s cubic-bezier(.22,.9,.33,1);z-index:1300;padding-top:var(--header-h);
+      display:flex;flex-direction:column;
+    }
+    .nav-mobile.is-open{transform:translateX(0)}
+    .nav-mobile .nav-mobile-links{padding:1.6rem;display:flex;flex-direction:column;gap:.6rem}
+    .nav-mobile a{color:var(--txt-light);padding:.9rem;border-radius:8px;font-weight:700}
+    .nav-mobile a:hover{background:rgba(255,255,255,0.04)}
+    .mobile-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1250;opacity:0;visibility:hidden;transition:opacity .3s}
+    .mobile-overlay.is-open{opacity:1;visibility:visible}
+
+    #hero{
+      display:flex;align-items:center;justify-content:center;
+      min-height:calc(100vh - var(--header-h));
+      padding-top:var(--header-h);
+      background:linear-gradient(180deg,#fff6b8 0%, #ffd400 40%);
+      text-align:center;
+    }
+    .hero-inner{max-width:var(--max-w);margin:0 auto;padding:3.2rem 1rem}
+    .hero h1{font-size:2.1rem;margin:.2rem 0 0.6rem;line-height:1.05}
+    .hero p.lead{font-size:1.05rem;color:var(--txt-dark);margin-bottom:1rem;max-width:720px;margin-left:auto;margin-right:auto}
+    .cta-row{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
+    .btn{
+      background:var(--bg-dark);color:var(--txt-light);padding:.85rem 1rem;border-radius:10px;font-weight:700;border:0;cursor:pointer;
+      box-shadow:0 6px 18px rgba(0,0,0,0.12);transition:transform .15s ease, box-shadow .15s;
+    }
+    .btn.secondary{
+      background:transparent;color:var(--bg-dark);border:2px solid rgba(0,0,0,0.06);
+    }
+    .btn:active{transform:translateY(1px)}
+
+    .container{width:100%;max-width:var(--max-w);margin:0 auto;padding:1rem}
+    .section{padding:3rem 0}
+    .section h2{font-size:1.6rem;margin-bottom:.5rem}
+    .section p{color:var(--muted)}
+
+    .product-grid{
+      display:grid;
+      grid-template-columns:repeat(1,1fr);
+      gap:1rem;
+      margin-top:1rem;
+    }
+    .product-card{
+      background:#fff;border-radius:14px;padding:0;overflow:hidden;display:flex;gap:0;
+      align-items:stretch;box-shadow:0 6px 20px rgba(18,18,18,0.06);
+    }
+    .product-card-image{width:36%;min-height:120px;object-fit:cover; cursor: pointer;}
+    .product-card-content{padding:1rem;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+    .product-card-content h3{margin:0 0 .25rem;font-size:1.05rem}
+    .product-card-content .description{font-size:.92rem;color:var(--muted);margin-bottom:.6rem}
+    .product-card-footer{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+    .product-price{font-weight:800;color:var(--bg-dark)}
+    .btn-add-cart{background:linear-gradient(180deg,var(--cor-principal),#ffc500);color:#111;padding:.5rem .75rem;border-radius:10px;font-weight:800;border:0;cursor:pointer}
+    .btn-add-cart:active{transform:translateY(1px)}
+
+    #cart-toggle-btn{
+      position:fixed;right:1rem;bottom:1rem;background:var(--bg-dark);color:var(--txt-light);border-radius:999px;padding:.65rem .8rem;display:flex;align-items:center;gap:.6rem;z-index:1400;border:0;box-shadow:0 12px 30px rgba(0,0,0,0.18);cursor:pointer;
+    }
+    #cart-toggle-btn .count{background:var(--cor-principal);color:#111;padding:.18rem .45rem;border-radius:999px;font-weight:700;font-size:.9rem}
+
+    #cart-modal{position:fixed;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:1rem;z-index:1400;pointer-events:none}
+    #cart-modal.visible{pointer-events:auto}
+    .cart-content{
+      width:100%;max-width:420px;background:#fff;border-radius:14px;padding:1rem;box-shadow:0 20px 40px rgba(0,0,0,0.18);transform:translateY(100%);transition:transform .28s cubic-bezier(.2,.9,.25,1);
+      max-height:88vh;overflow:auto;
+    }
+    #cart-modal.visible .cart-content{transform:translateY(0)}
+    .cart-header{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+    .cart-body{margin-top:.8rem}
+    .cart-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem;border-radius:10px;border:1px solid rgba(0,0,0,0.04);margin-bottom:.6rem;background:#fcfcfd}
+    .cart-item h4{margin:0;font-size:.98rem}
+    .cart-item .controls{display:flex;gap:.4rem;align-items:center}
+    
+    .icon-btn{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:.25rem .45rem;border-radius:8px;cursor:pointer}
+    #cart-clear { background: #f0f0f0; border: none; font-size: 0.85rem; padding: 0.4rem 0.8rem; }
+    #cart-close-btn { background: var(--erro); color: white; border: none; font-weight: bold; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
+    
+    .cart-summary{margin-top:1rem;border-top:1px dashed rgba(0,0,0,0.06);padding-top:1rem}
+    .summary-row{display:flex;justify-content:space-between;margin-bottom:.45rem;font-weight:700}
+    .total{font-size:1.05rem}
+
+    .form-group{margin-bottom:.8rem}
+    label{display:block;margin-bottom:.2rem;font-weight:700}
+    .form-control{width:100%;padding:.6rem;border-radius:8px;border:1px solid rgba(0,0,0,0.08)}
+    .form-control:focus{outline:2px solid rgba(0,0,0,0.06)}
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+    .span-2 { grid-column: span 2; }
+
+    .btn-gps {
+      background: var(--bg-dark); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem;
+      border: 0; cursor: pointer; display: flex; align-items: center; gap: 5px; margin-bottom: 5px; width: 100%; justify-content: center;
+    }
+
+    #image-zoom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1500; display: none; align-items: center; justify-content: center; padding: 1rem; }
+    #image-zoom-modal.visible { display: flex; animation: fadeIn .3s ease; }
+    #zoomed-image { max-width: 100%; max-height: 90vh; border-radius: 12px; }
+    #close-zoom { position: absolute; top: 1rem; right: 1rem; color: #fff; background: transparent; border: 0; font-size: 2rem; cursor: pointer; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    #order-tracker {
+      display: none; 
+      position: fixed; inset: 0; background: #fff; z-index: 2000;
+      flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 2rem;
+    }
+    #order-tracker.active { display: flex; }
+    .tracker-icon { font-size: 4rem; margin-bottom: 1rem; animation: bounce 2s infinite; }
+    .tracker-status { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--bg-dark); }
+    .tracker-timer { font-size: 2.5rem; font-weight: 900; color: var(--cor-principal); margin: 1rem 0; font-family: monospace; }
+    .tracker-steps { display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 300px; margin-top: 1.5rem; }
+    .step { display: flex; align-items: center; gap: 10px; opacity: 0.4; transition: opacity 0.5s; }
+    .step.active { opacity: 1; font-weight: 700; color: var(--sucesso); }
+    .step-icon { width: 20px; height: 20px; border-radius: 50%; background: #ccc; }
+    .step.active .step-icon { background: var(--sucesso); }
+    
+    @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
+
+    footer{padding:2rem 0;background:#fff;margin-top:2rem}
+    .footer-container{display:flex;flex-wrap:wrap;gap:1.2rem;align-items:flex-start;justify-content:space-between}
+    .footer-contact p{margin:.25rem 0}
+    .social-links{display:flex;gap:.6rem;list-style:none;padding:0;margin:0}
+
+    @media(min-width:700px){
+      .product-grid{grid-template-columns:repeat(2,1fr)}
+      .product-card-image{width:40%}
+    }
+    @media(min-width:1000px){
+      .main-nav{display:block}
+      #mobile-nav-toggle{display:none}
+      .nav-mobile,.mobile-overlay{display:none}
+      .product-grid{grid-template-columns:repeat(3,1fr)}
+      #hero .hero-inner{padding:5rem 1rem}
+      .hero h1{font-size:2.8rem}
+    }
+
+    :focus-visible{outline:3px solid var(--cor-principal);outline-offset:3px;border-radius:8px}
   </style>
 </head>
 <body>
 
-  <div id="login-screen">
-    <div class="login-box">
-      <img src="https://i.postimg.cc/bYCjz5WZ/Picsart-25-11-03-11-29-40-541.png" width="80" style="border-radius:50%; margin-bottom: 1rem;">
-      <h2>Acesso Restrito</h2>
-      <input type="email" id="email" placeholder="E-mail" />
-      <input type="password" id="senha" placeholder="Senha" />
-      <button class="btn" onclick="fazerLogin()">Entrar no Painel</button>
-      <p id="erro-login" style="color: red; display: none; font-size: 0.9rem; margin-top: 10px;">Login ou senha incorretos.</p>
-    </div>
+  <div id="mobile-overlay" class="mobile-overlay" aria-hidden="true"></div>
+
+  <div id="image-zoom-modal" aria-hidden="true">
+    <button id="close-zoom" aria-label="Fechar zoom">✕</button>
+    <img id="zoomed-image" src="" alt="Produto ampliado">
   </div>
 
-  <div id="admin-dashboard" class="container">
-    <div class="header">
-      <h2 style="margin: 0; font-size: 1.3rem;">Gestão - Lanche do Professor</h2>
-      <button onclick="fazerLogout()" style="background:transparent; color:white; border:1px solid white; padding:6px 16px; border-radius:6px; cursor:pointer; font-weight: bold;">Sair</button>
+  <div id="order-tracker">
+    <div class="tracker-icon">🛵</div>
+    <div class="tracker-status" id="status-text">Recebendo Pedido...</div>
+    <div class="tracker-timer" id="countdown">20:00</div>
+    
+    <div class="tracker-steps">
+      <div class="step active" id="step1"><div class="step-icon"></div> Pedido Recebido</div>
+      <div class="step" id="step2"><div class="step-icon"></div> Preparando Lanche</div>
+      <div class="step" id="step3"><div class="step-icon"></div> Saiu para Entrega</div>
     </div>
 
-    <div class="tabs">
-      <button class="tab-btn active" onclick="mudarAba('pedidos')">🔔 Pedidos ao Vivo</button>
-      <button class="tab-btn" onclick="mudarAba('produtos')">🍔 Gerir Produtos</button>
-    </div>
-
-    <div id="pedidos" class="panel-section active">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <h3 style="margin: 0;">Relatório de Pedidos</h3>
-        <span style="font-size: 0.8rem; color: #28a745; font-weight: bold;">🟢 A escutar novos pedidos...</span>
-      </div>
-      <div class="table-container">
-        <table>
-          <thead><tr><th>Data/Hora</th><th>Cliente</th><th>Contato</th><th>Tipo</th><th>Total</th><th>Detalhes</th></tr></thead>
-          <tbody id="lista-pedidos">
-            <tr><td colspan="6" style="text-align: center; color: #888;">A carregar pedidos...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div id="produtos" class="panel-section">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <h3 style="margin: 0;">Cardápio e Preços</h3>
-        <button class="btn" style="width: auto; padding: 5px 15px; font-size: 0.8rem;" onclick="forcarSincronizacao()">🔄 Forçar Sincronização</button>
-      </div>
-      <p style="font-size: 0.9rem; color: #666;">Altere o preço ou o estado (Ativo/Esgotado) e clique em Salvar.</p>
-      <div class="table-container">
-        <table>
-          <thead><tr><th>Produto</th><th>Preço (R$)</th><th>Estado</th><th>Ação</th></tr></thead>
-          <tbody id="lista-produtos">
-             <tr><td colspan="4" style="text-align: center; color: #888;">A carregar produtos do banco de dados...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <button onclick="location.reload()" style="margin-top: 2rem; background: transparent; border: 1px solid #ccc; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Fazer Novo Pedido</button>
   </div>
 
-  <div id="modal-detalhes" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center;">
-    <div style="background:white; padding:2rem; border-radius:12px; width:90%; max-width:500px; max-height:80vh; overflow-y:auto;">
-      <h3 style="margin-top:0;">Detalhes do Pedido</h3>
-      <pre id="texto-detalhes" style="white-space: pre-wrap; font-family: monospace; background:#f4f4f4; padding:1rem; border-radius:8px;"></pre>
-      <button class="btn" onclick="document.getElementById('modal-detalhes').style.display='none'" style="margin-top:1rem;">Fechar</button>
+  <header class="main-header" id="main-header" role="banner">
+    <div class="header-inner">
+      <a href="#hero" class="logo" aria-label="Lanche do Professor - início">
+        <img src="https://i.postimg.cc/bYCjz5WZ/Picsart-25-11-03-11-29-40-541.png" alt="Ícone - Lanche do Professor">
+        <div class="brand">Lanche do Professor</div>
+      </a>
+
+      <div id="status-cabecalho" class="status-modesto">
+        <span class="status-bolinha"></span>
+        <span id="status-texto-cabecalho">Verificando...</span>
+      </div>
+
+      <nav class="main-nav" role="navigation" aria-label="Navegação principal">
+        <ul class="nav-links" role="menubar">
+          <li role="none"><a role="menuitem" href="#cardapio">Cardápio</a></li>
+          <li role="none"><a role="menuitem" href="#sobre">Sobre</a></li>
+          <li role="none"><a role="menuitem" href="#localizacao">Localização</a></li>
+        </ul>
+      </nav>
+
+      <button id="mobile-nav-toggle" aria-controls="nav-mobile" aria-expanded="false" aria-label="Abrir menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
     </div>
-  </div>
+  </header>
 
-  <script>
-    // CHAVES DO FIREBASE INSERIDAS
-    const firebaseConfig = {
-      apiKey: "AIzaSyBiMg-u2r6BYwjjdjV4ItuJfnsCSsTCqc0",
-      authDomain: "lanche-do-professor.firebaseapp.com",
-      projectId: "lanche-do-professor",
-      storageBucket: "lanche-do-professor.firebasestorage.app",
-      messagingSenderId: "921836830559",
-      appId: "1:921836830559:web:a1da6e2fffae48c58d80ea"
-    };
+  <nav id="nav-mobile" class="nav-mobile" aria-hidden="true" aria-label="Menu mobile">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:1rem 1.2rem;border-bottom:1px solid rgba(255,255,255,0.03)">
+      <div style="font-weight:800">Menu</div>
+      <button id="mobile-close" aria-label="Fechar menu" class="icon-btn" style="background:transparent;border:0;color:inherit;font-size:1.5rem;cursor:pointer">✕</button>
+    </div>
+    <div class="nav-mobile-links">
+      <a href="#cardapio" data-anchor>Cardápio</a>
+      <a href="#sobre" data-anchor>Sobre Nós</a>
+      <a href="#localizacao" data-anchor>Localização</a>
+      <a href="https://wa.me/5521996470174" target="_blank" rel="noopener noreferrer" style="margin-top:.6rem;background:var(--cor-accent);padding:.75rem;border-radius:10px;text-align:center;font-weight:800">Pedir pelo WhatsApp</a>
+    </div>
+  </nav>
 
-    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    const audioNotificacao = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3');
-    let primeiraCargaPedidos = true;
-
-    // Cardápio que será salvo no Firebase. Erro de Sintaxe corrigido aqui!
-    const produtosIniciais = [
-      { id: 'pas1', name: 'Pastel de Carne', price: 9.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/VNZKXSb1/pastel-maria.jpg', available: true },
-      { id: 'pas2', name: 'Pastel de Queijo', price: 9.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/gJPnSsh8/990810f9242641a8e264ce996a78ed28-XL.jpg', available: true },
-      { id: 'pas3', name: 'Pastel de Pizza', price: 9.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/9MG1KLNs/pizza-tradicional.jpg', available: true },
-      { id: 'pas4', name: 'Pastel de Frango c/ Catupiry', price: 9.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/7PjthTg4/images.jpg', available: true },
-      { id: 'pas5', name: 'Pastel de Camarão', price: 12.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/3xc5NDQy/pastel-de-camarao-com-queijo-portal-minha-receita-1-500x281.jpg', available: false },
-      { id: 'pas6', name: 'Pastel de Carne Seca', price: 12.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg', available: false },
-      { id: 'pas7', name: 'Pastel de Arraia', price: 12.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg', available: false },
-      { id: 'pas8', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg', available: false },
-      { id: 'pas9', name: 'Pastel de Siri', price: 12.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg', available: false },
-      { id: 'pas10', name: 'Pastel de Banana com Canela', price: 12.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg', available: false },
-      { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg', available: true },
-      { id: 'cal1', name: 'Garrafa de Caldo 500ml', price: 8.00, category: 'caldo', imageUrl: 'https://i.postimg.cc/D0BtSDZp/D-Q-NP-2X-869138-MLB91945553217-092025-T-garrafa-plast-descartavel-300ml-sucocaldo-de-cana-c30un.webp', available: true },
-      { id: 'bev1', name: 'Refrigerante (lata)', price: 7.00, category: 'bebidas', imageUrl: 'https://i.postimg.cc/bNK77B6g/istockphoto-477567554-612x612.jpg', available: true },
-      { id: 'bev2', name: 'Refrigerente Mini', price: 4.00, category: 'bebidas', imageUrl: 'https://i.postimg.cc/zGQFts05/623a090228197.webp', available: true },
-      { id: 'bev3', name: 'Guaracamp', price: 3.50, category: 'bebidas', imageUrl: 'https://i.postimg.cc/sDQXPbQz/images-1.jpg', available: true },
-      { id: 'bev4', name: 'Água natural', price: 3.00, category: 'bebidas', imageUrl: 'https://i.postimg.cc/xj7HSvL0/shutterstock-174041981.jpg', available: true },
-      { id: 'bev5', name: 'Água com gás', price: 4.00, category: 'bebidas', imageUrl: 'https://i.postimg.cc/FKDpbY8C/CAPA-BONS-FLUIDOS-27.jpg', available: true },
-      { id: 'sal1', name: 'Pastel de Forno de Frango', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/pXn3RM1S/massa-de-pastel-de-forno.jpg', available: true },
-      { id: 'sal2', name: 'Coxinha', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/x1f7HN1w/03-pc027ubzik.png', available: true },
-      { id: 'sal3', name: 'Hambúrguer (com cheddar)', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true },
-      { id: 'sal4', name: 'Hambúrguer (sem cheddar)', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true },
-      { id: 'sal5', name: 'Joelho', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/mZPJYpF5/images-2.jpg', available: true },
-      { id: 'sal6', name: 'Esfiha', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/mkTcs1M7/esfirradecarnelouca.webp', available: true },
-      { id: 'sal7', name: 'Cachorro quente de forno', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/Px5sntJv/images-3.jpg', available: true },
-      { id: 'sal8', name: 'Bolinho de Aipim - Carne', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/k42CtJmk/Bolinho-de-aimpim.jpg', available: true },
-      { id: 'sal9', name: 'Bolinho de Aipim - Queijo', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/gkJVX1XW/9900510.jpg', available: true },
-      { id: 'sal10', name: 'Bolinho de Aipim - Pizza', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/pr9dxQrh/hqdefault.jpg', available: true },
-      { id: 'sal11', name: 'Bolinho de Aipim - Carne Seca', price: 7.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/s26Qrgmp/bolinho2.jpg', available: true },
-      { id: 'b1', name: 'Bolo - Cenoura (fatia)', price: 5.00, category: 'bolos', imageUrl: 'https://i.postimg.cc/sgG0SMQ1/images-4.jpg', available: true },
-      { id: 'b2', name: 'Bolo - Fubá (fatia)', price: 5.00, category: 'bolos', imageUrl: 'https://i.postimg.cc/FHxG00Fh/images-5.jpg', available: true },
-      { id: 'b3', name: 'Bolo - Banana (fatia)', price: 5.00, category: 'bolos', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg', available: false },
-      { id: 'novo2', name: 'Pastel de Frango Caipira', price: 9.00, category: 'pasteis', imageUrl: 'https://i.postimg.cc/ZYHVsHGJ/Screenshot-20260319-181437-2.jpg', available: true },
-      { id: 'sal99', name: 'Croissant de Queijo e Presunto', price: 8.00, category: 'salgados', imageUrl: 'https://i.postimg.cc/ZRCsrdqW/Screenshot-20260319-183502-2.jpg', available: true }
-    ];
-
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('admin-dashboard').style.display = 'block';
-        iniciarPainel();
-      } else {
-        document.getElementById('login-screen').style.display = 'flex';
-        document.getElementById('admin-dashboard').style.display = 'none';
-      }
-    });
-
-    function fazerLogin() {
-      const email = document.getElementById('email').value;
-      const senha = document.getElementById('senha').value;
-      auth.signInWithEmailAndPassword(email, senha).catch(error => {
-        document.getElementById('erro-login').style.display = 'block';
-      });
-    }
-
-    function fazerLogout() { auth.signOut(); }
-
-    function mudarAba(abaId) {
-      document.querySelectorAll('.panel-section').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      document.getElementById(abaId).classList.add('active');
-      event.target.classList.add('active');
-    }
-
-    function iniciarPainel() {
-      carregarProdutos();
-      ouvirPedidos();
-    }
-
-    // Função para forçar a atualização do Firebase com os produtos escritos no código acima
-    window.forcarSincronizacao = function() {
-      const batch = db.batch();
-      produtosIniciais.forEach(p => {
-        const docRef = db.collection('produtos').doc(p.id);
-        batch.set(docRef, p, { merge: true }); // Merge true adiciona sem apagar o que já existe de bom
-      });
-      batch.commit().then(() => {
-        alert("Sincronização concluída! Os novos produtos foram enviados para a base de dados.");
-        carregarProdutos();
-      }).catch(err => {
-        console.error(err);
-        alert("Erro ao sincronizar.");
-      });
-    }
-
-    function carregarProdutos() {
-      db.collection('produtos').get().then(snapshot => {
-        if (snapshot.empty) {
-          forcarSincronizacao();
-        } else {
-          let html = '';
-          const produtosArray = [];
-          snapshot.forEach(doc => produtosArray.push({ id: doc.id, ...doc.data() }));
-          produtosArray.sort((a, b) => a.name.localeCompare(b.name));
-
-          produtosArray.forEach(p => {
-            const statusClass = p.available !== false ? 'btn-on' : 'btn-off';
-            const statusText = p.available !== false ? 'Ativo' : 'Esgotado';
-            html += `
-              <tr>
-                <td><strong>${p.name}</strong></td>
-                <td><input type="number" id="preco-${p.id}" class="input-preco" value="${p.price.toFixed(2)}" step="0.50"></td>
-                <td><button class="status-btn ${statusClass}" onclick="alternarStatus('${p.id}', ${p.available !== false})">${statusText}</button></td>
-                <td><button class="btn" style="padding: 6px 12px; width:auto;" onclick="salvarPreco('${p.id}')">Salvar</button></td>
-              </tr>
-            `;
-          });
-          document.getElementById('lista-produtos').innerHTML = html;
-        }
-      });
-    }
-
-    window.alternarStatus = function(id, statusAtual) {
-      const novoStatus = !statusAtual;
-      db.collection('produtos').doc(id).update({ available: novoStatus }).then(() => {
-        carregarProdutos(); 
-      });
-    }
-
-    window.salvarPreco = function(id) {
-      const novoPreco = parseFloat(document.getElementById(`preco-${id}`).value);
-      if(isNaN(novoPreco)) return alert("Preço inválido!");
-      db.collection('produtos').doc(id).update({ price: novoPreco }).then(() => {
-        alert("Preço atualizado!");
-      });
-    }
-
-    function ouvirPedidos() {
-      db.collection('pedidos').orderBy('timestamp', 'desc').limit(50).onSnapshot(snapshot => {
-        let html = '';
-        if (snapshot.empty) {
-            document.getElementById('lista-pedidos').innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum pedido recebido ainda.</td></tr>';
-            return;
-        }
-
-        snapshot.forEach(doc => {
-          const ped = doc.data();
-          const dataHora = ped.timestamp ? ped.timestamp.toDate().toLocaleString('pt-BR') : 'Agora';
-          const tipoCor = ped.tipo === 'Entrega' ? '#007bff' : '#fd7e14';
-          const btnHtml = `<button class="btn" style="padding: 5px; font-size: 0.8rem; width: auto;" onclick='verDetalhes(${JSON.stringify(ped.mensagem || "Detalhes indisponíveis.")})'>Ver</button>`;
-
-          html += `
-            <tr>
-              <td style="font-size:0.85rem; color:#555;">${dataHora}</td>
-              <td><strong>${ped.cliente}</strong></td>
-              <td>${ped.contato}</td>
-              <td><span style="background:${tipoCor}; color:white; padding:3px 8px; border-radius:4px; font-size:0.8rem;">${ped.tipo}</span></td>
-              <td><strong>R$ ${ped.total.toFixed(2).replace('.',',')}</strong></td>
-              <td>${btnHtml}</td>
-            </tr>
-          `;
-        });
+  <main id="main-content" tabindex="-1">
+    <section id="hero" class="hero" role="region" aria-label="ENTREGA RÀPIDA E GRATIS">
+      <div class="hero-inner container" data-aos="fade-up">
+        <h1>FAÇA SEU PEDIDO!</h1>
         
-        document.getElementById('lista-pedidos').innerHTML = html;
+        <p class="lead">Funcionando de Segunda a Sexta.<br>Delivery: 16h → 1h da manhã.</p>
+        
+        <p class="lead" style="font-size:0.95rem; margin-top:0.5rem"><strong>Compras acima de 25 reais , entrega GRÁTIS</strong> chegou pra salvar seu semestre com a entrega mais rápida de Seropédica.</p>
+        
+        <div class="cta-row" aria-hidden="false">
+          <a class="btn" href="#cardapio">Ver Cardápio</a>
+        </div>
+      </div>
+    </section>
 
-        snapshot.docChanges().forEach(change => {
-          if (change.type === "added" && !primeiraCargaPedidos) {
-            audioNotificacao.play().catch(() => console.log("Áudio bloqueado"));
-          }
+    <section id="cardapio" class="section" aria-labelledby="cardapio-title">
+      <div class="container">
+        <header style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+          <div>
+            <h2 id="cardapio-title">Nosso Cardápio</h2>
+            <p>Filtre por categoria e adicione ao carrinho. (Clique na foto para ampliar)</p>
+          </div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap" aria-hidden="false">
+            <button class="btn filter-btn" data-filter="all" aria-pressed="true">Todos</button>
+            <button class="btn filter-btn" data-filter="pasteis" aria-pressed="false">Pastéis</button>
+            <button class="btn filter-btn" data-filter="caldo" aria-pressed="false">Caldo de Cana</button>
+            <button class="btn filter-btn" data-filter="salgados" aria-pressed="false">Salgados</button>
+            <button class="btn filter-btn" data-filter="bebidas" aria-pressed="false">Bebidas</button>
+            <button class="btn filter-btn" data-filter="bolos" aria-pressed="false">Bolos</button>
+          </div>
+        </header>
+        <div id="product-grid" class="product-grid" role="region" aria-live="polite" aria-label="Lista de produtos"></div>
+      </div>
+    </section>
+
+    <section id="sobre" class="section section-dark" aria-labelledby="sobre-title" style="background:var(--bg-dark);color:var(--txt-light)">
+      <div class="container">
+        <h2 id="sobre-title">A lenda do Professor</h2>
+        <p style="color:rgba(255,255,255,0.85)">Reza a lenda que um professor trocou física quântica por fritura perfeita — e fez o melhor caldo de cana de Seropédica. Nossa missão: barriga cheia, mente (quase) sã.</p>
+      </div>
+    </section>
+
+    <section id="localizacao" class="section" aria-labelledby="localizacao-title">
+      <div class="container">
+        <h2 id="localizacao-title">Onde Fica a Sala dos Professores?</h2>
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div style="display:flex;flex-direction:column;gap:.6rem">
+            <strong>Endereço</strong>
+            <p>Av. Min. Fernando Costa 100 NA PRIMEIRA PASSARELA PROX. PONTO - Boa Esperança, Seropédica - RJ, 23890-005</p>
+            <p><strong>Ponto de referência:</strong> PRIMEIRA PASSARELA NO CENTRO DE SEROPEDICA</p>
+            <a class="btn" href="https://wa.me/5521996470174" target="_blank" rel="noopener noreferrer" style="background:var(--cor-accent)">Pedir pelo WhatsApp</a>
+          </div>
+          <div style="border-radius:12px;overflow:hidden">
+            <iframe 
+              src="https://www.google.com/maps?q=Av.+Min.+Fernando+Costa+100+Boa+Esperanca+Seropedica+RJ&output=embed"
+              width="100%" height="320" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa - Lanche do Professor">
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <button id="cart-toggle-btn" aria-controls="cart-modal" aria-haspopup="dialog" aria-expanded="false" aria-label="Abrir carrinho de compras">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.9 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+    <span class="count" id="cart-item-count">0</span>
+  </button>
+
+  <div id="cart-modal" role="dialog" aria-modal="true" aria-labelledby="cart-title" aria-hidden="true">
+    <div class="cart-content" role="document">
+      <header class="cart-header">
+        <h3 id="cart-title">Seu Pedido</h3>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <button id="cart-clear" class="icon-btn" title="Limpar carrinho">Limpar</button>
+          <button id="cart-close-btn" class="icon-btn" aria-label="Fechar">✕</button>
+        </div>
+      </header>
+      <div class="cart-body" id="cart-body">
+        <p id="cart-empty-msg" style="color:var(--muted)">Seu carrinho está vazio.</p>
+        <ul id="cart-items-list" style="list-style:none;padding:0;margin:0"></ul>
+      </div>
+      <div class="cart-summary" id="cart-summary">
+        <div class="summary-row"><span>Subtotal</span><span id="cart-subtotal">R$ 0,00</span></div>
+        <div class="summary-row"><span>Taxa de Entrega</span><span id="cart-delivery-fee">R$ 0,00</span></div>
+        <div id="delivery-fee-msg" style="color:var(--muted);font-size:.95rem;margin-top:.4rem"></div>
+        <div class="summary-row total"><strong>Total</strong><strong id="cart-total">R$ 0,00</strong></div>
+
+        <form id="checkout-form" style="margin-top:1rem">
+          <div class="form-group">
+            <label for="cliente-nome">👤 Nome Completo</label>
+            <input id="cliente-nome" name="nome" class="form-control" required placeholder="Ex: Wellington Silva" />
+          </div>
+          <div class="form-group">
+            <label for="cliente-contato">📱 WhatsApp / Telefone</label>
+            <input id="cliente-contato" type="tel" class="form-control" required placeholder="(21) 99999-9999" />
+          </div>
+          
+          <div class="form-group">
+            <label for="tipo-entrega">🛵 Como prefere receber?</label>
+            <select id="tipo-entrega" class="form-control" required>
+              <option value="Retirada">Vou Buscar (Retirada)</option>
+              <option value="Entrega">Delivery (Entrega)</option>
+            </select>
+          </div>
+          <div id="endereco-field" class="form-group" style="display:none">
+            
+            <button type="button" class="btn-gps" onclick="getLocation()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              Usar Localização Atual
+            </button>
+
+            <div class="form-grid">
+               <div class="span-2">
+                 <label>Rua e Número</label>
+                 <input id="end-rua" class="form-control" placeholder="Rua das Limeiras, 13" />
+               </div>
+               <div>
+                 <label>Bairro</label>
+                 <input id="end-bairro" class="form-control" placeholder="Centro" />
+               </div>
+               <div>
+                 <label>Complemento</label>
+                 <input id="end-complemento" class="form-control" placeholder="Apto 101, Fundos..." />
+               </div>
+               <div class="span-2">
+                 <label>🏁 Ponto de Referência</label>
+                 <input id="end-ref" class="form-control" placeholder="Perto do Colégio" />
+               </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="forma-pagamento">💳 Forma de Pagamento</label>
+            <select id="forma-pagamento" class="form-control" required>
+              <option value="Pix">Pix</option>
+              <option value="Cartão">Cartão (Débito/Crédito)</option>
+              <option value="Dinheiro">Dinheiro</option>
+            </select>
+          </div>
+          <div id="troco-field" class="form-group" style="display:none">
+            <label for="valor-troco">💵 Troco para quanto?</label>
+            <input id="valor-troco" type="number" class="form-control" placeholder="Ex: 50" />
+          </div>
+          <button id="send-order-btn" type="submit" class="btn" style="flex:1; width: 100%; background: var(--cor-accent);">Enviar Pedido Agora</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    (function(){
+      // INICIALIZAÇÃO DO EMAILJS
+      emailjs.init("I411iBg-_msw-aK29");
+
+      // VERIFICAÇÃO AUTOMÁTICA DE HORÁRIO (STATUS MODESTO)
+      function checkOpenStatus() {
+        const now = new Date();
+        const day = now.getDay(); 
+        const hour = now.getHours();
+        
+        let isOpen = false;
+
+        if (day >= 1 && day <= 5 && hour >= 16) {
+           isOpen = true;
+        } else if (day >= 2 && day <= 6 && hour < 1) {
+           isOpen = true;
+        }
+
+        const statusDiv = document.getElementById('status-cabecalho');
+        const statusText = document.getElementById('status-texto-cabecalho');
+
+        if(isOpen) {
+          statusDiv.className = 'status-modesto status-aberto';
+          statusText.textContent = 'Delivery Aberto';
+        } else {
+          statusDiv.className = 'status-modesto status-fechado';
+          statusText.textContent = 'Delivery Fechado (Abre 16h)';
+        }
+      }
+      
+      checkOpenStatus();
+      setInterval(checkOpenStatus, 60000);
+
+      window.getLocation = function() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+          alert("Geolocalização não é suportada por este navegador.");
+        }
+      }
+
+      function showPosition(position) {
+        const lat = position.coords.latitude;
+        const long = position.coords.longitude;
+        document.getElementById("end-rua").value = `Localização GPS: https://maps.google.com/?q=${lat},${long}`;
+        document.getElementById("end-bairro").value = "Localização Atual (GPS)";
+        alert("Localização capturada! O link do mapa será enviado ao motoboy.");
+      }
+
+      function showError(error) {
+        switch(error.code) {
+          case error.PERMISSION_DENIED: alert("Usuário negou a solicitação de Geolocalização."); break;
+          case error.POSITION_UNAVAILABLE: alert("Informações de localização indisponíveis."); break;
+          case error.TIMEOUT: alert("A requisição para obter a localização expirou."); break;
+          case error.UNKNOWN_ERROR: alert("Um erro desconhecido ocorreu."); break;
+        }
+      }
+
+      // =========================================================================
+      // BASE DE DADOS MANUAL - EDITE SEUS PRODUTOS E PREÇOS AQUI
+      // Mude "available: true" para "available: false" para marcar como ESGOTADO
+      // =========================================================================
+      const productDatabase = [
+        { id: 'pas1', name: 'Pastel de Carne', price: 9.00, category: 'pasteis', description: 'Pastel crocante com recheio de carne suculenta.', imageUrl: 'https://i.postimg.cc/VNZKXSb1/pastel-maria.jpg', available: true },
+        { id: 'pas2', name: 'Pastel de Queijo', price: 9.00, category: 'pasteis', description: 'Queijo derretido até a última mordida.', imageUrl: 'https://i.postimg.cc/gJPnSsh8/990810f9242641a8e264ce996a78ed28-XL.jpg', available: true },
+        { id: 'pas3', name: 'Pastel de Pizza', price: 9.00, category: 'pasteis', description: 'Sabor pizza com muito queijo e molho.', imageUrl: 'https://i.postimg.cc/9MG1KLNs/pizza-tradicional.jpg', available: true },
+        { id: 'pas4', name: 'Pastel de Frango c/ Catupiry', price: 9.00, category: 'pasteis', description: 'Frango desfiado com catupiry cremoso.', imageUrl: 'https://i.postimg.cc/7PjthTg4/images.jpg', available: true },
+        
+        { id: 'pas5', name: 'Pastel de Camarão', price: 12.00, category: 'pasteis', description: 'Camarão fresco!', imageUrl: 'https://i.postimg.cc/3xc5NDQy/pastel-de-camarao-com-queijo-portal-minha-receita-1-500x281.jpg', available: false },
+        { id: 'pas6', name: 'Pastel de Carne Seca', price: 12.00, category: 'pasteis', description: 'Carne seca desfiada!', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg', available:true },
+        { id: 'pas7', name: 'Pastel de Arraia', price: 12.00, category: 'pasteis', description: 'Uma explosão de sabor.', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg', available: false },
+        { id: 'pas8', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', description: 'Pastel delicioso de marisco.', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg', available: false },
+        { id: 'pas9', name: 'Pastel de Siri', price: 12.00, category: 'pasteis', description: 'Recheado de siri desfiado.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg', available: false },
+        { id: 'pas10', name: 'Pastel de Banana com Canela', price: 12.00, category: 'pasteis', description: 'Recheado de banana macia.', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg', available: false },
+        { id: 'pas12', name: 'Pastel de Frango Caipira', price: 9.00, category: 'pasteis', description: 'Recheado de frango caipira.', imageUrl: 'https://i.postimg.cc/ZYHVsHGJ/Screenshot-20260319-181437-2.jpg', available: false },
+        
+        { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', description: 'Goiabada e queijo.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg', available: false },
+        
+        { id: 'cal1', name: 'Garrafa de Caldo 500ml', price: 8.00, category: 'caldo', description: 'Caldo de cana moído na hora.', imageUrl: 'https://i.postimg.cc/D0BtSDZp/D-Q-NP-2X-869138-MLB91945553217-092025-T-garrafa-plast-descartavel-300ml-sucocaldo-de-cana-c30un.webp', available: true },
+        
+        { id: 'bev1', name: 'Refrigerante (lata)', price: 7.00, category: 'bebidas', description: 'Coca ou Fanta lata.', imageUrl: 'https://i.postimg.cc/bNK77B6g/istockphoto-477567554-612x612.jpg', available: true },
+        { id: 'bev2', name: 'Refrigerente Mini', price: 4.00, category: 'bebidas', description: 'Coca mini.', imageUrl: 'https://i.postimg.cc/zGQFts05/623a090228197.webp', available: true },
+        { id: 'bev3', name: 'Guaracamp', price: 3.50, category: 'bebidas', description: 'Guaracamp geladinho.', imageUrl: 'https://i.postimg.cc/sDQXPbQz/images-1.jpg', available: true },
+        { id: 'bev4', name: 'Água natural', price: 3.00, category: 'bebidas', description: 'Mineral sem gás.', imageUrl: 'https://i.postimg.cc/xj7HSvL0/shutterstock-174041981.jpg', available: true },
+        { id: 'bev5', name: 'Água com gás', price: 4.00, category: 'bebidas', description: 'Mineral com gás.', imageUrl: 'https://i.postimg.cc/FKDpbY8C/CAPA-BONS-FLUIDOS-27.jpg', available: true },
+        
+        { id: 'sal99', name: 'Croissant de Queijo e Presunto', price: 8.00, category: 'salgados', description: 'Croissant macio recheado.', imageUrl: 'https://i.postimg.cc/ZRCsrdqW/Screenshot-20260319-183502-2.jpg', available: true },
+        { id: 'sal1', name: 'Pastel de Forno de Frango', price: 7.00, category: 'salgados', description: 'Massa leve recheada com frango.', imageUrl: 'https://i.postimg.cc/pXn3RM1S/massa-de-pastel-de-forno.jpg', available: true },
+        { id: 'sal2', name: 'Coxinha', price: 7.00, category: 'salgados', description: 'Coxinha assada, crocante por fora.', imageUrl: 'https://i.postimg.cc/x1f7HN1w/03-pc027ubzik.png', available: true },
+        { id: 'sal3', name: 'Hambúrguer (com cheddar)', price: 7.00, category: 'salgados', description: 'Saboroso hambúrguer com muito cheddar.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true },
+        { id: 'sal4', name: 'Hambúrguer (sem cheddar)', price: 7.00, category: 'salgados', description: 'O clássico hambúrguer assado.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true },
+        { id: 'sal5', name: 'Joelho', price: 7.00, category: 'salgados', description: 'Joelho assado, recheado e macio.', imageUrl: 'https://i.postimg.cc/mZPJYpF5/images-2.jpg', available: false },
+        { id: 'sal6', name: 'Esfiha', price: 7.00, category: 'salgados', description: 'Tradicional sabor de carne.', imageUrl: 'https://i.postimg.cc/mkTcs1M7/esfirradecarnelouca.webp', available: true },
+        { id: 'sal7', name: 'Cachorro quente de forno', price: 7.00, category: 'salgados', description: 'O queridinho da galera.', imageUrl: 'https://i.postimg.cc/Px5sntJv/images-3.jpg', available: false },
+        { id: 'sal8', name: 'Bolinho de Aipim - Carne', price: 7.00, category: 'salgados', description: 'Aipim recheado com carne moída.', imageUrl: 'https://i.postimg.cc/k42CtJmk/Bolinho-de-aimpim.jpg', available: true },
+        { id: 'sal9', name: 'Bolinho de Aipim - Queijo', price: 7.00, category: 'salgados', description: 'Aipim recheado com queijo.', imageUrl: 'https://i.postimg.cc/gkJVX1XW/9900510.jpg', available: false },
+        { id: 'sal10', name: 'Bolinho de Aipim - Pizza', price: 7.00, category: 'salgados', description: 'Aipim sabor pizza.', imageUrl: 'https://i.postimg.cc/pr9dxQrh/hqdefault.jpg', available: false },
+        { id: 'sal11', name: 'Bolinho de Aipim - Carne Seca', price: 7.00, category: 'salgados', description: 'Aipim com deliciosa carne seca.', imageUrl: 'https://i.postimg.cc/s26Qrgmp/bolinho2.jpg', available: true },
+        
+        { id: 'b1', name: 'Bolo - Cenoura (fatia)', price: 5.00, category: 'bolos', description: 'Com calda de chocolate.', imageUrl: 'https://i.postimg.cc/sgG0SMQ1/images-4.jpg', available: true },
+        { id: 'b2', name: 'Bolo - Fubá (fatia)', price: 5.00, category: 'bolos', description: 'Bolo de vó.', imageUrl: 'https://i.postimg.cc/FHxG00Fh/images-5.jpg', available: true },
+        { id: 'b3', name: 'Bolo - Banana (fatia)', price: 5.00, category: 'bolos', description: 'Caramelizado.', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg', available: false }
+      ];
+
+      const DELIVERY_FEE = 6.00;
+      const FREE_DELIVERY_THRESHOLD = 25.00;
+      let cart = [];
+
+      const productGrid = document.getElementById('product-grid');
+      const cartItemsList = document.getElementById('cart-items-list');
+      const cartModal = document.getElementById('cart-modal');
+      const checkoutForm = document.getElementById('checkout-form');
+      const tipoEntregaSelect = document.getElementById('tipo-entrega');
+      const formaPagamentoSelect = document.getElementById('forma-pagamento');
+      const navMobile = document.getElementById('nav-mobile');
+      const mobileOverlay = document.getElementById('mobile-overlay');
+      const mobileToggle = document.getElementById('mobile-nav-toggle');
+      const mobileClose = document.getElementById('mobile-close');
+      const sendOrderBtn = document.getElementById('send-order-btn');
+      const zoomModal = document.getElementById('image-zoom-modal');
+      const zoomedImage = document.getElementById('zoomed-image');
+      const closeZoom = document.getElementById('close-zoom');
+
+      AOS.init({duration:900, once:true, easing:'ease-out-cubic'});
+
+      // Inicia a renderização diretamente com os dados manuais
+      renderProducts('all');
+
+      function startOrderSimulation() {
+        toggleCartModal(false);
+        const tracker = document.getElementById('order-tracker');
+        tracker.classList.add('active');
+        let timeLeft = 1200; 
+        const countdownEl = document.getElementById('countdown');
+        const statusText = document.getElementById('status-text');
+        const steps = [
+          document.getElementById('step1'),
+          document.getElementById('step2'),
+          document.getElementById('step3')
+        ];
+
+        const timer = setInterval(() => {
+          timeLeft--;
+          const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+          const s = (timeLeft % 60).toString().padStart(2, '0');
+          countdownEl.textContent = `${m}:${s}`;
+          if(timeLeft === 1195) { steps[0].classList.add('active'); statusText.textContent = "Pedido Aceito!"; }
+          if(timeLeft === 1180) { steps[1].classList.add('active'); statusText.textContent = "Preparando seu Lanche..."; }
+          if(timeLeft === 600) { steps[2].classList.add('active'); statusText.textContent = "Saiu para Entrega!"; }
+          if(timeLeft <= 0) { clearInterval(timer); statusText.textContent = "Pedido Entregue!"; }
+        }, 1000);
+      }
+
+      window.openZoom = function(src) {
+        zoomedImage.src = src;
+        zoomModal.classList.add('visible');
+      }
+      closeZoom.onclick = () => zoomModal.classList.remove('visible');
+      zoomModal.onclick = (e) => {
+        if(e.target === zoomModal) zoomModal.classList.remove('visible');
+      }
+
+      const closeMenu = () => {
+        navMobile.classList.remove('is-open');
+        mobileOverlay.classList.remove('is-open');
+      };
+      mobileToggle.onclick = () => {
+        navMobile.classList.add('is-open');
+        mobileOverlay.classList.add('is-open');
+      };
+      mobileClose.onclick = closeMenu;
+      
+      mobileOverlay.onclick = () => {
+         closeMenu();
+         toggleCartModal(false);
+      };
+      
+      document.querySelectorAll('.nav-mobile-links a').forEach(link => { link.onclick = closeMenu; });
+
+      function renderProducts(filter='all'){
+        productGrid.innerHTML = '';
+        const items = productDatabase.filter(p => filter==='all' || p.category===filter);
+        
+        items.forEach((p, idx)=>{
+          const isAvailable = p.available !== false; 
+          const card = document.createElement('article');
+          card.className = 'product-card';
+          card.setAttribute('data-aos','fade-up');
+          if(!isAvailable) card.style.opacity = '0.6';
+          card.innerHTML = `
+            <img class="product-card-image" src="${p.imageUrl || p.img}" alt="${p.name}" style="${!isAvailable ? 'filter: grayscale(1);' : ''}" onclick="openZoom('${p.imageUrl || p.img}')">
+            <div class="product-card-content">
+              <div>
+                <h3>${p.name} ${!isAvailable ? '<span style="color:red; font-size:0.8rem;">(ESGOTADO)</span>' : ''}</h3>
+                <p class="description">${p.description || ''}</p>
+              </div>
+              <div class="product-card-footer">
+                <div class="product-price">R$ ${p.price.toFixed(2).replace('.',',')}</div>
+                ${isAvailable 
+                  ? `<button class="btn-add-cart" onclick="addToCart('${p.id}')">Adicionar</button>`
+                  : `<button class="btn" style="background:#ccc; cursor:not-allowed;" disabled>Indisponível</button>`
+                }
+              </div>
+            </div>`;
+          productGrid.appendChild(card);
         });
-        primeiraCargaPedidos = false;
-      });
-    }
+      }
 
-    window.verDetalhes = function(texto) {
-      document.getElementById('texto-detalhes').textContent = texto;
-      document.getElementById('modal-detalhes').style.display = 'flex';
-    }
+      window.addToCart = function(id){
+        const p = productDatabase.find(x => x.id === id);
+        if (p.available === false) return alert("Desculpe, este produto acabou de esgotar!");
+        const exists = cart.find(x => x.id === id);
+        if(exists) exists.quantity++; else cart.push({...p, quantity: 1});
+        updateCart();
+        if(cart.length === 1) toggleCartModal(true);
+      };
+
+      function updateCart(){
+        document.getElementById('cart-item-count').textContent = cart.reduce((s,i)=> s + i.quantity, 0);
+        cartItemsList.innerHTML = '';
+        if(!cart.length) { document.getElementById('cart-empty-msg').style.display = 'block'; return; }
+        document.getElementById('cart-empty-msg').style.display = 'none';
+        let subtotal = 0;
+        cart.forEach(i => {
+          subtotal += i.price * i.quantity;
+          const li = document.createElement('li');
+          li.className = 'cart-item';
+          li.innerHTML = `<div><h4>${i.name}</h4><small>${i.quantity}x R$ ${i.price.toFixed(2)}</small></div>
+            <div class="controls">
+              <button class="icon-btn" onclick="changeQty('${i.id}', -1)">−</button>
+              <button class="icon-btn" onclick="changeQty('${i.id}', 1)">+</button>
+            </div>`;
+          cartItemsList.appendChild(li);
+        });
+        const taxa = (tipoEntregaSelect.value === 'Entrega' && subtotal < FREE_DELIVERY_THRESHOLD && subtotal > 0) ? DELIVERY_FEE : 0;
+        document.getElementById('cart-subtotal').textContent = 'R$ ' + subtotal.toFixed(2).replace('.',',');
+        document.getElementById('cart-delivery-fee').textContent = taxa === 0 ? 'GRÁTIS' : 'R$ ' + taxa.toFixed(2).replace('.',',');
+        document.getElementById('cart-total').textContent = 'R$ ' + (subtotal + taxa).toFixed(2).replace('.',',');
+      }
+
+      window.changeQty = (id, delta) => {
+        const item = cart.find(i => i.id === id);
+        if(item) { item.quantity += delta; if(item.quantity <= 0) cart = cart.filter(x => x.id !== id); }
+        updateCart();
+      };
+
+      function toggleCartModal(open){
+        if(open) { 
+          cartModal.classList.add('visible'); 
+          mobileOverlay.classList.add('is-open'); 
+          document.body.style.overflow = 'hidden'; 
+        } else { 
+          cartModal.classList.remove('visible');
+          mobileOverlay.classList.remove('is-open'); 
+          document.body.style.overflow = ''; 
+        }
+      }
+      
+      document.getElementById('cart-clear').onclick = () => {
+         cart = [];
+         updateCart();
+      };
+
+      tipoEntregaSelect.onchange = () => { document.getElementById('endereco-field').style.display = tipoEntregaSelect.value === 'Entrega' ? 'block' : 'none'; updateCart(); };
+      formaPagamentoSelect.onchange = () => { document.getElementById('troco-field').style.display = formaPagamentoSelect.value === 'Dinheiro' ? 'block' : 'none'; };
+
+      checkoutForm.onsubmit = (e) => {
+        e.preventDefault();
+        if(!cart.length) return alert("Carrinho vazio!");
+
+        sendOrderBtn.textContent = "Enviando pedido...";
+        sendOrderBtn.disabled = true;
+
+        const nome = document.getElementById('cliente-nome').value.toUpperCase();
+        const contato = document.getElementById('cliente-contato').value;
+        const tipo = document.getElementById('tipo-entrega').value;
+        const pag = document.getElementById('forma-pagamento').value;
+        const troco = document.getElementById('valor-troco').value;
+        const rua = document.getElementById('end-rua').value;
+        const bairro = document.getElementById('end-bairro').value;
+        const comp = document.getElementById('end-complemento').value;
+        const ref = document.getElementById('end-ref').value;
+
+        let msg = `NOVO PEDIDO — LANCHE DO PROFESSOR\n`;
+        msg += `------------------------------------------\n`;
+        msg += `Cliente: ${nome}\n`;
+        msg += `Contato: ${contato}\n`; 
+        msg += `Tipo: ${tipo}\n`;
+        if(tipo === 'Entrega') {
+          msg += `Local: ${rua}, ${bairro}${comp ? ' ('+comp+')' : ''}\n`;
+          msg += `Referência: ${ref}\n`;
+        } else {
+          msg += `Local: Retirada no Balcão\n`;
+        }
+        msg += `Pagamento: ${pag}${troco ? ' (Troco p/ R$ '+troco+')' : ''}\n\n`;
+        msg += `--- ITENS DO PEDIDO ---\n`;
+        
+        let sub = 0;
+        cart.forEach(i => {
+          msg += `- ${i.quantity}x ${i.name} — R$ ${(i.price * i.quantity).toFixed(2).replace('.',',')}\n`;
+          sub += i.price * i.quantity;
+        });
+
+        const taxa = (tipo === 'Entrega' && sub < FREE_DELIVERY_THRESHOLD) ? DELIVERY_FEE : 0;
+        msg += `\nSubtotal: R$ ${sub.toFixed(2).replace('.',',')}\n`;
+        msg += `Taxa de entrega: R$ ${taxa.toFixed(2).replace('.',',')}\n`;
+        msg += `TOTAL: R$ ${(sub + taxa).toFixed(2).replace('.',',')}\n`;
+
+        // ABRE O WHATSAPP
+        const waLink = `https://wa.me/5521996470174?text=${encodeURIComponent(msg)}`;
+        window.open(waLink, '_blank');
+
+        // ENVIA E-MAIL PARA BACKUP E ATIVA O RASTREADOR (Mantido)
+        const templateParams = {
+            message: msg,       
+            from_name: nome,    
+            reply_to: "email_cliente@exemplo.com" 
+        };
+
+        emailjs.send('service_tibjxdw', 'template_3tfwdsp', templateParams)
+          .then(function(response) {
+             alert("Pedido enviado com sucesso! Acompanhe o rastreador.");
+             cart = []; 
+             updateCart();
+             startOrderSimulation();
+             sendOrderBtn.textContent = "Enviar Pedido Agora";
+             sendOrderBtn.disabled = false;
+          }, function(error) {
+             // Caso o EmailJS falhe, a mensagem de WhatsApp já abriu, então podemos continuar a tela
+             alert("Pedido enviado para o WhatsApp!");
+             cart = [];
+             updateCart();
+             startOrderSimulation();
+             sendOrderBtn.textContent = "Enviar Pedido Agora";
+             sendOrderBtn.disabled = false;
+          });
+      };
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.onclick = () => { 
+          document.querySelectorAll('.filter-btn').forEach(b=>b.setAttribute('aria-pressed','false')); 
+          btn.setAttribute('aria-pressed','true'); renderProducts(btn.dataset.filter); 
+        };
+      });
+
+      document.getElementById('cart-toggle-btn').onclick = () => toggleCartModal(true);
+      document.getElementById('cart-close-btn').onclick = () => toggleCartModal(false);
+
+    })();
   </script>
 </body>
 </html>
