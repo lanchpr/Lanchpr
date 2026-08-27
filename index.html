@@ -195,8 +195,9 @@
 
     .form-group{margin-bottom:.8rem}
     label{display:block;margin-bottom:.2rem;font-weight:700}
-    .form-control{width:100%;padding:.6rem;border-radius:8px;border:1px solid rgba(0,0,0,0.08)}
+    .form-control{width:100%;padding:.6rem;border-radius:8px;border:1px solid rgba(0,0,0,0.08); background: #fff;}
     .form-control:focus{outline:2px solid rgba(0,0,0,0.06)}
+    select.form-control { cursor: pointer; }
 
     .form-grid {
       display: grid;
@@ -320,13 +321,13 @@
   </nav>
 
   <main id="main-content" tabindex="-1">
-    <section id="hero" class="hero" role="region" aria-label="ENTREGA RÀPIDA E GRATIS">
+    <section id="hero" class="hero" role="region" aria-label="ENTREGA RÀPIDA">
       <div class="hero-inner container" data-aos="fade-up">
         <h1>FAÇA SEU PEDIDO!</h1>
         
         <p class="lead">Funcionando de Segunda a Sexta.<br>Delivery: 16h → 1h da manhã.</p>
         
-        <p class="lead" style="font-size:0.95rem; margin-top:0.5rem"><strong>Compras acima de 25 reais , entrega GRÁTIS</strong> chegou pra salvar seu semestre com a entrega mais rápida de Seropédica.</p>
+        <p class="lead" style="font-size:0.95rem; margin-top:0.5rem">A entrega mais rápida de Seropédica chegou pra salvar seu semestre.</p>
         
         <div class="cta-row" aria-hidden="false">
           <a class="btn" href="#cardapio">Ver Cardápio</a>
@@ -432,14 +433,30 @@
 
             <div class="form-grid">
                <div class="span-2">
+                 <label>Selecione seu Bairro</label>
+                 <select id="end-bairro" class="form-control">
+                   <option value="" data-price="0" disabled selected>Pesquise pelo seu bairro...</option>
+                   <option value="Belvedere" data-price="25.00">Belvedere (Consultar disp.) (ATÉ AS 00:00) - R$ 25,00</option>
+                   <option value="Boa esperança" data-price="7.00">Boa esperança - R$ 7,00</option>
+                   <option value="Casinha" data-price="10.00">Casinha - R$ 10,00</option>
+                   <option value="Ecologia" data-price="20.00">Ecologia - R$ 20,00</option>
+                   <option value="Fazenda caxias" data-price="7.00">Fazenda caxias - R$ 7,00</option>
+                   <option value="Fonte Limpa" data-price="15.00">Fonte Limpa (Consultar disp.) (ATÉ AS 00:00) - R$ 15,00</option>
+                   <option value="Geladeira" data-price="15.00">Geladeira - R$ 15,00</option>
+                   <option value="Incra" data-price="25.00">Incra (Consultar disp.) (ATÉ AS 00:00) - R$ 25,00</option>
+                   <option value="Jardim Maracanã" data-price="25.00">Jardim Maracanã (Consultar disp.) (ATÉ AS 00:00) - R$ 25,00</option>
+                   <option value="KM 52" data-price="10.00">KM 52 - R$ 10,00</option>
+                   <option value="Rural" data-price="10.00">Rural - R$ 10,00</option>
+                   <option value="Santa Sofia até a praça" data-price="15.00">Santa Sofia até a praça - R$ 15,00</option>
+                   <option value="santa Sofia cemitério" data-price="20.00">Santa Sofia cemitério - R$ 20,00</option>
+                   <option value="São Miguel" data-price="20.00">São Miguel (Consultar disp.) (ATÉ AS 00h00) - R$ 20,00</option>
+                 </select>
+               </div>
+               <div class="span-2">
                  <label>Rua e Número</label>
                  <input id="end-rua" class="form-control" placeholder="Rua das Limeiras, 13" />
                </div>
-               <div>
-                 <label>Bairro</label>
-                 <input id="end-bairro" class="form-control" placeholder="Centro" />
-               </div>
-               <div>
+               <div class="span-2">
                  <label>Complemento</label>
                  <input id="end-complemento" class="form-control" placeholder="Apto 101, Fundos..." />
                </div>
@@ -514,7 +531,6 @@
         const lat = position.coords.latitude;
         const long = position.coords.longitude;
         document.getElementById("end-rua").value = `Localização GPS: https://maps.google.com/?q=${lat},${long}`;
-        document.getElementById("end-bairro").value = "Localização Atual (GPS)";
         alert("Localização capturada! O link do mapa será enviado ao motoboy.");
       }
 
@@ -528,54 +544,45 @@
       }
 
       // =========================================================================
-      // BASE DE DADOS MANUAL - EDITE SEUS PRODUTOS E PREÇOS AQUI
-      // Mude "available: true" para "available: false" para marcar como ESGOTADO
+      // BASE DE DADOS MANUAL
       // =========================================================================
       const productDatabase = [
-        { id: 'pas1', name: 'Pastel de Carne', price: 9.00, category: 'pasteis', description: 'Pastel crocante com recheio de carne suculenta.', imageUrl: 'https://i.postimg.cc/VNZKXSb1/pastel-maria.jpg', available: true },
-        { id: 'pas2', name: 'Pastel de Queijo', price: 9.00, category: 'pasteis', description: 'Queijo derretido até a última mordida.', imageUrl: 'https://i.postimg.cc/gJPnSsh8/990810f9242641a8e264ce996a78ed28-XL.jpg', available: true },
-        { id: 'pas3', name: 'Pastel de Pizza', price: 9.00, category: 'pasteis', description: 'Sabor pizza com muito queijo e molho.', imageUrl: 'https://i.postimg.cc/9MG1KLNs/pizza-tradicional.jpg', available: true },
-        { id: 'pas4', name: 'Pastel de Frango c/ Catupiry', price: 9.00, category: 'pasteis', description: 'Frango desfiado com catupiry cremoso.', imageUrl: 'https://i.postimg.cc/7PjthTg4/images.jpg', available: true },
-        
-        { id: 'pas5', name: 'Pastel de Camarão', price: 12.00, category: 'pasteis', description: 'Camarão fresco!', imageUrl: 'https://i.postimg.cc/3xc5NDQy/pastel-de-camarao-com-queijo-portal-minha-receita-1-500x281.jpg', available: true },
-        { id: 'pas6', name: 'Pastel de Carne Seca', price: 12.00, category: 'pasteis', description: 'Carne seca desfiada!', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg', available:true },
-        { id: 'pas7', name: 'Pastel de Arraia', price: 12.00, category: 'pasteis', description: 'Uma explosão de sabor.', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg', available: false },
+        { id: 'pas1', name: 'Pastel de Carne', price: 8.00, category: 'pasteis', description: 'Pastel crocante com recheio de carne suculenta.', imageUrl: 'https://i.postimg.cc/VNZKXSb1/pastel-maria.jpg', available: true },
+        { id: 'pas2', name: 'Pastel de Queijo', price: 8.00, category: 'pasteis', description: 'Queijo derretido até a última mordida.', imageUrl: 'https://i.postimg.cc/gJPnSsh8/990810f9242641a8e264ce996a78ed28-XL.jpg', available: true },
+        { id: 'pas3', name: 'Pastel de Pizza', price: 8.00, category: 'pasteis', description: 'Sabor pizza com muito queijo e molho.', imageUrl: 'https://i.postimg.cc/9MG1KLNs/pizza-tradicional.jpg', available: true },
+        { id: 'pas4', name: 'Pastel de Frango c/ Catupiry', price: 8.00, category: 'pasteis', description: 'Frango desfiado com catupiry cremoso.', imageUrl: 'https://i.postimg.cc/7PjthTg4/images.jpg', available: true },
+        { id: 'pas5', name: 'Pastel de Camarão', price: 10.00, category: 'pasteis', description: 'Camarão fresco!', imageUrl: 'https://i.postimg.cc/3xc5NDQy/pastel-de-camarao-com-queijo-portal-minha-receita-1-500x281.jpg', available: true },
+        { id: 'pas6', name: 'Pastel de Carne Seca', price: 9.00, category: 'pasteis', description: 'Carne seca desfiada!', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg', available:true },
+        { id: 'pas7', name: 'Pastel de Arraia', price: 10.00, category: 'pasteis', description: 'Uma explosão de sabor.', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg', available: false },
         { id: 'pas8', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', description: 'Pastel delicioso de marisco.', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg', available: false },
-        { id: 'pas9', name: 'Pastel de Siri', price: 12.00, category: 'pasteis', description: 'Recheado de siri desfiado.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg', available: false },
-        { id: 'pas10', name: 'Pastel de Banana com Canela', price: 12.00, category: 'pasteis', description: 'Recheado de banana macia.', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg', available: false },
-        { id: 'pas12', name: 'Pastel de Frango Caipira', price: 9.00, category: 'pasteis', description: 'Recheado de frango caipira.', imageUrl: 'https://i.postimg.cc/ZYHVsHGJ/Screenshot-20260319-181437-2.jpg', available: true },
-        { id: 'pas13', name: 'Pastel de Calabresa', price: 9.00, category: 'pasteis', description: 'Recheado de calabresa e queijo.', imageUrl: 'https://i.postimg.cc/pVmWXTQJ/Screenshot-20260601-164607-2.jpg', available: false },
-        
-        { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 12.00, category: 'pasteis', description: 'Goiabada e queijo.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg', available: false },
-        
-        { id: 'cal1', name: 'Garrafa de Caldo 500ml', price: 8.00, category: 'caldo', description: 'Caldo de cana moído na hora.', imageUrl: 'https://i.postimg.cc/D0BtSDZp/D-Q-NP-2X-869138-MLB91945553217-092025-T-garrafa-plast-descartavel-300ml-sucocaldo-de-cana-c30un.webp', available: true },
-        
-        { id: 'bev1', name: 'Refrigerante (lata)', price: 7.00, category: 'bebidas', description: 'Coca ou Fanta lata.', imageUrl: 'https://i.postimg.cc/bNK77B6g/istockphoto-477567554-612x612.jpg', available: true },
-        { id: 'bev2', name: 'Refrigerente Mini', price: 4.00, category: 'bebidas', description: 'Coca mini.', imageUrl: 'https://i.postimg.cc/zGQFts05/623a090228197.webp', available: true },
-        { id: 'bev3', name: 'Guaracamp', price: 3.50, category: 'bebidas', description: 'Guaracamp geladinho.', imageUrl: 'https://i.postimg.cc/sDQXPbQz/images-1.jpg', available: true },
-        { id: 'bev4', name: 'Água natural', price: 3.00, category: 'bebidas', description: 'Mineral sem gás.', imageUrl: 'https://i.postimg.cc/xj7HSvL0/shutterstock-174041981.jpg', available: true },
-        { id: 'bev5', name: 'Água com gás', price: 4.00, category: 'bebidas', description: 'Mineral com gás.', imageUrl: 'https://i.postimg.cc/FKDpbY8C/CAPA-BONS-FLUIDOS-27.jpg', available: true },
-        
-        { id: 'sal99', name: 'Croissant de Queijo e Presunto', price: 8.00, category: 'salgados', description: 'Croissant macio recheado.', imageUrl: 'https://i.postimg.cc/ZRCsrdqW/Screenshot-20260319-183502-2.jpg', available: false },
-        { id: 'sal1', name: 'Pastel de Forno de Frango', price: 7.00, category: 'salgados', description: 'Massa leve recheada com frango.', imageUrl: 'https://i.postimg.cc/pXn3RM1S/massa-de-pastel-de-forno.jpg', available: true },
-        { id: 'sal2', name: 'Coxinha', price: 7.00, category: 'salgados', description: 'Coxinha assada, crocante por fora.', imageUrl: 'https://i.postimg.cc/x1f7HN1w/03-pc027ubzik.png', available: true },
-        { id: 'sal3', name: 'Hambúrguer (com cheddar)', price: 7.00, category: 'salgados', description: 'Saboroso hambúrguer com muito cheddar.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true },
-        { id: 'sal4', name: 'Hambúrguer (sem cheddar)', price: 7.00, category: 'salgados', description: 'O clássico hambúrguer assado.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true },
-        { id: 'sal5', name: 'Joelho', price: 7.00, category: 'salgados', description: 'Joelho assado, recheado e macio.', imageUrl: 'https://i.postimg.cc/mZPJYpF5/images-2.jpg', available: true },
-        { id: 'sal6', name: 'Esfiha', price: 7.00, category: 'salgados', description: 'Tradicional sabor de carne.', imageUrl: 'https://i.postimg.cc/mkTcs1M7/esfirradecarnelouca.webp', available: true },
-        { id: 'sal7', name: 'Cachorro quente de forno', price: 7.00, category: 'salgados', description: 'O queridinho da galera.', imageUrl: 'https://i.postimg.cc/Px5sntJv/images-3.jpg', available: true },
-        { id: 'sal8', name: 'Bolinho de Aipim - Carne', price: 7.00, category: 'salgados', description: 'Aipim recheado com carne moída.', imageUrl: 'https://i.postimg.cc/k42CtJmk/Bolinho-de-aimpim.jpg', available: true },
-        { id: 'sal9', name: 'Bolinho de Aipim - Queijo', price: 7.00, category: 'salgados', description: 'Aipim recheado com queijo.', imageUrl: 'https://i.postimg.cc/gkJVX1XW/9900510.jpg', available: false },
-        { id: 'sal10', name: 'Bolinho de Aipim - Pizza', price: 7.00, category: 'salgados', description: 'Aipim sabor pizza.', imageUrl: 'https://i.postimg.cc/pr9dxQrh/hqdefault.jpg', available: false },
-        { id: 'sal11', name: 'Bolinho de Aipim - Carne Seca', price: 7.00, category: 'salgados', description: 'Aipim com deliciosa carne seca.', imageUrl: 'https://i.postimg.cc/s26Qrgmp/bolinho2.jpg', available: true },
-        
-        { id: 'b1', name: 'Bolo - Cenoura (fatia)', price: 7.00, category: 'bolos', description: 'Com calda de chocolate.', imageUrl: 'https://i.postimg.cc/sgG0SMQ1/images-4.jpg', available: true },
-        { id: 'b2', name: 'Bolo - Fubá (fatia)', price: 7.00, category: 'bolos', description: 'Bolo de vó.', imageUrl: 'https://i.postimg.cc/FHxG00Fh/images-5.jpg', available: true },
-        { id: 'b3', name: 'Bolo - Banana (fatia)', price: 7.00, category: 'bolos', description: 'Caramelizado.', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg', available: true }
+        { id: 'pas9', name: 'Pastel de Siri', price: 10.00, category: 'pasteis', description: 'Recheado de siri desfiado.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg', available: false },
+        { id: 'pas10', name: 'Pastel de Banana com Canela', price: 10.00, category: 'pasteis', description: 'Recheado de banana macia.', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg', available: false },
+        { id: 'pas12', name: 'Pastel de Frango Caipira', price: 8.00, category: 'pasteis', description: 'Recheado de frango caipira.', imageUrl: 'https://i.postimg.cc/ZYHVsHGJ/Screenshot-20260319-181437-2.jpg', available: true },
+        { id: 'pas13', name: 'Pastel de Calabresa', price: 8.00, category: 'pasteis', description: 'Recheado de calabresa e queijo.', imageUrl: 'https://i.postimg.cc/pVmWXTQJ/Screenshot-20260601-164607-2.jpg', available: false },
+        { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 10.00, category: 'pasteis', description: 'Goiabada e queijo.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg', available: false },
+        { id: 'cal1', name: 'Garrafa de Caldo 500ml', price: 6.00, category: 'caldo', description: 'Caldo de cana moído na hora.', imageUrl: 'https://i.postimg.cc/D0BtSDZp/D-Q-NP-2X-869138-MLB91945553217-092025-T-garrafa-plast-descartavel-300ml-sucocaldo-de-cana-c30un.webp', available: true },
+        { id: 'bev1', name: 'Refrigerante (lata)', price: 6.50, category: 'bebidas', description: 'Coca ou Fanta lata.', imageUrl: 'https://i.postimg.cc/bNK77B6g/istockphoto-477567554-612x612.jpg', available: true },
+        { id: 'bev2', name: 'Refrigerente Mini', price: 3.50, category: 'bebidas', description: 'Coca mini.', imageUrl: 'https://i.postimg.cc/zGQFts05/623a090228197.webp', available: true },
+        { id: 'bev3', name: 'Guaracamp', price: 2.50, category: 'bebidas', description: 'Guaracamp geladinho.', imageUrl: 'https://i.postimg.cc/sDQXPbQz/images-1.jpg', available: true },
+        { id: 'bev4', name: 'Água natural', price: 2.00, category: 'bebidas', description: 'Mineral sem gás.', imageUrl: 'https://i.postimg.cc/xj7HSvL0/shutterstock-174041981.jpg', available: true },
+        { id: 'bev5', name: 'Água com gás', price: 3.50, category: 'bebidas', description: 'Mineral com gás.', imageUrl: 'https://i.postimg.cc/FKDpbY8C/CAPA-BONS-FLUIDOS-27.jpg', available: true },
+        { id: 'sal99', name: 'Croissant de Queijo e Presunto', price: 6.00, category: 'salgados', description: 'Croissant macio recheado.', imageUrl: 'https://i.postimg.cc/ZRCsrdqW/Screenshot-20260319-183502-2.jpg', available: false },
+        { id: 'sal1', name: 'Pastel de Forno de Frango', price: 6.00, category: 'salgados', description: 'Massa leve recheada com frango.', imageUrl: 'https://i.postimg.cc/pXn3RM1S/massa-de-pastel-de-forno.jpg', available: true },
+        { id: 'sal2', name: 'Coxinha', price: 6.00, category: 'salgados', description: 'Coxinha assada, crocante por fora.', imageUrl: 'https://i.postimg.cc/x1f7HN1w/03-pc027ubzik.png', available: true },
+        { id: 'sal3', name: 'Hambúrguer (com cheddar)', price: 6.00, category: 'salgados', description: 'Saboroso hambúrguer com muito cheddar.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true },
+        { id: 'sal4', name: 'Hambúrguer (sem cheddar)', price: 6.00, category: 'salgados', description: 'O clássico hambúrguer assado.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true },
+        { id: 'sal5', name: 'Joelho', price: 6.00, category: 'salgados', description: 'Joelho assado, recheado e macio.', imageUrl: 'https://i.postimg.cc/mZPJYpF5/images-2.jpg', available: true },
+        { id: 'sal6', name: 'Esfiha', price: 6.00, category: 'salgados', description: 'Tradicional sabor de carne.', imageUrl: 'https://i.postimg.cc/mkTcs1M7/esfirradecarnelouca.webp', available: true },
+        { id: 'sal7', name: 'Cachorro quente de forno', price: 6.00, category: 'salgados', description: 'O queridinho da galera.', imageUrl: 'https://i.postimg.cc/Px5sntJv/images-3.jpg', available: true },
+        { id: 'sal8', name: 'Bolinho de Aipim - Carne', price: 6.00, category: 'salgados', description: 'Aipim recheado com carne moída.', imageUrl: 'https://i.postimg.cc/k42CtJmk/Bolinho-de-aimpim.jpg', available: true },
+        { id: 'sal9', name: 'Bolinho de Aipim - Queijo', price: 6.00, category: 'salgados', description: 'Aipim recheado com queijo.', imageUrl: 'https://i.postimg.cc/gkJVX1XW/9900510.jpg', available: false },
+        { id: 'sal10', name: 'Bolinho de Aipim - Pizza', price: 6.00, category: 'salgados', description: 'Aipim sabor pizza.', imageUrl: 'https://i.postimg.cc/pr9dxQrh/hqdefault.jpg', available: false },
+        { id: 'sal11', name: 'Bolinho de Aipim - Carne Seca', price: 6.00, category: 'salgados', description: 'Aipim com deliciosa carne seca.', imageUrl: 'https://i.postimg.cc/s26Qrgmp/bolinho2.jpg', available: true },
+        { id: 'b1', name: 'Bolo - Cenoura (fatia)', price: 5.00, category: 'bolos', description: 'Com calda de chocolate.', imageUrl: 'https://i.postimg.cc/sgG0SMQ1/images-4.jpg', available: true },
+        { id: 'b2', name: 'Bolo - Fubá (fatia)', price: 5.00, category: 'bolos', description: 'Bolo de vó.', imageUrl: 'https://i.postimg.cc/FHxG00Fh/images-5.jpg', available: true },
+        { id: 'b3', name: 'Bolo - Banana (fatia)', price: 5.00, category: 'bolos', description: 'Caramelizado.', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg', available: true }
       ];
 
-      const DELIVERY_FEE = 6.00;
-      const FREE_DELIVERY_THRESHOLD = 25.00;
       let cart = [];
 
       const productGrid = document.getElementById('product-grid');
@@ -583,6 +590,7 @@
       const cartModal = document.getElementById('cart-modal');
       const checkoutForm = document.getElementById('checkout-form');
       const tipoEntregaSelect = document.getElementById('tipo-entrega');
+      const bairroSelect = document.getElementById('end-bairro');
       const formaPagamentoSelect = document.getElementById('forma-pagamento');
       const navMobile = document.getElementById('nav-mobile');
       const mobileOverlay = document.getElementById('mobile-overlay');
@@ -595,7 +603,6 @@
 
       AOS.init({duration:900, once:true, easing:'ease-out-cubic'});
 
-      // Inicia a renderização diretamente com os dados manuais
       renderProducts('all');
 
       function startOrderSimulation() {
@@ -704,9 +711,17 @@
             </div>`;
           cartItemsList.appendChild(li);
         });
-        const taxa = (tipoEntregaSelect.value === 'Entrega' && subtotal < FREE_DELIVERY_THRESHOLD && subtotal > 0) ? DELIVERY_FEE : 0;
+        
+        let taxa = 0;
+        if (tipoEntregaSelect.value === 'Entrega') {
+          const selectedOption = bairroSelect.options[bairroSelect.selectedIndex];
+          if (selectedOption && selectedOption.dataset.price) {
+            taxa = parseFloat(selectedOption.dataset.price);
+          }
+        }
+
         document.getElementById('cart-subtotal').textContent = 'R$ ' + subtotal.toFixed(2).replace('.',',');
-        document.getElementById('cart-delivery-fee').textContent = taxa === 0 ? 'GRÁTIS' : 'R$ ' + taxa.toFixed(2).replace('.',',');
+        document.getElementById('cart-delivery-fee').textContent = taxa === 0 ? 'R$ 0,00' : 'R$ ' + taxa.toFixed(2).replace('.',',');
         document.getElementById('cart-total').textContent = 'R$ ' + (subtotal + taxa).toFixed(2).replace('.',',');
       }
 
@@ -733,12 +748,21 @@
          updateCart();
       };
 
-      tipoEntregaSelect.onchange = () => { document.getElementById('endereco-field').style.display = tipoEntregaSelect.value === 'Entrega' ? 'block' : 'none'; updateCart(); };
+      tipoEntregaSelect.onchange = () => { 
+        const isDelivery = tipoEntregaSelect.value === 'Entrega';
+        document.getElementById('endereco-field').style.display = isDelivery ? 'block' : 'none'; 
+        bairroSelect.required = isDelivery;
+        updateCart(); 
+      };
+      
+      bairroSelect.addEventListener('change', updateCart);
+
       formaPagamentoSelect.onchange = () => { document.getElementById('troco-field').style.display = formaPagamentoSelect.value === 'Dinheiro' ? 'block' : 'none'; };
 
       checkoutForm.onsubmit = (e) => {
         e.preventDefault();
         if(!cart.length) return alert("Carrinho vazio!");
+        if(tipoEntregaSelect.value === 'Entrega' && !bairroSelect.value) return alert("Por favor, selecione seu bairro!");
 
         sendOrderBtn.textContent = "Enviando pedido...";
         sendOrderBtn.disabled = true;
@@ -748,22 +772,31 @@
         const tipo = document.getElementById('tipo-entrega').value;
         const pag = document.getElementById('forma-pagamento').value;
         const troco = document.getElementById('valor-troco').value;
-        const rua = document.getElementById('end-rua').value;
-        const bairro = document.getElementById('end-bairro').value;
-        const comp = document.getElementById('end-complemento').value;
-        const ref = document.getElementById('end-ref').value;
-
+        
         let msg = `NOVO PEDIDO — LANCHE DO PROFESSOR\n`;
         msg += `------------------------------------------\n`;
         msg += `Cliente: ${nome}\n`;
         msg += `Contato: ${contato}\n`; 
         msg += `Tipo: ${tipo}\n`;
+        
+        let taxa = 0;
+        
         if(tipo === 'Entrega') {
-          msg += `Local: ${rua}, ${bairro}${comp ? ' ('+comp+')' : ''}\n`;
+          const rua = document.getElementById('end-rua').value;
+          const comp = document.getElementById('end-complemento').value;
+          const ref = document.getElementById('end-ref').value;
+          
+          const selectedBairroOption = bairroSelect.options[bairroSelect.selectedIndex];
+          const bairroNome = selectedBairroOption.value; // Ex: Belvedere
+          taxa = parseFloat(selectedBairroOption.dataset.price);
+          
+          msg += `Bairro: ${bairroNome}\n`;
+          msg += `Local: ${rua}${comp ? ' ('+comp+')' : ''}\n`;
           msg += `Referência: ${ref}\n`;
         } else {
           msg += `Local: Retirada no Balcão\n`;
         }
+        
         msg += `Pagamento: ${pag}${troco ? ' (Troco p/ R$ '+troco+')' : ''}\n\n`;
         msg += `--- ITENS DO PEDIDO ---\n`;
         
@@ -773,16 +806,17 @@
           sub += i.price * i.quantity;
         });
 
-        const taxa = (tipo === 'Entrega' && sub < FREE_DELIVERY_THRESHOLD) ? DELIVERY_FEE : 0;
         msg += `\nSubtotal: R$ ${sub.toFixed(2).replace('.',',')}\n`;
-        msg += `Taxa de entrega: R$ ${taxa.toFixed(2).replace('.',',')}\n`;
+        if(tipo === 'Entrega') {
+          msg += `Taxa de entrega: R$ ${taxa.toFixed(2).replace('.',',')}\n`;
+        }
         msg += `TOTAL: R$ ${(sub + taxa).toFixed(2).replace('.',',')}\n`;
 
         // ABRE O WHATSAPP
         const waLink = `https://wa.me/5521996470174?text=${encodeURIComponent(msg)}`;
         window.open(waLink, '_blank');
 
-        // ENVIA E-MAIL PARA BACKUP E ATIVA O RASTREADOR (Mantido)
+        // ENVIA E-MAIL PARA BACKUP E ATIVA O RASTREADOR
         const templateParams = {
             message: msg,       
             from_name: nome,    
@@ -798,7 +832,6 @@
              sendOrderBtn.textContent = "Enviar Pedido Agora";
              sendOrderBtn.disabled = false;
           }, function(error) {
-             // Caso o EmailJS falhe, a mensagem de WhatsApp já abriu, então podemos continuar a tela
              alert("Pedido enviado para o WhatsApp!");
              cart = [];
              updateCart();
