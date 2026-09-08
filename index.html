@@ -162,7 +162,7 @@
     .product-card-content{padding:1rem;flex:1;display:flex;flex-direction:column;justify-content:space-between}
     .product-card-content h3{margin:0 0 .25rem;font-size:1.05rem}
     .product-card-content .description{font-size:.92rem;color:var(--muted);margin-bottom:.6rem}
-    .product-card-footer{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+    .product-card-footer{display:flex;align-items:center;justify-content:space-between;gap:.6rem; margin-top: 10px;}
     .product-price{font-weight:800;color:var(--bg-dark)}
     .btn-add-cart{background:linear-gradient(180deg,var(--cor-principal),#ffc500);color:#111;padding:.5rem .75rem;border-radius:10px;font-weight:800;border:0;cursor:pointer}
     .btn-add-cart:active{transform:translateY(1px)}
@@ -175,8 +175,8 @@
     #cart-modal{position:fixed;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:1rem;z-index:1400;pointer-events:none}
     #cart-modal.visible{pointer-events:auto}
     .cart-content{
-      width:100%;max-width:420px;background:#fff;border-radius:14px;padding:1rem;box-shadow:0 20px 40px rgba(0,0,0,0.18);transform:translateY(100%);transition:transform .28s cubic-bezier(.2,.9,.25,1);
-      max-height:88vh;overflow:auto;
+      width:100%;max-width:440px;background:#fff;border-radius:14px;padding:1rem;box-shadow:0 20px 40px rgba(0,0,0,0.18);transform:translateY(100%);transition:transform .28s cubic-bezier(.2,.9,.25,1);
+      max-height:90vh;overflow:auto;
     }
     #cart-modal.visible .cart-content{transform:translateY(0)}
     .cart-header{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
@@ -188,6 +188,8 @@
     .icon-btn{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:.25rem .45rem;border-radius:8px;cursor:pointer}
     #cart-clear { background: #f0f0f0; border: none; font-size: 0.85rem; padding: 0.4rem 0.8rem; }
     #cart-close-btn { background: var(--erro); color: white; border: none; font-weight: bold; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
+    
+    .cart-section-title { font-size: 0.95rem; font-weight: 800; margin: 10px 0 5px; color: var(--bg-dark); border-bottom: 2px solid var(--cor-principal); padding-bottom: 3px; }
     
     .cart-summary{margin-top:1rem;border-top:1px dashed rgba(0,0,0,0.06);padding-top:1rem}
     .summary-row{display:flex;justify-content:space-between;margin-bottom:.45rem;font-weight:700}
@@ -325,6 +327,8 @@
       <div class="hero-inner container" data-aos="fade-up">
         <h1>FAÇA SEU PEDIDO!</h1>
         
+        <p class="lead" style="font-size:1.2rem; font-weight:900; color:var(--bg-dark); background:rgba(255,255,255,0.85); display:inline-block; padding:8px 18px; border-radius:12px; margin-bottom: 1rem; border: 2px solid var(--txt-dark);">🔥 Mini Pastel por Encomenda!</p>
+        
         <p class="lead">Funcionando de Segunda a Sexta.<br>Delivery: 16h → 1h da manhã.</p>
         
         <p class="lead" style="font-size:0.95rem; margin-top:0.5rem">A entrega mais rápida de Seropédica chegou pra salvar seu semestre.</p>
@@ -345,6 +349,7 @@
           <div style="display:flex;gap:.5rem;flex-wrap:wrap" aria-hidden="false">
             <button class="btn filter-btn" data-filter="all" aria-pressed="true">Todos</button>
             <button class="btn filter-btn" data-filter="pasteis" aria-pressed="false">Pastéis</button>
+            <button class="btn filter-btn" data-filter="mini_pasteis" aria-pressed="false">Mini Pastéis</button>
             <button class="btn filter-btn" data-filter="caldo" aria-pressed="false">Caldo de Cana</button>
             <button class="btn filter-btn" data-filter="salgados" aria-pressed="false">Salgados</button>
             <button class="btn filter-btn" data-filter="bebidas" aria-pressed="false">Bebidas</button>
@@ -399,9 +404,21 @@
       </header>
       <div class="cart-body" id="cart-body">
         <p id="cart-empty-msg" style="color:var(--muted)">Seu carrinho está vazio.</p>
-        <ul id="cart-items-list" style="list-style:none;padding:0;margin:0"></ul>
+        
+        <!-- Carrinho de Pronta Entrega / Site -->
+        <div id="section-site-cart" style="display:none;">
+          <div class="cart-section-title">🛒 Pronta Entrega / Venda do Site</div>
+          <ul id="cart-site-items-list" style="list-style:none;padding:0;margin:0"></ul>
+        </div>
+
+        <!-- Carrinho de Encomendas / Congelados -->
+        <div id="section-encomenda-cart" style="display:none; margin-top: 15px;">
+          <div class="cart-section-title">📦 Carrinho de Encomendas & Congelados</div>
+          <ul id="cart-encomenda-items-list" style="list-style:none;padding:0;margin:0"></ul>
+        </div>
       </div>
-      <div class="cart-summary" id="cart-summary">
+
+      <div class="cart-summary" id="cart-summary" style="display:none;">
         <div class="summary-row"><span>Subtotal</span><span id="cart-subtotal">R$ 0,00</span></div>
         <div class="summary-row"><span>Taxa de Entrega</span><span id="cart-delivery-fee">R$ 0,00</span></div>
         <div id="delivery-fee-msg" style="color:var(--muted);font-size:.95rem;margin-top:.4rem"></div>
@@ -417,15 +434,24 @@
             <input id="cliente-contato" type="tel" class="form-control" required placeholder="(21) 99999-9999" />
           </div>
           
-          <div class="form-group">
-            <label for="tipo-entrega">🛵 Como prefere receber?</label>
-            <select id="tipo-entrega" class="form-control" required>
+          <!-- Opção de Entrega / Retirada para o Site -->
+          <div id="tipo-entrega-group" class="form-group">
+            <label for="tipo-entrega">🛵 Como prefere receber a Pronta Entrega?</label>
+            <select id="tipo-entrega" class="form-control">
               <option value="Retirada">Vou Buscar (Retirada)</option>
               <option value="Entrega">Delivery (Entrega)</option>
             </select>
           </div>
+
+          <!-- Agendamento Obrigatório para Encomendas / Congelados -->
+          <div id="data-agendamento-field" class="form-group" style="display:none">
+            <label for="data-retirada" style="color: var(--bg-dark); font-weight:800;">📅 Data para Retirada da Encomenda (Mínimo 3 dias)</label>
+            <input id="data-retirada" type="date" class="form-control" />
+            <label for="hora-retirada" style="margin-top: 6px; color: var(--bg-dark); font-weight:800;">⏰ Horário para Retirada da Encomenda / Local</label>
+            <input id="hora-retirada" type="time" class="form-control" />
+          </div>
+
           <div id="endereco-field" class="form-group" style="display:none">
-            
             <button type="button" class="btn-gps" onclick="getLocation()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
               Usar Localização Atual
@@ -466,6 +492,7 @@
                </div>
             </div>
           </div>
+
           <div class="form-group">
             <label for="forma-pagamento">💳 Forma de Pagamento</label>
             <select id="forma-pagamento" class="form-control" required>
@@ -487,10 +514,8 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     (function(){
-      // INICIALIZAÇÃO DO EMAILJS
       emailjs.init("I411iBg-_msw-aK29");
 
-      // VERIFICAÇÃO AUTOMÁTICA DE HORÁRIO (STATUS MODESTO)
       function checkOpenStatus() {
         const now = new Date();
         const day = now.getDay(); 
@@ -519,6 +544,15 @@
       checkOpenStatus();
       setInterval(checkOpenStatus, 60000);
 
+      // Configurar data mínima para 3 dias a partir de hoje no campo de agendamento
+      const minDate = new Date();
+      minDate.setDate(minDate.getDate() + 3);
+      const yyyy = minDate.getFullYear();
+      const mm = String(minDate.getMonth() + 1).padStart(2, '0');
+      const dd = String(minDate.getDate()).padStart(2, '0');
+      document.getElementById('data-retirada').min = `${yyyy}-${mm}-${dd}`;
+      document.getElementById('data-retirada').value = `${yyyy}-${mm}-${dd}`;
+
       window.getLocation = function() {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(showPosition, showError);
@@ -543,50 +577,101 @@
         }
       }
 
-      // =========================================================================
-      // BASE DE DADOS MANUAL
-      // =========================================================================
       const productDatabase = [
-        { id: 'pas1', name: 'Pastel de Carne', price: 8.00, category: 'pasteis', description: 'Pastel crocante com recheio de carne suculenta.', imageUrl: 'https://i.postimg.cc/VNZKXSb1/pastel-maria.jpg', available: true },
-        { id: 'pas2', name: 'Pastel de Queijo', price: 8.00, category: 'pasteis', description: 'Queijo derretido até a última mordida.', imageUrl: 'https://i.postimg.cc/gJPnSsh8/990810f9242641a8e264ce996a78ed28-XL.jpg', available: true },
-        { id: 'pas3', name: 'Pastel de Pizza', price: 8.00, category: 'pasteis', description: 'Sabor pizza com muito queijo e molho.', imageUrl: 'https://i.postimg.cc/9MG1KLNs/pizza-tradicional.jpg', available: true },
-        { id: 'pas4', name: 'Pastel de Frango c/ Catupiry', price: 8.00, category: 'pasteis', description: 'Frango desfiado com catupiry cremoso.', imageUrl: 'https://i.postimg.cc/7PjthTg4/images.jpg', available: true },
-        { id: 'pas5', name: 'Pastel de Camarão', price: 10.00, category: 'pasteis', description: 'Camarão fresco!', imageUrl: 'https://i.postimg.cc/3xc5NDQy/pastel-de-camarao-com-queijo-portal-minha-receita-1-500x281.jpg', available: true },
-        { id: 'pas6', name: 'Pastel de Carne Seca', price: 9.00, category: 'pasteis', description: 'Carne seca desfiada!', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg', available:true },
-        { id: 'pas7', name: 'Pastel de Arraia', price: 10.00, category: 'pasteis', description: 'Uma explosão de sabor.', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg', available: false },
-        { id: 'pas8', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', description: 'Pastel delicioso de marisco.', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg', available: false },
-        { id: 'pas9', name: 'Pastel de Siri', price: 10.00, category: 'pasteis', description: 'Recheado de siri desfiado.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg', available: false },
-        { id: 'pas10', name: 'Pastel de Banana com Canela', price: 10.00, category: 'pasteis', description: 'Recheado de banana macia.', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg', available: false },
-        { id: 'pas12', name: 'Pastel de Frango Caipira', price: 8.00, category: 'pasteis', description: 'Recheado de frango caipira.', imageUrl: 'https://i.postimg.cc/ZYHVsHGJ/Screenshot-20260319-181437-2.jpg', available: true },
-        { id: 'pas13', name: 'Pastel de Calabresa', price: 8.00, category: 'pasteis', description: 'Recheado de calabresa e queijo.', imageUrl: 'https://i.postimg.cc/pVmWXTQJ/Screenshot-20260601-164607-2.jpg', available: false },
-        { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 10.00, category: 'pasteis', description: 'Goiabada e queijo.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg', available: false },
-        { id: 'cal1', name: 'Garrafa de Caldo 500ml', price: 6.00, category: 'caldo', description: 'Caldo de cana moído na hora.', imageUrl: 'https://i.postimg.cc/D0BtSDZp/D-Q-NP-2X-869138-MLB91945553217-092025-T-garrafa-plast-descartavel-300ml-sucocaldo-de-cana-c30un.webp', available: true },
-        { id: 'bev1', name: 'Refrigerante (lata)', price: 6.50, category: 'bebidas', description: 'Coca ou Fanta lata.', imageUrl: 'https://i.postimg.cc/bNK77B6g/istockphoto-477567554-612x612.jpg', available: true },
-        { id: 'bev2', name: 'Refrigerente Mini', price: 3.50, category: 'bebidas', description: 'Coca mini.', imageUrl: 'https://i.postimg.cc/zGQFts05/623a090228197.webp', available: true },
-        { id: 'bev3', name: 'Guaracamp', price: 2.50, category: 'bebidas', description: 'Guaracamp geladinho.', imageUrl: 'https://i.postimg.cc/sDQXPbQz/images-1.jpg', available: true },
-        { id: 'bev4', name: 'Água natural', price: 2.00, category: 'bebidas', description: 'Mineral sem gás.', imageUrl: 'https://i.postimg.cc/xj7HSvL0/shutterstock-174041981.jpg', available: true },
-        { id: 'bev5', name: 'Água com gás', price: 3.50, category: 'bebidas', description: 'Mineral com gás.', imageUrl: 'https://i.postimg.cc/FKDpbY8C/CAPA-BONS-FLUIDOS-27.jpg', available: true },
-        { id: 'sal99', name: 'Croissant de Queijo e Presunto', price: 6.00, category: 'salgados', description: 'Croissant macio recheado.', imageUrl: 'https://i.postimg.cc/ZRCsrdqW/Screenshot-20260319-183502-2.jpg', available: false },
-        { id: 'sal1', name: 'Pastel de Forno de Frango', price: 6.00, category: 'salgados', description: 'Massa leve recheada com frango.', imageUrl: 'https://i.postimg.cc/pXn3RM1S/massa-de-pastel-de-forno.jpg', available: true },
-        { id: 'sal2', name: 'Coxinha', price: 6.00, category: 'salgados', description: 'Coxinha assada, crocante por fora.', imageUrl: 'https://i.postimg.cc/x1f7HN1w/03-pc027ubzik.png', available: true },
-        { id: 'sal3', name: 'Hambúrguer (com cheddar)', price: 6.00, category: 'salgados', description: 'Saboroso hambúrguer com muito cheddar.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true },
-        { id: 'sal4', name: 'Hambúrguer (sem cheddar)', price: 6.00, category: 'salgados', description: 'O clássico hambúrguer assado.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true },
-        { id: 'sal5', name: 'Joelho', price: 6.00, category: 'salgados', description: 'Joelho assado, recheado e macio.', imageUrl: 'https://i.postimg.cc/mZPJYpF5/images-2.jpg', available: true },
-        { id: 'sal6', name: 'Esfiha', price: 6.00, category: 'salgados', description: 'Tradicional sabor de carne.', imageUrl: 'https://i.postimg.cc/mkTcs1M7/esfirradecarnelouca.webp', available: true },
-        { id: 'sal7', name: 'Cachorro quente de forno', price: 6.00, category: 'salgados', description: 'O queridinho da galera.', imageUrl: 'https://i.postimg.cc/Px5sntJv/images-3.jpg', available: true },
-        { id: 'sal8', name: 'Bolinho de Aipim - Carne', price: 6.00, category: 'salgados', description: 'Aipim recheado com carne moída.', imageUrl: 'https://i.postimg.cc/k42CtJmk/Bolinho-de-aimpim.jpg', available: true },
-        { id: 'sal9', name: 'Bolinho de Aipim - Queijo', price: 6.00, category: 'salgados', description: 'Aipim recheado com queijo.', imageUrl: 'https://i.postimg.cc/gkJVX1XW/9900510.jpg', available: false },
-        { id: 'sal10', name: 'Bolinho de Aipim - Pizza', price: 6.00, category: 'salgados', description: 'Aipim sabor pizza.', imageUrl: 'https://i.postimg.cc/pr9dxQrh/hqdefault.jpg', available: false },
-        { id: 'sal11', name: 'Bolinho de Aipim - Carne Seca', price: 6.00, category: 'salgados', description: 'Aipim com deliciosa carne seca.', imageUrl: 'https://i.postimg.cc/s26Qrgmp/bolinho2.jpg', available: true },
-        { id: 'b1', name: 'Bolo - Cenoura (fatia)', price: 5.00, category: 'bolos', description: 'Com calda de chocolate.', imageUrl: 'https://i.postimg.cc/sgG0SMQ1/images-4.jpg', available: true },
-        { id: 'b2', name: 'Bolo - Fubá (fatia)', price: 5.00, category: 'bolos', description: 'Bolo de vó.', imageUrl: 'https://i.postimg.cc/FHxG00Fh/images-5.jpg', available: true },
-        { id: 'b3', name: 'Bolo - Banana (fatia)', price: 5.00, category: 'bolos', description: 'Caramelizado.', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg', available: true }
+        // ====== MINI PASTÉIS ATUALIZADOS ======
+        { 
+          id: 'mp_frito', 
+          name: 'Mini Pastéis Fritos (Porção R$ 6,00)', 
+          price: 6.00, 
+          category: 'mini_pasteis', 
+          description: 'Frito na hora (Apenas Carne, Pizza, Frango e Queijo). Porção com unidades. Selecione o sabor.', 
+          imageUrl: 'https://i.postimg.cc/VNZKXSb1/pastel-maria.jpg', 
+          available: true,
+          isEncomenda: false,
+          hasFlavors: true,
+          flavors: [
+              { name: 'Carne', price: 6.00 },
+              { name: 'Pizza', price: 6.00 },
+              { name: 'Frango', price: 6.00 },
+              { name: 'Queijo', price: 6.00 }
+          ]
+        },
+        { 
+          id: 'mp_congelado', 
+          name: 'Mini Pastel Congelado (Encomenda - Unidade)', 
+          price: 0.70, 
+          category: 'mini_pasteis', 
+          description: 'Todo congelado por encomenda (Mínimo de 3 dias de antecedência). Selecione o sabor.', 
+          imageUrl: 'https://i.postimg.cc/pXn3RM1S/massa-de-pastel-de-forno.jpg', 
+          available: true,
+          isEncomenda: true,
+          hasFlavors: true,
+          flavors: [
+              { name: 'Carne', price: 0.70 },
+              { name: 'Queijo', price: 0.70 },
+              { name: 'Pizza', price: 0.70 },
+              { name: 'Frango com Catupiry', price: 0.70 },
+              { name: 'Costela com Queijo', price: 0.70 },
+              { name: 'Bobó de Camarão', price: 0.70 },
+              { name: 'Carne Seca', price: 0.70 },
+              { name: 'Charque com Calabresa', price: 0.70 },
+              { name: 'Calabresa com Queijo', price: 0.70 },
+              { name: 'Ovo com Carne', price: 0.70 },
+              { name: 'Bacon com Cheddar', price: 0.70 },
+              { name: 'Bacon com Queijo', price: 0.70 },
+              { name: 'Doce de Leite', price: 0.70 },
+              { name: 'Nutella', price: 0.70 },
+              { name: 'Chocolate', price: 0.70 },
+              { name: 'Banana com Canela', price: 0.70 },
+              { name: 'Romeu e Julieta', price: 0.70 },
+              { name: 'Beijinho', price: 0.70 },
+              { name: 'Cocada', price: 0.70 }
+          ]
+        },
+
+        // ====== RESTANTE DOS PRODUTOS (PRONTA ENTREGA / SITE) ======
+        { id: 'pas1', name: 'Pastel de Carne', price: 8.00, category: 'pasteis', description: 'Pastel crocante com recheio de carne suculenta.', imageUrl: 'https://i.postimg.cc/VNZKXSb1/pastel-maria.jpg', available: true, isEncomenda: false },
+        { id: 'pas2', name: 'Pastel de Queijo', price: 8.00, category: 'pasteis', description: 'Queijo derretido até a última mordida.', imageUrl: 'https://i.postimg.cc/gJPnSsh8/990810f9242641a8e264ce996a78ed28-XL.jpg', available: true, isEncomenda: false },
+        { id: 'pas3', name: 'Pastel de Pizza', price: 8.00, category: 'pasteis', description: 'Sabor pizza com muito queijo e molho.', imageUrl: 'https://i.postimg.cc/9MG1KLNs/pizza-tradicional.jpg', available: true, isEncomenda: false },
+        { id: 'pas4', name: 'Pastel de Frango c/ Catupiry', price: 8.00, category: 'pasteis', description: 'Frango desfiado com catupiry cremoso.', imageUrl: 'https://i.postimg.cc/7PjthTg4/images.jpg', available: true, isEncomenda: false },
+        { id: 'pas5', name: 'Pastel de Camarão', price: 10.00, category: 'pasteis', description: 'Camarão fresco!', imageUrl: 'https://i.postimg.cc/3xc5NDQy/pastel-de-camarao-com-queijo-portal-minha-receita-1-500x281.jpg', available: true, isEncomenda: false },
+        { id: 'pas6', name: 'Pastel de Carne Seca', price: 9.00, category: 'pasteis', description: 'Carne seca desfiada!', imageUrl: 'https://i.postimg.cc/3wjcLbGB/Screenshot-20251116-122133-2.jpg', available:true, isEncomenda: false },
+        { id: 'pas7', name: 'Pastel de Arraia', price: 10.00, category: 'pasteis', description: 'Uma explosão de sabor.', imageUrl: 'https://i.postimg.cc/YS9zKnL7/Screenshot-20251116-125012-2.jpg', available: false, isEncomenda: false },
+        { id: 'pas8', name: 'Pastel de Marisco', price: 12.00, category: 'pasteis', description: 'Pastel delicioso de marisco.', imageUrl: 'https://i.postimg.cc/Bn2dPvMN/Screenshot-20251116-125508-2.jpg', available: false, isEncomenda: false },
+        { id: 'pas9', name: 'Pastel de Siri', price: 10.00, category: 'pasteis', description: 'Recheado de siri desfiado.', imageUrl: 'https://i.postimg.cc/NjPpMvwn/Screenshot-20251116-125933-2.jpg', available: false, isEncomenda: false },
+        { id: 'pas10', name: 'Pastel de Banana com Canela', price: 10.00, category: 'pasteis', description: 'Recheado de banana macia.', imageUrl: 'https://i.postimg.cc/9M7ScsYh/Screenshot-20251209-201552-2.jpg', available: false, isEncomenda: false },
+        { id: 'pas12', name: 'Pastel de Frango Caipira', price: 8.00, category: 'pasteis', description: 'Recheado de frango caipira.', imageUrl: 'https://i.postimg.cc/ZYHVsHGJ/Screenshot-20260319-181437-2.jpg', available: true, isEncomenda: false },
+        { id: 'pas13', name: 'Pastel de Calabresa', price: 8.00, category: 'pasteis', description: 'Recheado de calabresa e queijo.', imageUrl: 'https://i.postimg.cc/pVmWXTQJ/Screenshot-20260601-164607-2.jpg', available: false, isEncomenda: false },
+        { id: 'pas11', name: 'Pastel de Romeu e Julieta', price: 10.00, category: 'pasteis', description: 'Goiabada e queijo.', imageUrl: 'https://i.postimg.cc/76nRC0dR/Screenshot-20251209-202523-2.jpg', available: false, isEncomenda: false },
+        { id: 'cal1', name: 'Garrafa de Caldo 500ml', price: 6.00, category: 'caldo', description: 'Caldo de cana moído na hora.', imageUrl: 'https://i.postimg.cc/D0BtSDZp/D-Q-NP-2X-869138-MLB91945553217-092025-T-garrafa-plast-descartavel-300ml-sucocaldo-de-cana-c30un.webp', available: true, isEncomenda: false },
+        { id: 'bev1', name: 'Refrigerante (lata)', price: 6.50, category: 'bebidas', description: 'Coca ou Fanta lata.', imageUrl: 'https://i.postimg.cc/bNK77B6g/istockphoto-477567554-612x612.jpg', available: true, isEncomenda: false },
+        { id: 'bev2', name: 'Refrigerente Mini', price: 3.50, category: 'bebidas', description: 'Coca mini.', imageUrl: 'https://i.postimg.cc/zGQFts05/623a090228197.webp', available: true, isEncomenda: false },
+        { id: 'bev3', name: 'Guaracamp', price: 2.50, category: 'bebidas', description: 'Guaracamp geladinho.', imageUrl: 'https://i.postimg.cc/sDQXPbQz/images-1.jpg', available: true, isEncomenda: false },
+        { id: 'bev4', name: 'Água natural', price: 2.00, category: 'bebidas', description: 'Mineral sem gás.', imageUrl: 'https://i.postimg.cc/xj7HSvL0/shutterstock-174041981.jpg', available: true, isEncomenda: false },
+        { id: 'bev5', name: 'Água com gás', price: 3.50, category: 'bebidas', description: 'Mineral com gás.', imageUrl: 'https://i.postimg.cc/FKDpbY8C/CAPA-BONS-FLUIDOS-27.jpg', available: true, isEncomenda: false },
+        { id: 'sal99', name: 'Croissant de Queijo e Presunto', price: 6.00, category: 'salgados', description: 'Croissant macio recheado.', imageUrl: 'https://i.postimg.cc/ZRCsrdqW/Screenshot-20260319-183502-2.jpg', available: false, isEncomenda: false },
+        { id: 'sal1', name: 'Pastel de Forno de Frango', price: 6.00, category: 'salgados', description: 'Massa leve recheada com frango.', imageUrl: 'https://i.postimg.cc/pXn3RM1S/massa-de-pastel-de-forno.jpg', available: true, isEncomenda: false },
+        { id: 'sal2', name: 'Coxinha', price: 6.00, category: 'salgados', description: 'Coxinha assada, crocante por fora.', imageUrl: 'https://i.postimg.cc/x1f7HN1w/03-pc027ubzik.png', available: true, isEncomenda: false },
+        { id: 'sal3', name: 'Hambúrguer (com cheddar)', price: 6.00, category: 'salgados', description: 'Saboroso hambúrguer com muito cheddar.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true, isEncomenda: false },
+        { id: 'sal4', name: 'Hambúrguer (sem cheddar)', price: 6.00, category: 'salgados', description: 'O clássico hambúrguer assado.', imageUrl: 'https://i.postimg.cc/vTbq9XRp/Hamburgao-02-1200x901.jpg', available: true, isEncomenda: false },
+        { id: 'sal5', name: 'Joelho', price: 6.00, category: 'salgados', description: 'Joelho assado, recheado e macio.', imageUrl: 'https://i.postimg.cc/mZPJYpF5/images-2.jpg', available: true, isEncomenda: false },
+        { id: 'sal6', name: 'Esfiha', price: 6.00, category: 'salgados', description: 'Tradicional sabor de carne.', imageUrl: 'https://i.postimg.cc/mkTcs1M7/esfirradecarnelouca.webp', available: true, isEncomenda: false },
+        { id: 'sal7', name: 'Cachorro quente de forno', price: 6.00, category: 'salgados', description: 'O queridinho da galera.', imageUrl: 'https://i.postimg.cc/Px5sntJv/images-3.jpg', available: true, isEncomenda: false },
+        { id: 'sal8', name: 'Bolinho de Aipim - Carne', price: 6.00, category: 'salgados', description: 'Aipim recheado com carne moída.', imageUrl: 'https://i.postimg.cc/k42CtJmk/Bolinho-de-aimpim.jpg', available: true, isEncomenda: false },
+        { id: 'sal9', name: 'Bolinho de Aipim - Queijo', price: 6.00, category: 'salgados', description: 'Aipim recheado com queijo.', imageUrl: 'https://i.postimg.cc/gkJVX1XW/9900510.jpg', available: false, isEncomenda: false },
+        { id: 'sal10', name: 'Bolinho de Aipim - Pizza', price: 6.00, category: 'salgados', description: 'Aipim sabor pizza.', imageUrl: 'https://i.postimg.cc/pr9dxQrh/hqdefault.jpg', available: false, isEncomenda: false },
+        { id: 'sal11', name: 'Bolinho de Aipim - Carne Seca', price: 6.00, category: 'salgados', description: 'Aipim com deliciosa carne seca.', imageUrl: 'https://i.postimg.cc/s26Qrgmp/bolinho2.jpg', available: true, isEncomenda: false },
+        { id: 'b1', name: 'Bolo - Cenoura (fatia)', price: 5.00, category: 'bolos', description: 'Com calda de chocolate.', imageUrl: 'https://i.postimg.cc/sgG0SMQ1/images-4.jpg', available: true, isEncomenda: false },
+        { id: 'b2', name: 'Bolo - Fubá (fatia)', price: 5.00, category: 'bolos', description: 'Bolo de vó.', imageUrl: 'https://i.postimg.cc/FHxG00Fh/images-5.jpg', available: true, isEncomenda: false },
+        { id: 'b3', name: 'Bolo - Banana (fatia)', price: 5.00, category: 'bolos', description: 'Caramelizado.', imageUrl: 'https://i.postimg.cc/zXs4xw1C/images-6.jpg', available: true, isEncomenda: false }
       ];
 
-      let cart = [];
+      let cartSite = [];
+      let cartEncomenda = [];
 
       const productGrid = document.getElementById('product-grid');
-      const cartItemsList = document.getElementById('cart-items-list');
+      const cartSiteItemsList = document.getElementById('cart-site-items-list');
+      const cartEncomendaItemsList = document.getElementById('cart-encomenda-items-list');
       const cartModal = document.getElementById('cart-modal');
       const checkoutForm = document.getElementById('checkout-form');
       const tipoEntregaSelect = document.getElementById('tipo-entrega');
@@ -666,15 +751,26 @@
           card.className = 'product-card';
           card.setAttribute('data-aos','fade-up');
           if(!isAvailable) card.style.opacity = '0.6';
+
+          let flavorSelectHtml = '';
+          if (p.hasFlavors && isAvailable) {
+              flavorSelectHtml = `<select id="flavor-${p.id}" class="form-control" style="margin-top: 8px; font-size: 0.85rem; padding: 0.4rem; font-weight: bold; cursor: pointer;" onchange="document.getElementById('price-${p.id}').innerText = 'R$ ' + parseFloat(this.options[this.selectedIndex].dataset.price).toFixed(2).replace('.',',')">`;
+              p.flavors.forEach(f => {
+                  flavorSelectHtml += `<option value="${f.name}" data-price="${f.price}">${f.name}</option>`;
+              });
+              flavorSelectHtml += `</select>`;
+          }
+
           card.innerHTML = `
             <img class="product-card-image" src="${p.imageUrl || p.img}" alt="${p.name}" style="${!isAvailable ? 'filter: grayscale(1);' : ''}" onclick="openZoom('${p.imageUrl || p.img}')">
             <div class="product-card-content">
               <div>
                 <h3>${p.name} ${!isAvailable ? '<span style="color:red; font-size:0.8rem;">(ESGOTADO)</span>' : ''}</h3>
                 <p class="description">${p.description || ''}</p>
+                ${flavorSelectHtml}
               </div>
               <div class="product-card-footer">
-                <div class="product-price">R$ ${p.price.toFixed(2).replace('.',',')}</div>
+                <div class="product-price" id="price-${p.id}">R$ ${p.price.toFixed(2).replace('.',',')}</div>
                 ${isAvailable 
                   ? `<button class="btn-add-cart" onclick="addToCart('${p.id}')">Adicionar</button>`
                   : `<button class="btn" style="background:#ccc; cursor:not-allowed;" disabled>Indisponível</button>`
@@ -688,169 +784,318 @@
       window.addToCart = function(id){
         const p = productDatabase.find(x => x.id === id);
         if (p.available === false) return alert("Desculpe, este produto acabou de esgotar!");
-        const exists = cart.find(x => x.id === id);
-        if(exists) exists.quantity++; else cart.push({...p, quantity: 1});
-        updateCart();
-        if(cart.length === 1) toggleCartModal(true);
-      };
 
-      function updateCart(){
-        document.getElementById('cart-item-count').textContent = cart.reduce((s,i)=> s + i.quantity, 0);
-        cartItemsList.innerHTML = '';
-        if(!cart.length) { document.getElementById('cart-empty-msg').style.display = 'block'; return; }
-        document.getElementById('cart-empty-msg').style.display = 'none';
-        let subtotal = 0;
-        cart.forEach(i => {
-          subtotal += i.price * i.quantity;
-          const li = document.createElement('li');
-          li.className = 'cart-item';
-          li.innerHTML = `<div><h4>${i.name}</h4><small>${i.quantity}x R$ ${i.price.toFixed(2)}</small></div>
-            <div class="controls">
-              <button class="icon-btn" onclick="changeQty('${i.id}', -1)">−</button>
-              <button class="icon-btn" onclick="changeQty('${i.id}', 1)">+</button>
-            </div>`;
-          cartItemsList.appendChild(li);
-        });
-        
-        let taxa = 0;
-        if (tipoEntregaSelect.value === 'Entrega') {
-          const selectedOption = bairroSelect.options[bairroSelect.selectedIndex];
-          if (selectedOption && selectedOption.dataset.price) {
-            taxa = parseFloat(selectedOption.dataset.price);
-          }
+        let finalPrice = p.price;
+        let itemId = p.id;
+        let itemName = p.name;
+        let flavor = '';
+
+        if (p.hasFlavors) {
+            const select = document.getElementById('flavor-' + id);
+            if (select) {
+                flavor = select.value;
+                const selectedOption = select.options[select.selectedIndex];
+                if (selectedOption.dataset.price) {
+                    finalPrice = parseFloat(selectedOption.dataset.price);
+                }
+                itemId = p.id + '-' + flavor.replace(/\s+/g, '');
+                itemName = p.name + ' (' + flavor + ')';
+            }
         }
 
-        document.getElementById('cart-subtotal').textContent = 'R$ ' + subtotal.toFixed(2).replace('.',',');
-        document.getElementById('cart-delivery-fee').textContent = taxa === 0 ? 'R$ 0,00' : 'R$ ' + taxa.toFixed(2).replace('.',',');
-        document.getElementById('cart-total').textContent = 'R$ ' + (subtotal + taxa).toFixed(2).replace('.',',');
-      }
-
-      window.changeQty = (id, delta) => {
-        const item = cart.find(i => i.id === id);
-        if(item) { item.quantity += delta; if(item.quantity <= 0) cart = cart.filter(x => x.id !== id); }
-        updateCart();
-      };
-
-      function toggleCartModal(open){
-        if(open) { 
-          cartModal.classList.add('visible'); 
-          mobileOverlay.classList.add('is-open'); 
-          document.body.style.overflow = 'hidden'; 
-        } else { 
-          cartModal.classList.remove('visible');
-          mobileOverlay.classList.remove('is-open'); 
-          document.body.style.overflow = ''; 
-        }
-      }
-      
-      document.getElementById('cart-clear').onclick = () => {
-         cart = [];
-         updateCart();
-      };
-
-      tipoEntregaSelect.onchange = () => { 
-        const isDelivery = tipoEntregaSelect.value === 'Entrega';
-        document.getElementById('endereco-field').style.display = isDelivery ? 'block' : 'none'; 
-        bairroSelect.required = isDelivery;
-        updateCart(); 
-      };
-      
-      bairroSelect.addEventListener('change', updateCart);
-
-      formaPagamentoSelect.onchange = () => { document.getElementById('troco-field').style.display = formaPagamentoSelect.value === 'Dinheiro' ? 'block' : 'none'; };
-
-      checkoutForm.onsubmit = (e) => {
-        e.preventDefault();
-        if(!cart.length) return alert("Carrinho vazio!");
-        if(tipoEntregaSelect.value === 'Entrega' && !bairroSelect.value) return alert("Por favor, selecione seu bairro!");
-
-        sendOrderBtn.textContent = "Enviando pedido...";
-        sendOrderBtn.disabled = true;
-
-        const nome = document.getElementById('cliente-nome').value.toUpperCase();
-        const contato = document.getElementById('cliente-contato').value;
-        const tipo = document.getElementById('tipo-entrega').value;
-        const pag = document.getElementById('forma-pagamento').value;
-        const troco = document.getElementById('valor-troco').value;
-        
-        let msg = `NOVO PEDIDO — LANCHE DO PROFESSOR\n`;
-        msg += `------------------------------------------\n`;
-        msg += `Cliente: ${nome}\n`;
-        msg += `Contato: ${contato}\n`; 
-        msg += `Tipo: ${tipo}\n`;
-        
-        let taxa = 0;
-        
-        if(tipo === 'Entrega') {
-          const rua = document.getElementById('end-rua').value;
-          const comp = document.getElementById('end-complemento').value;
-          const ref = document.getElementById('end-ref').value;
-          
-          const selectedBairroOption = bairroSelect.options[bairroSelect.selectedIndex];
-          const bairroNome = selectedBairroOption.value; // Ex: Belvedere
-          taxa = parseFloat(selectedBairroOption.dataset.price);
-          
-          msg += `Bairro: ${bairroNome}\n`;
-          msg += `Local: ${rua}${comp ? ' ('+comp+')' : ''}\n`;
-          msg += `Referência: ${ref}\n`;
-        } else {
-          msg += `Local: Retirada no Balcão\n`;
-        }
-        
-        msg += `Pagamento: ${pag}${troco ? ' (Troco p/ R$ '+troco+')' : ''}\n\n`;
-        msg += `--- ITENS DO PEDIDO ---\n`;
-        
-        let sub = 0;
-        cart.forEach(i => {
-          msg += `- ${i.quantity}x ${i.name} — R$ ${(i.price * i.quantity).toFixed(2).replace('.',',')}\n`;
-          sub += i.price * i.quantity;
-        });
-
-        msg += `\nSubtotal: R$ ${sub.toFixed(2).replace('.',',')}\n`;
-        if(tipo === 'Entrega') {
-          msg += `Taxa de entrega: R$ ${taxa.toFixed(2).replace('.',',')}\n`;
-        }
-        msg += `TOTAL: R$ ${(sub + taxa).toFixed(2).replace('.',',')}\n`;
-
-        // ABRE O WHATSAPP
-        const waLink = `https://wa.me/5521996470174?text=${encodeURIComponent(msg)}`;
-        window.open(waLink, '_blank');
-
-        // ENVIA E-MAIL PARA BACKUP E ATIVA O RASTREADOR
-        const templateParams = {
-            message: msg,       
-            from_name: nome,    
-            reply_to: "email_cliente@exemplo.com" 
+        const newItem = {
+           id: itemId, 
+           name: itemName, 
+           price: finalPrice, 
+           quantity: 1, 
+           imageUrl: p.imageUrl 
         };
 
-        emailjs.send('service_tibjxdw', 'template_3tfwdsp', templateParams)
-          .then(function(response) {
-             alert("Pedido enviado com sucesso! Acompanhe o rastreador.");
-             cart = []; 
-             updateCart();
-             startOrderSimulation();
-             sendOrderBtn.textContent = "Enviar Pedido Agora";
-             sendOrderBtn.disabled = false;
-          }, function(error) {
-             alert("Pedido enviado para o WhatsApp!");
-             cart = [];
-             updateCart();
-             startOrderSimulation();
-             sendOrderBtn.textContent = "Enviar Pedido Agora";
-             sendOrderBtn.disabled = false;
-          });
+        if (p.isEncomenda) {
+            const exists = cartEncomenda.find(x => x.id === itemId);
+            if(exists) exists.quantity++;
+            else cartEncomenda.push(newItem);
+        } else {
+            const exists = cartSite.find(x => x.id === itemId);
+            if(exists) exists.quantity++;
+            else cartSite.push(newItem);
+        }
+        
+        updateCart();
+        toggleCartModal(true);
       };
 
       document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.onclick = () => { 
-          document.querySelectorAll('.filter-btn').forEach(b=>b.setAttribute('aria-pressed','false')); 
-          btn.setAttribute('aria-pressed','true'); renderProducts(btn.dataset.filter); 
+        btn.onclick = (e) => {
+          document.querySelectorAll('.filter-btn').forEach(b=>{
+            b.classList.remove('secondary');
+            b.setAttribute('aria-pressed','false');
+          });
+          e.target.classList.add('secondary');
+          e.target.setAttribute('aria-pressed','true');
+          renderProducts(e.target.dataset.filter);
         };
       });
 
+      function updateCart(){
+        cartSiteItemsList.innerHTML = '';
+        cartEncomendaItemsList.innerHTML = '';
+        
+        let subtotalSite = 0;
+        let subtotalEncomenda = 0;
+        let qtySite = 0;
+        let qtyEncomenda = 0;
+
+        // Renderizar carrinho de site
+        if(cartSite.length === 0){
+          document.getElementById('section-site-cart').style.display = 'none';
+        } else {
+          document.getElementById('section-site-cart').style.display = 'block';
+          cartSite.forEach(i => {
+            subtotalSite += i.price * i.quantity;
+            qtySite += i.quantity;
+            const li = document.createElement('li');
+            li.className = 'cart-item';
+            li.innerHTML = `
+              <div>
+                <h4>${i.name}</h4>
+                <div style="font-size:.85rem;color:var(--muted)">R$ ${(i.price*i.quantity).toFixed(2).replace('.',',')}</div>
+              </div>
+              <div class="controls">
+                <button class="icon-btn" onclick="changeQtySite('${i.id}',-1)" aria-label="Diminuir quantidade">-</button>
+                <span style="font-weight:700;min-width:20px;text-align:center">${i.quantity}</span>
+                <button class="icon-btn" onclick="changeQtySite('${i.id}',1)" aria-label="Aumentar quantidade">+</button>
+              </div>
+            `;
+            cartSiteItemsList.appendChild(li);
+          });
+        }
+
+        // Renderizar carrinho de encomenda
+        if(cartEncomenda.length === 0){
+          document.getElementById('section-encomenda-cart').style.display = 'none';
+        } else {
+          document.getElementById('section-encomenda-cart').style.display = 'block';
+          cartEncomenda.forEach(i => {
+            subtotalEncomenda += i.price * i.quantity;
+            qtyEncomenda += i.quantity;
+            const li = document.createElement('li');
+            li.className = 'cart-item';
+            li.innerHTML = `
+              <div>
+                <h4>${i.name}</h4>
+                <div style="font-size:.85rem;color:var(--muted)">R$ ${(i.price*i.quantity).toFixed(2).replace('.',',')}</div>
+              </div>
+              <div class="controls">
+                <button class="icon-btn" onclick="changeQtyEncomenda('${i.id}',-1)" aria-label="Diminuir quantidade">-</button>
+                <span style="font-weight:700;min-width:20px;text-align:center">${i.quantity}</span>
+                <button class="icon-btn" onclick="changeQtyEncomenda('${i.id}',1)" aria-label="Aumentar quantidade">+</button>
+              </div>
+            `;
+            cartEncomendaItemsList.appendChild(li);
+          });
+        }
+
+        const totalQty = qtySite + qtyEncomenda;
+        document.getElementById('cart-item-count').textContent = totalQty;
+
+        const totalSubtotal = subtotalSite + subtotalEncomenda;
+
+        if(totalQty === 0){
+          document.getElementById('cart-empty-msg').style.display = 'block';
+          document.getElementById('cart-summary').style.display = 'none';
+        } else {
+          document.getElementById('cart-empty-msg').style.display = 'none';
+          document.getElementById('cart-summary').style.display = 'block';
+          document.getElementById('cart-subtotal').textContent = `R$ ${totalSubtotal.toFixed(2).replace('.',',')}`;
+          updateTotal(totalSubtotal);
+        }
+
+        // Exibir campos de agendamento se houver encomenda, e campos de entrega/retirada de site se houver itens no site
+        document.getElementById('data-agendamento-field').style.display = cartEncomenda.length > 0 ? 'block' : 'none';
+        document.getElementById('tipo-entrega-group').style.display = cartSite.length > 0 ? 'block' : 'none';
+        
+        const isDelivery = cartSite.length > 0 && tipoEntregaSelect.value === 'Entrega';
+        document.getElementById('endereco-field').style.display = isDelivery ? 'block' : 'none';
+      }
+
+      window.changeQtySite = function(itemId, amount){
+        const item = cartSite.find(x => x.id === itemId);
+        if(item){
+          item.quantity += amount;
+          if(item.quantity <= 0) cartSite = cartSite.filter(x => x.id !== itemId);
+          updateCart();
+        }
+      };
+
+      window.changeQtyEncomenda = function(itemId, amount){
+        const item = cartEncomenda.find(x => x.id === itemId);
+        if(item){
+          item.quantity += amount;
+          if(item.quantity <= 0) cartEncomenda = cartEncomenda.filter(x => x.id !== itemId);
+          updateCart();
+        }
+      };
+
+      document.getElementById('cart-clear').onclick = function(){
+        if(confirm("Tem certeza que deseja limpar todos os carrinhos?")){
+          cartSite = [];
+          cartEncomenda = [];
+          updateCart();
+        }
+      }
+
+      function updateTotal(sub){
+        let fee = 0;
+        const msgDiv = document.getElementById('delivery-fee-msg');
+        msgDiv.textContent = '';
+        
+        if(cartSite.length > 0 && tipoEntregaSelect.value === 'Entrega'){
+          const option = bairroSelect.options[bairroSelect.selectedIndex];
+          if(option && option.dataset.price){
+            fee = parseFloat(option.dataset.price);
+          } else {
+            msgDiv.textContent = 'Selecione um bairro para calcular o frete da pronta entrega.';
+          }
+        }
+        document.getElementById('cart-delivery-fee').textContent = `R$ ${fee.toFixed(2).replace('.',',')}`;
+        document.getElementById('cart-total').textContent = `R$ ${(sub + fee).toFixed(2).replace('.',',')}`;
+      }
+
+      function toggleCartModal(show){
+        if(show){
+          cartModal.classList.add('visible');
+          mobileOverlay.classList.add('is-open');
+        } else {
+          cartModal.classList.remove('visible');
+          mobileOverlay.classList.remove('is-open');
+        }
+      }
+      
       document.getElementById('cart-toggle-btn').onclick = () => toggleCartModal(true);
       document.getElementById('cart-close-btn').onclick = () => toggleCartModal(false);
 
+      tipoEntregaSelect.onchange = (e) => {
+        const isDelivery = cartSite.length > 0 && e.target.value === 'Entrega';
+        document.getElementById('endereco-field').style.display = isDelivery ? 'block' : 'none';
+        bairroSelect.required = isDelivery;
+        document.getElementById('end-rua').required = isDelivery;
+        let subtotal = cartSite.reduce((acc, i) => acc + i.price * i.quantity, 0) + cartEncomenda.reduce((acc, i) => acc + i.price * i.quantity, 0);
+        updateTotal(subtotal);
+      };
+
+      bairroSelect.onchange = () => {
+        let subtotal = cartSite.reduce((acc, i) => acc + i.price * i.quantity, 0) + cartEncomenda.reduce((acc, i) => acc + i.price * i.quantity, 0);
+        updateTotal(subtotal);
+      };
+
+      formaPagamentoSelect.onchange = (e) => {
+        document.getElementById('troco-field').style.display = e.target.value === 'Dinheiro' ? 'block' : 'none';
+      };
+
+      checkoutForm.onsubmit = function(e){
+        e.preventDefault();
+        
+        if(cartSite.length > 0 && tipoEntregaSelect.value === 'Entrega' && !bairroSelect.value) {
+            alert('Por favor, selecione seu bairro para a entrega.');
+            return;
+        }
+        
+        sendOrderBtn.disabled = true;
+        sendOrderBtn.textContent = 'Processando...';
+        
+        const subtotalSite = cartSite.reduce((acc, i) => acc + i.price * i.quantity, 0);
+        const subtotalEncomenda = cartEncomenda.reduce((acc, i) => acc + i.price * i.quantity, 0);
+        const subtotal = subtotalSite + subtotalEncomenda;
+
+        let deliveryFee = 0;
+        let bairroNome = '';
+        if(cartSite.length > 0 && tipoEntregaSelect.value === 'Entrega'){
+          const option = bairroSelect.options[bairroSelect.selectedIndex];
+          if(option){
+            deliveryFee = parseFloat(option.dataset.price);
+            bairroNome = option.text;
+          }
+        }
+        const total = subtotal + deliveryFee;
+
+        let cartSiteText = cartSite.length > 0 ? cartSite.map(i => `${i.quantity}x ${i.name} (R$ ${(i.price*i.quantity).toFixed(2)})`).join('\n') : '';
+        let cartEncomendaText = cartEncomenda.length > 0 ? cartEncomenda.map(i => `${i.quantity}x ${i.name} (R$ ${(i.price*i.quantity).toFixed(2)})`).join('\n') : '';
+        
+        let msg = `*NOVO PEDIDO - LANCHE DO PROFESSOR* 🍔\n\n`;
+        msg += `*Cliente:* ${document.getElementById('cliente-nome').value}\n`;
+        msg += `*Contato:* ${document.getElementById('cliente-contato').value}\n\n`;
+        
+        if(cartSite.length > 0) {
+          msg += `*--- PRONTA ENTREGA (SITE) ---*\n`;
+          msg += `*Tipo:* ${tipoEntregaSelect.value}\n`;
+          msg += `${cartSiteText}\n\n`;
+        }
+
+        if(cartEncomenda.length > 0) {
+          msg += `*--- ENCOMENDAS / CONGELADOS ---*\n`;
+          msg += `*Data/Hora Retirada:* ${document.getElementById('data-retirada').value} às ${document.getElementById('hora-retirada').value}\n`;
+          msg += `${cartEncomendaText}\n\n`;
+        }
+        
+        if(cartSite.length > 0 && tipoEntregaSelect.value === 'Entrega'){
+          msg += `*ENDEREÇO DE ENTREGA*\n`;
+          msg += `Bairro/Taxa: ${bairroNome}\n`;
+          msg += `Rua/Nº: ${document.getElementById('end-rua').value}\n`;
+          if(document.getElementById('end-complemento').value) msg += `Complemento: ${document.getElementById('end-complemento').value}\n`;
+          if(document.getElementById('end-ref').value) msg += `Referência: ${document.getElementById('end-ref').value}\n`;
+          msg += `\n`;
+        }
+        
+        msg += `*PAGAMENTO*\n`;
+        msg += `Subtotal: R$ ${subtotal.toFixed(2)}\n`;
+        if(cartSite.length > 0 && tipoEntregaSelect.value === 'Entrega') {
+          msg += `Taxa de Entrega: R$ ${deliveryFee.toFixed(2)}\n`;
+        }
+        msg += `*TOTAL A PAGAR: R$ ${total.toFixed(2)}*\n`;
+        msg += `Forma: ${formaPagamentoSelect.value}\n`;
+        if(formaPagamentoSelect.value === 'Dinheiro' && document.getElementById('valor-troco').value){
+          msg += `Troco para: R$ ${document.getElementById('valor-troco').value}\n`;
+        }
+
+        let fullPedidoTexto = "";
+        if(cartSiteText) fullPedidoTexto += `[Pronta Entrega]:\n${cartSiteText}\n`;
+        if(cartEncomendaText) fullPedidoTexto += `[Encomendas/Congelados]:\n${cartEncomendaText}`;
+
+        const templateParams = {
+          nome_cliente: document.getElementById('cliente-nome').value,
+          telefone_cliente: document.getElementById('cliente-contato').value,
+          tipo_entrega: cartSite.length > 0 ? tipoEntregaSelect.value : 'Retirada de Encomenda',
+          pedido_texto: fullPedidoTexto,
+          endereco_texto: (cartSite.length > 0 && tipoEntregaSelect.value === 'Entrega') ? `${bairroNome} - ${document.getElementById('end-rua').value}` : `Retirada de Encomenda agendada para ${document.getElementById('data-retirada').value} às ${document.getElementById('hora-retirada').value}`,
+          total_pedido: `R$ ${total.toFixed(2)}`,
+          forma_pagamento: formaPagamentoSelect.value
+        };
+
+        emailjs.send('service_57q1a3x', 'template_z220j8t', templateParams)
+          .then(function(response) {
+            console.log('E-mail enviado!', response.status, response.text);
+            const wppUrl = `https://wa.me/5521996470174?text=${encodeURIComponent(msg)}`;
+            window.open(wppUrl, '_blank');
+            startOrderSimulation();
+            cartSite = [];
+            cartEncomenda = [];
+            updateCart();
+            checkoutForm.reset();
+            document.getElementById('endereco-field').style.display = 'none';
+            document.getElementById('data-agendamento-field').style.display = 'none';
+            document.getElementById('troco-field').style.display = 'none';
+            sendOrderBtn.disabled = false;
+            sendOrderBtn.textContent = 'Enviar Pedido Agora';
+          }, function(error) {
+            console.error('Falha ao enviar e-mail...', error);
+            const wppUrl = `https://wa.me/5521996470174?text=${encodeURIComponent(msg)}`;
+            window.open(wppUrl, '_blank');
+            startOrderSimulation();
+            sendOrderBtn.disabled = false;
+            sendOrderBtn.textContent = 'Enviar Pedido Agora';
+          });
+      };
     })();
   </script>
 </body>
