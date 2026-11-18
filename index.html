@@ -10,8 +10,6 @@
 
   <meta name="description" content="Peça o melhor pastel, caldo de cana e salgados de Seropédica. Lanche do Professor: matando a sua fome com velocidade e bom humor.">
   
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
   <style>
@@ -327,7 +325,7 @@
       <div class="hero-inner container" data-aos="fade-up">
         <h1>FAÇA SEU PEDIDO!</h1>
         
-        <p class="lead" style="font-size:1.2rem; font-weight:900; color:var(--bg-dark); background:rgba(255,255,255,0.85); display:inline-block; padding:8px 18px; border-radius:12px; margin-bottom: 1rem; border: 2px solid var(--txt-dark);">🔥 Mini Pastel por Encomenda!</p>
+        <p class="lead" style="font-size:1.2rem; font-weight:900; color:var(--bg-dark); background:rgba(255,255,255,0.85); display:inline-block; padding:8px 18px; border-radius:12px; margin-bottom: 1rem; border: 2px solid var(--txt-dark);">🔥 Mini Pastel por Encomenda (Mín. 16 un. por sabor)!</p>
         
         <p class="lead">Funcionando de Segunda a Sexta.<br>Delivery: 16h → 1h da manhã.</p>
         
@@ -413,7 +411,7 @@
 
         <!-- Carrinho de Encomendas / Congelados -->
         <div id="section-encomenda-cart" style="display:none; margin-top: 15px;">
-          <div class="cart-section-title">📦 Carrinho de Encomendas & Congelados</div>
+          <div class="cart-section-title">📦 Carrinho de Encomendas & Congelados (Mín. 16 un. por sabor)</div>
           <ul id="cart-encomenda-items-list" style="list-style:none;padding:0;margin:0"></ul>
         </div>
       </div>
@@ -514,8 +512,6 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
     (function(){
-      emailjs.init("I411iBg-_msw-aK29");
-
       function checkOpenStatus() {
         const now = new Date();
         const day = now.getDay(); 
@@ -598,10 +594,10 @@
         },
         { 
           id: 'mp_congelado', 
-          name: 'Mini Pastel Congelado (Encomenda - Unidade)', 
+          name: 'Mini Pastel Congelado (Encomenda - Mín. 16 un. por sabor)', 
           price: 0.60, 
           category: 'mini_pasteis', 
-          description: 'Todo congelado por encomenda (Mínimo de 3 dias de antecedência). Selecione o sabor.', 
+          description: 'Todo congelado por encomenda (Mínimo de 16 unidades por sabor e 3 dias de antecedência). Selecione o sabor.', 
           imageUrl: 'https://i.postimg.cc/9Mm7xjpv/Screenshot-20260909-175127-2.jpg', 
           available: true,
           isEncomenda: true,
@@ -754,12 +750,14 @@
 
           let flavorSelectHtml = '';
           if (p.hasFlavors && isAvailable) {
-              flavorSelectHtml = `<select id="flavor-${p.id}" class="form-control" style="margin-top: 8px; font-size: 0.85rem; padding: 0.4rem; font-weight: bold; cursor: pointer;" onchange="document.getElementById('price-${p.id}').innerText = 'R$ ' + parseFloat(this.options[this.selectedIndex].dataset.price).toFixed(2).replace('.',',')">`;
+              flavorSelectHtml = `<select id="flavor-${p.id}" class="form-control" style="margin-top: 8px; font-size: 0.85rem; padding: 0.4rem; font-weight: bold; cursor: pointer;" onchange="document.getElementById('price-${p.id}').innerText = 'R$ ' + (parseFloat(this.options[this.selectedIndex].dataset.price) * (${p.id === 'mp_congelado' ? 16 : 1})).toFixed(2).replace('.',',')">`;
               p.flavors.forEach(f => {
                   flavorSelectHtml += `<option value="${f.name}" data-price="${f.price}">${f.name}</option>`;
               });
               flavorSelectHtml += `</select>`;
           }
+
+          const initialDisplayPrice = p.id === 'mp_congelado' ? p.price * 16 : p.price;
 
           card.innerHTML = `
             <img class="product-card-image" src="${p.imageUrl || p.img}" alt="${p.name}" style="${!isAvailable ? 'filter: grayscale(1);' : ''}" onclick="openZoom('${p.imageUrl || p.img}')">
@@ -770,7 +768,7 @@
                 ${flavorSelectHtml}
               </div>
               <div class="product-card-footer">
-                <div class="product-price" id="price-${p.id}">R$ ${p.price.toFixed(2).replace('.',',')}</div>
+                <div class="product-price" id="price-${p.id}">R$ ${initialDisplayPrice.toFixed(2).replace('.',',')}</div>
                 ${isAvailable 
                   ? `<button class="btn-add-cart" onclick="addToCart('${p.id}')">Adicionar</button>`
                   : `<button class="btn" style="background:#ccc; cursor:not-allowed;" disabled>Indisponível</button>`
@@ -799,21 +797,23 @@
                     finalPrice = parseFloat(selectedOption.dataset.price);
                 }
                 itemId = p.id + '-' + flavor.replace(/\s+/g, '');
-                itemName = p.name + ' (' + flavor + ')';
+                itemName = p.name.replace(' (Mín. 16 un. por sabor)', '') + ' (' + flavor + ')';
             }
         }
+
+        const initialQty = (p.id === 'mp_congelado') ? 16 : 1;
 
         const newItem = {
            id: itemId, 
            name: itemName, 
            price: finalPrice, 
-           quantity: 1, 
+           quantity: initialQty, 
            imageUrl: p.imageUrl 
         };
 
         if (p.isEncomenda) {
             const exists = cartEncomenda.find(x => x.id === itemId);
-            if(exists) exists.quantity++;
+            if(exists) exists.quantity += initialQty;
             else cartEncomenda.push(newItem);
         } else {
             const exists = cartSite.find(x => x.id === itemId);
@@ -888,7 +888,7 @@
               </div>
               <div class="controls">
                 <button class="icon-btn" onclick="changeQtyEncomenda('${i.id}',-1)" aria-label="Diminuir quantidade">-</button>
-                <span style="font-weight:700;min-width:20px;text-align:center">${i.quantity}</span>
+                <span style="font-weight:700;min-width:25px;text-align:center">${i.quantity}</span>
                 <button class="icon-btn" onclick="changeQtyEncomenda('${i.id}',1)" aria-label="Aumentar quantidade">+</button>
               </div>
             `;
@@ -931,8 +931,11 @@
       window.changeQtyEncomenda = function(itemId, amount){
         const item = cartEncomenda.find(x => x.id === itemId);
         if(item){
-          item.quantity += amount;
-          if(item.quantity <= 0) cartEncomenda = cartEncomenda.filter(x => x.id !== itemId);
+          const step = item.id.startsWith('mp_congelado') ? 16 : 1;
+          item.quantity += amount * step;
+          if(item.quantity < step) {
+            cartEncomenda = cartEncomenda.filter(x => x.id !== itemId);
+          }
           updateCart();
         }
       };
@@ -1000,6 +1003,13 @@
             alert('Por favor, selecione seu bairro para a entrega.');
             return;
         }
+
+        for(let item of cartEncomenda) {
+          if(item.id.startsWith('mp_congelado') && (item.quantity < 16 || item.quantity % 16 !== 0)) {
+            alert(`O mini pastel congelado "${item.name}" deve ser encomendado em quantidade mínima de 16 unidades por sabor (e múltiplos de 16).`);
+            return;
+          }
+        }
         
         sendOrderBtn.disabled = true;
         sendOrderBtn.textContent = 'Processando...';
@@ -1058,43 +1068,20 @@
           msg += `Troco para: R$ ${document.getElementById('valor-troco').value}\n`;
         }
 
-        let fullPedidoTexto = "";
-        if(cartSiteText) fullPedidoTexto += `[Pronta Entrega]:\n${cartSiteText}\n`;
-        if(cartEncomendaText) fullPedidoTexto += `[Encomendas/Congelados]:\n${cartEncomendaText}`;
+        // Abre o WhatsApp diretamente e sem bloqueio/permissão de navegador
+        const wppUrl = `https://wa.me/5521995738400?text=${encodeURIComponent(msg)}`;
+        window.open(wppUrl, '_blank');
 
-        const templateParams = {
-          nome_cliente: document.getElementById('cliente-nome').value,
-          telefone_cliente: document.getElementById('cliente-contato').value,
-          tipo_entrega: cartSite.length > 0 ? tipoEntregaSelect.value : 'Retirada de Encomenda',
-          pedido_texto: fullPedidoTexto,
-          endereco_texto: (cartSite.length > 0 && tipoEntregaSelect.value === 'Entrega') ? `${bairroNome} - ${document.getElementById('end-rua').value}` : `Retirada de Encomenda agendada para ${document.getElementById('data-retirada').value} às ${document.getElementById('hora-retirada').value}`,
-          total_pedido: `R$ ${total.toFixed(2)}`,
-          forma_pagamento: formaPagamentoSelect.value
-        };
-
-        emailjs.send('service_57q1a3x', 'template_z220j8t', templateParams)
-          .then(function(response) {
-            console.log('E-mail enviado!', response.status, response.text);
-            const wppUrl = `https://wa.me/5521995738400?text=${encodeURIComponent(msg)}`;
-            window.open(wppUrl, '_blank');
-            startOrderSimulation();
-            cartSite = [];
-            cartEncomenda = [];
-            updateCart();
-            checkoutForm.reset();
-            document.getElementById('endereco-field').style.display = 'none';
-            document.getElementById('data-agendamento-field').style.display = 'none';
-            document.getElementById('troco-field').style.display = 'none';
-            sendOrderBtn.disabled = false;
-            sendOrderBtn.textContent = 'Enviar Pedido Agora';
-          }, function(error) {
-            console.error('Falha ao enviar e-mail...', error);
-            const wppUrl = `https://wa.me/5521995738400?text=${encodeURIComponent(msg)}`;
-            window.open(wppUrl, '_blank');
-            startOrderSimulation();
-            sendOrderBtn.disabled = false;
-            sendOrderBtn.textContent = 'Enviar Pedido Agora';
-          });
+        startOrderSimulation();
+        cartSite = [];
+        cartEncomenda = [];
+        updateCart();
+        checkoutForm.reset();
+        document.getElementById('endereco-field').style.display = 'none';
+        document.getElementById('data-agendamento-field').style.display = 'none';
+        document.getElementById('troco-field').style.display = 'none';
+        sendOrderBtn.disabled = false;
+        sendOrderBtn.textContent = 'Enviar Pedido Agora';
       };
     })();
   </script>
